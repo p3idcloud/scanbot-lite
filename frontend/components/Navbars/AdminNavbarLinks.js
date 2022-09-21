@@ -1,5 +1,7 @@
 import React from "react";
+import Router from "next/router";
 import classNames from "classnames";
+import { destroyCookie } from "nookies";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -21,6 +23,7 @@ import Button from "components/CustomButtons/Button.js";
 import useWindowSize from "components/Hooks/useWindowSize.js";
 
 import styles from "assets/jss/nextjs-material-dashboard/components/headerLinksStyle.js";
+import { authConstants } from "constants/auth";
 
 export default function AdminNavbarLinks() {
   const size = useWindowSize();
@@ -48,6 +51,13 @@ export default function AdminNavbarLinks() {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+  const handleLogout = () => {
+    destroyCookie({}, authConstants.SESSION_TOKEN);
+    destroyCookie({}, authConstants.CSRF_TOKEN);
+    destroyCookie({}, authConstants.CALLBACK_URL);
+    // destroyCookie({}, "ivalt-cookies");
+    Router.push("/api/auth/logout/saml");
+  }
   return (
     <div>
       <div className={classes.searchWrapper}>
@@ -208,7 +218,7 @@ export default function AdminNavbarLinks() {
                     </MenuItem>
                     <Divider light />
                     <MenuItem
-                      onClick={handleCloseProfile}
+                      onClick={handleLogout}
                       className={classes.dropdownItem}
                     >
                       Logout

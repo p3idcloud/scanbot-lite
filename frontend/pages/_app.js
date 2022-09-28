@@ -32,6 +32,7 @@ import store from "redux/store";
 import { createWrapper } from "next-redux-wrapper";
 import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
+import { ToastContainer } from "react-toastify";
 
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
@@ -167,6 +168,13 @@ class MyApp extends App {
             </Page>
           </AccountProvider>
         </Layout>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+        />
       </React.Fragment>
     );
   }

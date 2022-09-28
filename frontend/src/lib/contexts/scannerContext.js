@@ -117,17 +117,19 @@ export const ScannerProvider = ({
         }
     }
 
-    function loadScannerHistory(page = 1) {
+    function loadScannerHistory(page = 1, rowsPerPage = 5, setRowCount = (_) => {}) {
         fetchData(`${process.env.backendUrl}api/scanners/history`, {
         headers,
         params: {
             scannerId,
+            limit: rowsPerPage,
             sort: "-createdAt",
             page,
         },
         })
         .then((res) => {
-            setScannerHistory(res ?? null);
+            setScannerHistory(res.data ?? null);
+            setRowCount(res?.dataCount ?? 0);
         })
         .catch((err) => toast.error("Api error something"));
     }
@@ -206,13 +208,14 @@ export const ScannerProvider = ({
                 justifyContent="center"
                 alignItems="center"
             >
-                <Box py={4}>
+                <Box py={4} px={1}>
                     <h3>Scanner Error, Please check the service</h3>
                 </Box>
                 <Box my={4} display='flex' justifyContent='center'>
                     <RegularButton color="info" onClick={handleRefresh}>
                         Retry
                     </RegularButton>
+                    <div style={{padding: 5}}/>
                     <RegularButton color="info" onClick={()=>setInfoexStatus(false)}>
                         OK
                     </RegularButton>

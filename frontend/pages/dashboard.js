@@ -53,6 +53,7 @@ function Dashboard() {
   const { scannerList, setScannerList } = useAccount();
 
   const rowsPerPage = 5;
+  const [rowCount, setRowCount] = useState(0);
   const [pageIndex, setPageIndex] = useState(1);
   
   const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex);
@@ -64,10 +65,8 @@ function Dashboard() {
 
   useEffect(() => {
     if (data) {
-      const dataScanner = data?.data?.map((item) => {
-        return item;
-      });
-      setScannerList(dataScanner);
+      setScannerList(data?.data ?? []);
+      setRowCount(data?.dataCount ?? 0);
     }
   }, [data]);
   return (
@@ -90,7 +89,7 @@ function Dashboard() {
           <CardFooter>
               <TablePagination
                   component="div"
-                  count={0}
+                  count={rowCount}
                   page={pageIndex-1}
                   onPageChange={handlePageIndexChange}
                   rowsPerPage={rowsPerPage}
@@ -135,7 +134,7 @@ function Dashboard() {
           <CardFooter>
               <TablePagination
                   component="div"
-                  count={0}
+                  count={rowCount}
                   page={pageIndex-1}
                   onPageChange={handlePageIndexChange}
                   rowsPerPage={rowsPerPage}

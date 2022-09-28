@@ -21,6 +21,7 @@ export default function ScannerHistory() {
 
     const rowsPerPage = 5;
     const [pageIndex, setPageIndex] = useState(1);
+    const [rowCount, setRowCount] = useState(0);
 
     const {scannerHistory, loadScannerHistory} = useScanner();
 
@@ -28,8 +29,8 @@ export default function ScannerHistory() {
     const classes = useStyles();
 
     const getDetailHistory = (id) => {
-        fetchData(`${process.env.backendUrl}api/scanners/history/${id}?page=${pageIndex}&limit=${rowsPerPage}`)
-          .then((res) => setDetailHistory(res))
+        fetchData(`${process.env.backendUrl}api/scanners/history/${id}`)
+          .then((res) => setDetailHistory(res.data))
           .catch((err) => console.log(err));
     };
 
@@ -43,7 +44,7 @@ export default function ScannerHistory() {
     };
 
     useEffect(() => {
-        loadScannerHistory(pageIndex);
+        loadScannerHistory(pageIndex, rowsPerPage, rowCount);
     }, [pageIndex]);
 
     return (
@@ -61,13 +62,13 @@ export default function ScannerHistory() {
                     <CardBody>
                         <CustomTable
                             tableHead={["Name", "Description", "Start Date", "Status", "Pages", ""]}
-                            tableData={[]} // scannerHistory?.data
+                            tableData={[]} // scannerHistory
                         />
                     </CardBody>
                     <CardFooter>
                         <TablePagination
                             component="div"
-                            count={0}
+                            count={rowCount}
                             page={pageIndex-1}
                             onPageChange={handlePageIndexChange}
                             rowsPerPage={rowsPerPage}

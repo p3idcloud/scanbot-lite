@@ -3,12 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 // core components
-import { infoColor, title } from "assets/jss/nextjs-material-dashboard.js";
+import { infoColor, title } from "assets/jss/nextjs-material-dashboard";
 import Image from "next/image";
 
 const styles = {
     progress: {
-      color: infoColor,
+      color: infoColor[3],
       width: "350px !important",
       height: "350px !important",
     },

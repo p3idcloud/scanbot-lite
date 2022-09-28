@@ -49,7 +49,7 @@ export default function Step1() {
                     You are about to claim an ownership for a scanner.
                     Confirm your identity using the button below:
                 </p>
-                <Button color="primary" onClick={onClick}>
+                <Button color="info" onClick={onClick}>
                     Sign in with SSO
                 </Button>
             </CardBody>

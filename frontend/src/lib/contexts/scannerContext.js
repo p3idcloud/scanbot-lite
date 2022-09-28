@@ -210,10 +210,10 @@ export const ScannerProvider = ({
                     <h3>Scanner Error, Please check the service</h3>
                 </Box>
                 <Box my={4} display='flex' justifyContent='center'>
-                    <RegularButton color="primary" onClick={handleRefresh}>
+                    <RegularButton color="info" onClick={handleRefresh}>
                         Retry
                     </RegularButton>
-                    <RegularButton color="primary" onClick={()=>setInfoexStatus(false)}>
+                    <RegularButton color="info" onClick={()=>setInfoexStatus(false)}>
                         OK
                     </RegularButton>
                 </Box>

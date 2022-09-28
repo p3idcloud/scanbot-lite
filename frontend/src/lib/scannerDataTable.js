@@ -13,7 +13,7 @@ export const generateScannerDataTable = (scannerData) => {
             data.model,
             data.description,
             <Button 
-                color="primary"
+                color="info"
                 onClick={() => {
                     Router.push(`/scanners/${data.id}`)
                 }}

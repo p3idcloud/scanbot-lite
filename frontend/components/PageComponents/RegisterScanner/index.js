@@ -34,7 +34,7 @@ export default function Register() {
         >
             <Container>
                 <Card profile>
-                    <CardHeader color="primary">
+                    <CardHeader color="info">
                         <h2>Scanbot</h2>
                     </CardHeader>
                     <StepComponent />

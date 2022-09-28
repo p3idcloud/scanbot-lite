@@ -1,21 +1,32 @@
+import { Icon } from "@material-ui/core";
 import { Box, Paper, Stack } from "@mui/material";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import CardHeader from "components/Card/CardHeader";
+import CardIcon from "components/Card/CardIcon";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import { useScanner } from "lib/contexts/scannerContext";
 import StateBox from "./StateBox";
 
+import { makeStyles } from "@material-ui/core/styles";
+import styles from "assets/jss/nextjs-material-dashboard/views/dashboardStyle.js";
 
 export default function ScannerProfile() {
+    const useStyles = makeStyles(styles);
+    const classes = useStyles();
     const { detailScanner } = useScanner();
     return (
         <GridContainer>
-            <GridItem xs={12} lg={6}>
-                <Card style={{backgroundColor: '#e5e5e5'}}>
-                    <CardHeader profile color="primary">
-                        <h1>Scanner Profile</h1>
+            <GridItem xs={12} sm={7}>
+                <Card>
+                    <CardHeader stats color="info" >
+                        <CardIcon color="primary">
+                            <Stack direction="row" alignItems='center'>
+                                <Icon>adf_scanner</Icon>
+                                <h2>Scanner Profile</h2>
+                            </Stack>
+                        </CardIcon>
                     </CardHeader>
                     <CardBody>
                         <Box
@@ -53,8 +64,18 @@ export default function ScannerProfile() {
                     </CardBody>
                 </Card>
             </GridItem>
-            <GridItem xs={12} lg={6}>
-                <StateBox />
+            <GridItem xs={12} sm={5}>
+                <Card>
+                    <CardHeader color="info" stats icon>
+                        <CardIcon color="info">
+                            <Icon>cloud_queue</Icon>
+                        </CardIcon>
+                        <h3 className={classes.cardCategory}>Scanner status</h3>
+                    </CardHeader>
+                    <CardBody>
+                        <StateBox />
+                    </CardBody>
+                </Card>
             </GridItem>
         </GridContainer>
     )

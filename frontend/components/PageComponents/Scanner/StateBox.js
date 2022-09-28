@@ -1,4 +1,4 @@
-import { Box, Grid, Card, Stack } from "@mui/material";
+import { Box, Grid, Card } from "@mui/material";
 import { useScanner } from "lib/contexts/scannerContext";
 
 export default function StateBox({status, state}) {
@@ -21,35 +21,84 @@ export default function StateBox({status, state}) {
           return "#FCAE1E  !important";
     }
 
+    const handleStatusBoxShadow = (status) => {
+        if (
+            [
+              "Scanner Offline / Undetected",
+              "error",
+              "draining",
+              "closed"
+            ].includes(status)
+          ) {
+            return "0 4px 20px 0 " +
+                  '#F01E2C23' +
+                  ", 0 7px 10px -5px " +
+                  '#F01E2C66' +
+                  " !important";
+          }
+          if (["active", "ready", "capturing", "noSession"].includes(status)) {
+            return "0 4px 20px 0 " +
+                  '#1FD65523' +
+                  ", 0 7px 10px -5px " +
+                  '#1FD65566' +
+                  " !important";
+          }
+        return "0 4px 20px 0 " +
+              '#FCAE1E23' +
+              ", 0 7px 10px -5px " +
+              '#FCAE1E66' +
+              " !important";
+    }
+
     return (
-        <Grid component={Card} p={3} minHeight={0.85} alignItems='center'>
-            <Grid item xs={6} lg={12}>
-                <Stack direction='row' justifyContent="center" py={2} spacing={2}>
-                    <h3>Status{" "}</h3>
+        <Grid container p={3} alignItems='center' spacing={2}>
+            <Grid container item xs={6} sm={12} direction="row" justifyContent="center"  spacing={2}>
+                <Grid 
+                    item xs={12} sm={6}  
+                    display='flex' alignItems='center'
+                >
+                    <h3 >Status{" "}</h3>
+                </Grid>
+                <Grid 
+                    item xs={12} sm={6} 
+                    justifyContent='end' display='flex' alignItems='center'
+                >
                     <Box 
                         component={Card}
+                        textAlign='center'
                         sx={{
                             backgroundColor: handleStatus(statusPoll?.status),
-                            p: 1
+                            p: 1,
+                            boxShadow: handleStatusBoxShadow(statusPoll?.status)
                         }}
                     >
-                        <p>{usedBy ? "used by " + usedBy : statusPoll?.status || "Not ready"}</p>
+                        <h6 style={{margin: 0}}>{usedBy ? "used by " + usedBy : statusPoll?.status || "Not ready"}</h6>
                     </Box>
-                </Stack>
+                </Grid>
             </Grid>
-            <Grid item xs={6} lg={12}>
-                <Stack direction="row" justifyContent="center" py={2} spacing={2}>
+            <Grid container item xs={6} sm={12} direction="row" justifyContent="center"  spacing={2}>
+                <Grid 
+                    item xs={12} sm={6}  
+                    display='flex' alignItems='center'
+                >
                     <h3>State{" "}</h3>
+                </Grid>
+                <Grid 
+                    item xs={12} sm={6}  
+                    display='flex' alignItems='center' justifyContent='end'
+                >
                     <Box 
                         component={Card}
+                        textAlign='center'
                         sx={{
                             backgroundColor: handleStatus(statusPoll?.state),
                             p: 1,
+                            boxShadow: handleStatusBoxShadow(statusPoll?.state)
                         }}
                     >
-                        <p>{statusPoll?.state || "Offline"}</p>
+                        <h6 style={{margin: 0}}>{statusPoll?.state || "Offline"}</h6>
                     </Box>
-                </Stack>
+                </Grid>
             </Grid>
         </Grid>
     )

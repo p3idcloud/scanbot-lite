@@ -57,7 +57,7 @@ function TypographyPage() {
   const classes = useStyles();
   return (
     <Card>
-      <CardHeader color="primary">
+      <CardHeader color="info">
         <h4 className={classes.cardTitleWhite}>Material Dashboard Heading</h4>
         <p className={classes.cardCategoryWhite}>
           Created using Roboto Font Family

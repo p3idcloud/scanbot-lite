@@ -14,6 +14,8 @@ import CardBody from "components/Card/CardBody.js";
 import { fetchData } from "lib/fetch";
 import { generateScannerDataTable, generateScannerTableHead } from "lib/scannerDataTable";
 import { useAccount } from "lib/contexts/accountContext";
+import CardFooter from "components/Card/CardFooter";
+import { TablePagination } from "@mui/material";
 
 const styles = {
   cardCategoryWhite: {
@@ -50,10 +52,13 @@ function Dashboard() {
   const classes = useStyles();
   const { scannerList, setScannerList } = useAccount();
 
+  const rowsPerPage = 5;
   const [pageIndex, setPageIndex] = useState(1);
   
+  const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex);
+
   const { data, error, isValidating } = useSWR(
-    `${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=10&sort=-lastActive`,
+    `${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`,
     fetchData
   );
 
@@ -69,7 +74,7 @@ function Dashboard() {
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
         <Card>
-          <CardHeader color="primary">
+          <CardHeader color="info">
             <h4 className={classes.cardTitleWhite}>Scanner List</h4>
             <p className={classes.cardCategoryWhite}>
               list of connected scanners
@@ -77,23 +82,33 @@ function Dashboard() {
           </CardHeader>
           <CardBody>
             <Table
-              tableHeaderColor="primary"
+              tableHeadercolor="info"
               tableHead={generateScannerTableHead()}
               tableData={generateScannerDataTable(scannerList)}
             />
           </CardBody>
+          <CardFooter>
+              <TablePagination
+                  component="div"
+                  count={0}
+                  page={pageIndex-1}
+                  onPageChange={handlePageIndexChange}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[]}
+              />
+          </CardFooter>
         </Card>
       </GridItem>
       <GridItem xs={12} sm={12} md={12}>
         <Card plain>
-          <CardHeader plain color="primary">
+          <CardHeader plain color="info">
             <h4 className={classes.cardTitleWhite}>
               Scan History
             </h4>
           </CardHeader>
           <CardBody>
             <Table
-              tableHeaderColor="primary"
+              tableHeadercolor="info"
               tableHead={["ID", "Name", "Country", "City", "Salary"]}
               tableData={[
                 ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
@@ -117,6 +132,16 @@ function Dashboard() {
               ]}
             />
           </CardBody>
+          <CardFooter>
+              <TablePagination
+                  component="div"
+                  count={0}
+                  page={pageIndex-1}
+                  onPageChange={handlePageIndexChange}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[]}
+              />
+          </CardFooter>
         </Card>
       </GridItem>
     </GridContainer>

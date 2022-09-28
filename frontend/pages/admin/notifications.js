@@ -123,7 +123,7 @@ function Notifications() {
   };
   return (
     <Card>
-      <CardHeader color="primary">
+      <CardHeader color="info">
         <h4 className={classes.cardTitleWhite}>Notifications</h4>
         <p className={classes.cardCategoryWhite}>
           Handcrafted by our friends from{" "}
@@ -203,10 +203,10 @@ function Notifications() {
             />
             <SnackbarContent
               message={
-                'PRIMARY - This is a regular notification made with color="primary"'
+                'PRIMARY - This is a regular notification made with color="info"'
               }
               close
-              color="primary"
+              color="info"
             />
           </GridItem>
         </GridContainer>
@@ -227,7 +227,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("tl")}
                 >
                   Top Left
@@ -245,7 +245,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("tc")}
                 >
                   Top Center
@@ -263,7 +263,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("tr")}
                 >
                   Top Right
@@ -287,7 +287,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("bl")}
                 >
                   Bottom Left
@@ -305,7 +305,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("bc")}
                 >
                   Bottom Center
@@ -323,7 +323,7 @@ function Notifications() {
               <GridItem xs={12} sm={12} md={4}>
                 <Button
                   fullWidth
-                  color="primary"
+                  color="info"
                   onClick={() => showNotification("br")}
                 >
                   Bottom Right

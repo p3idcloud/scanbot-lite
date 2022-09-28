@@ -46,9 +46,8 @@ export default function Footer(props) {
               target="_blank"
               className={classes.a}
             >
-              Creative Tim
+              Open Source Scanbot
             </a>
-            , made with love for a better web
           </span>
         </p>
       </div>

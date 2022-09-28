@@ -13,7 +13,7 @@ import styles from "assets/jss/nextjs-material-dashboard/components/snackbarCont
 export default function SnackbarContent(props) {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
-  const { message, color, close, icon, rtlActive } = props;
+  const { message, color, close, icon } = props;
   var action = [];
   const messageClasses = classNames({
     [classes.iconMessage]: icon !== undefined,
@@ -40,8 +40,7 @@ export default function SnackbarContent(props) {
       }
       classes={{
         root: classes.root + " " + classes[color],
-        message: classes.message,
-        action: classNames({ [classes.actionRTL]: rtlActive }),
+        message: classes.message
       }}
       action={action}
     />
@@ -52,6 +51,5 @@ SnackbarContent.propTypes = {
   message: PropTypes.node.isRequired,
   color: PropTypes.oneOf(["info", "success", "warning", "danger", "primary"]),
   close: PropTypes.bool,
-  icon: PropTypes.object,
-  rtlActive: PropTypes.bool,
+  icon: PropTypes.object
 };

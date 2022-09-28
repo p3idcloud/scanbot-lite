@@ -64,7 +64,7 @@ export default NextAuth({
         sessionToken: {
             name: authConstants.SESSION_TOKEN,
             options: {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: 'lax',
                 path: '/',
                 secure: false

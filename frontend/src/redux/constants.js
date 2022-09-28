@@ -1,0 +1,18 @@
+export default {
+    GET_USER_DATA: 'get_user_data',
+    SET_USER_DATA: 'set_user_data',
+    UPDATE_USER_DATA: 'update_user_data',
+    GET_PROFILE_PICTURE: 'get_profile_picture',
+    UPLOAD_PROFILE_PICTURE: 'upload_profile_picture',
+    SET_PROFILE_PICTURE: 'set_profile_picture',
+    GET_PROFILE_DEFINITION: 'get_profile_definition',
+    GET_SCANNER_SETTING: 'get_scanner_setting',
+    SET_PROFILE_DEFINITION: 'set_profile_definition',
+    UPDATE_PROFILE_DEFINITION: 'update_profile_definition',
+    SET_SCANNER_SETTING: 'set_scanner_setting',
+    CREATE_PROFILE_DEFINITION: 'create_profile_definition',
+    DELETE_PROFILE_DEFINITION: 'delete_profile_definition',
+    SET_CREATE_PROFILE_DEFINITION: 'set_create_profile_definition',
+    SET_UPDATE_PROFILE_DEFINITION: 'set_update_profile_definition',
+    SET_DELETE_PROFILE_DEFINITION: 'set_delete_profile_definition',
+};

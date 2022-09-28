@@ -8,23 +8,6 @@ import dropdownStyle from "assets/jss/nextjs-material-dashboard/dropdownStyle.js
 
 const headerLinksStyle = (theme) => ({
   ...dropdownStyle(theme),
-  search: {
-    "& > div": {
-      marginTop: "0",
-    },
-    [theme.breakpoints.down("sm")]: {
-      margin: "10px 15px !important",
-      float: "none !important",
-      paddingTop: "1px",
-      paddingBottom: "1px",
-      padding: "0!important",
-      width: "60%",
-      marginTop: "40px",
-      "& input": {
-        color: whiteColor,
-      },
-    },
-  },
   linkText: {
     zIndex: "4",
     ...defaultFont,
@@ -56,20 +39,9 @@ const headerLinksStyle = (theme) => ({
       },
     },
   },
-  searchButton: {
-    [theme.breakpoints.down("sm")]: {
-      top: "-50px !important",
-      marginRight: "22px",
-      float: "right",
-    },
-  },
   margin: {
     zIndex: "4",
     margin: "0",
-  },
-  searchIcon: {
-    width: "17px",
-    zIndex: "4",
   },
   notifications: {
     zIndex: "4",
@@ -100,14 +72,7 @@ const headerLinksStyle = (theme) => ({
       width: "100%",
     },
     display: "inline-block",
-  },
-  searchWrapper: {
-    [theme.breakpoints.down("sm")]: {
-      width: "-webkit-fill-available",
-      margin: "10px 15px 0",
-    },
-    display: "inline-block",
-  },
+  }
 });
 
 export default headerLinksStyle;

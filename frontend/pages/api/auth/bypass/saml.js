@@ -8,8 +8,6 @@ import { authConstants } from "constants/auth";
 export default async (req, res) => {
     const cookies = new Cookies(req, res)
     if (req.method === "POST") {
-        const encodedSAMLBody = encodeURIComponent(JSON.stringify(req.body));
-
         let redirectUrl = req.body.callbackUrl;
         let csrfToken = req.body.csrfToken;
         let csrfTokenHash = req.body.csrfTokenHash;
@@ -50,8 +48,6 @@ export default async (req, res) => {
                 return res.status(401).send({message: 'SAML identity error!'});
             }
 
-
-            // console.log('ENV:', process.env.JWT_SECRET);
             //generate jwt
             var token = await jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: process.env.LOGIN_SESSION_DAY+'d'});
 
@@ -67,7 +63,8 @@ export default async (req, res) => {
             }else {
                 cookies.set(authConstants.SESSION_TOKEN, token, {
                     sameSite: 'lax',
-                    expires: expireCookie
+                    expires: expireCookie,
+                    httpOnly: false
                 });
             }
             if (redirectUrl){

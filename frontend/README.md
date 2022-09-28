@@ -58,13 +58,13 @@ It is open source, and it's Github Repo can be found [here](https://github.com/c
 
 ## Demo
 
-- [Start page](https://demos.creative-tim.com/nextjs-material-dashboard/admin/dashboard)
+- [Start page](https://demos.creative-tim.com/nextjs-material-dashboard/dashboard)
 - [User profile page](https://demos.creative-tim.com/nextjs-material-dashboard/admin/user-profile)
 - [Tables page ](https://demos.creative-tim.com/nextjs-material-dashboard-pro/admin/table-list)
 - [Maps Page](https://demos.creative-tim.com/nextjs-material-dashboard-pro/admin/maps)
 - [Notifications page](https://demos.creative-tim.com/nextjs-material-dashboard-pro/admin/notifications)
 
-[View More](https://demos.creative-tim.com/nextjs-material-dashboard-pro/admin/dashboard).
+[View More](https://demos.creative-tim.com/nextjs-material-dashboard-pro/dashboard).
 
 
 ## Quick start
@@ -117,7 +117,6 @@ nextjs-material-dashboard
 │       │   │   ├── footerStyle.js
 │       │   │   ├── headerLinksStyle.js
 │       │   │   ├── headerStyle.js
-│       │   │   ├── rtlHeaderLinksStyle.js
 │       │   │   ├── sidebarStyle.js
 │       │   │   ├── snackbarContentStyle.js
 │       │   │   ├── tableStyle.js
@@ -125,13 +124,11 @@ nextjs-material-dashboard
 │       │   │   └── typographyStyle.js
 │       │   ├── dropdownStyle.js
 │       │   ├── layouts
-│       │   │   ├── adminStyle.js
-│       │   │   └── rtlStyle.js
+│       │   │   └── adminStyle.js
 │       │   ├── tooltipStyle.js
 │       │   └── views
 │       │       ├── dashboardStyle.js
-│       │       ├── iconsStyle.js
-│       │       └── rtlStyle.js
+│       │       └── iconsStyle.js
 │       └── nextjs-material-dashboard.js
 ├── components
 │   ├── Card
@@ -156,8 +153,7 @@ nextjs-material-dashboard
 │   │   └── GridItem.js
 │   ├── Navbars
 │   │   ├── AdminNavbarLinks.js
-│   │   ├── Navbar.js
-│   │   └── RTLNavbarLinks.js
+│   │   └── Navbar.js
 │   ├── PageChange
 │   │   └── PageChange.js
 │   ├── Sidebar
@@ -190,8 +186,7 @@ nextjs-material-dashboard
 │   │       └── jquery-3.2.1.min.js
 │   └── tutorial-components.html
 ├── layouts
-│   ├── Admin.js
-│   └── RTL.js
+│   └── Admin.js
 ├── next.config.js
 ├── package.json
 ├── pages
@@ -207,9 +202,7 @@ nextjs-material-dashboard
 │   │   ├── typography.js
 │   │   ├── upgrade-to-pro.js
 │   │   └── user-profile.js
-│   ├── index.js
-│   └── rtl
-│       └── rtl-page.js
+│   └── index.js
 ├── routes.js
 └── variables
     ├── charts.js

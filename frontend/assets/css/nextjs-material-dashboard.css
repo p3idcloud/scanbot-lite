@@ -501,15 +501,6 @@ footer ul li a:hover {
   transform: translateY(-13%);
   transform-origin: 0 0;
 }
-.fixed-plugin.rtl-fixed-plugin {
-  right: auto;
-  left: 0px;
-  border-radius: 0 8px 8px 0;
-}
-.fixed-plugin.rtl-fixed-plugin .dropdown-menu {
-  right: auto;
-  left: 80px;
-}
 * {
   letter-spacing: normal !important;
 }
@@ -520,30 +511,20 @@ footer ul li a:hover {
   position: fixed;
   z-index: 9999;
   width: 100%;
-  display: flex;
   height: 100%;
-  justify-content: center;
-  align-items: center;
 }
-.body-page-transition #page-transition > div:after {
+.body-page-transition #page-transition > div {
   content: "";
-  background-image: url("../img/bg7.jpg");
+  background-color: #eeeeee;
   background-size: cover;
   position: fixed;
   z-index: 9998;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   top: 0;
   left: 0;
-}
-.body-page-transition #page-transition > div:before {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  content: '';
-  display: block;
-  z-index: 9999;
-  position: absolute;
-  background: rgba(0, 0, 0, 0.5);
 }

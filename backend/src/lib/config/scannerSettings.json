@@ -1,0 +1,93 @@
+[
+    {
+        "possibleValues": [
+            {
+                "label": "default",
+                "description": "Any pixelFormat, at the discretion of the scanner. This includes custom pixelFormats not defined by the TWAIN Directspecification.",
+                "value": "any"
+            },
+            {
+                "label": "Color 24-bit",
+                "description": "Color with a bit depth of 24 (8-bits per channel), allowing for 16.7million colors.",
+                "value": "rgb24"
+            }
+        ],
+        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf8",
+        "labelName": "Color",
+        "description": "A string. The colorspace and the bit depth of a pixel.",
+        "vendor": "TWAIN",
+        "valueType": "String",
+        "object": "task.actions[].streams[].sources[].pixelFormats[].pixelFormat",
+        "defaultValue": "default",
+        "currentValue": "default"
+    },
+    {
+        "possibleValues": [
+            {
+                "label": "1 - n",
+                "description": "The number of sheets",
+                "value": "integer"
+            },
+            {
+                "label": "Maximum",
+                "description": "Capture the maximum number of sheets supported by the scanner. This is the recommended default.",
+                "value": "maximum"
+            }
+        ],
+        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf9",
+        "labelName": "numberOfSheets",
+        "description": "The number of sheets that the scanner will capture. If the scanner runs out of sheets before reaching this number scanning will conclude, it won’t wait for more paper.",
+        "vendor": "TWAIN",
+        "valueType": "String",
+        "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
+        "defaultValue": "1",
+        "currentValue": "1"
+    },
+    {
+        "possibleValues": [
+            {
+                "label": "1 - n",
+                "description": "An integer value. Typical values are 75, 100, 150, 200, 240, 250, 300, 400, 500, 600, 1200, 2400, 4800, 9600 and 19200. Some scanners support continuous ranges.",
+                "value": "integer"
+            },
+            {
+                "label": "Maximum",
+                "description": "Use the maximum value supported by this scanner.",
+                "value": "maximum"
+            },
+            {
+                "label": "Minimum",
+                "description": "Use the minimum value supported by this scanner.",
+                "value": "minimum"
+            },
+            {
+                "label": "Closest",
+                "description": "Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner’s minimum or maximum value is used, whichever is closer.",
+                "value": "closest"
+            },
+            {
+                "label": "Closest greater than",
+                "description": "Selects the closest supported value greater than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no greater value, the scanner’s maximum value is used.",
+                "value": "closestGreaterThan"
+            },
+            {
+                "label": "Closest less than",
+                "description": "Selects the closest supported value less than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no lesser value, the scanner’s minimum value is used.",
+                "value": "closestLessThan"
+            },
+            {
+                "label": "Optical",
+                "description": "Use the optical resolution of the scanner. This produces the best image (least artifacts from scaling) that the scanner can produce, but the images can be large if the optical resolution is high, such as 1200dpi, which will result in a 404MB uncompressed color",
+                "value": "optical"
+            }
+        ],
+        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf7",
+        "labelName": "resolution",
+        "description": "The resolution of the image in dots-per-inch (dpi). Small values capture smaller image sizes with less detail. Large values result in larger image sizes with more detail.",
+        "vendor": "TWAIN",
+        "valueType": "String",
+        "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
+        "defaultValue": "400",
+        "currentValue": "400"
+    }
+]

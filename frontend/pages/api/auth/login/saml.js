@@ -14,7 +14,7 @@ export default async (req, res) => {
             'set-cookie', 
             [
                 `${authConstants.CSRF_TOKEN}=${encodeURIComponent(csrfTokenCookie)}; Path=/; HttpOnly; SameSite=Lax'`, 
-                `${authConstants.CALLBACK_URL}=${encodeURIComponent(process.env.baseUrl)+'/admin/dashboard'}; Path=/; SameSite=Lax`
+                `${authConstants.CALLBACK_URL}=${encodeURIComponent(process.env.baseUrl)+'/dashboard'}; Path=/; SameSite=Lax`
             ]
         );
 
@@ -25,7 +25,7 @@ export default async (req, res) => {
                     <input type="hidden" name="csrfTokenHash" value="${csrfTokenHash}"/>
                     <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                     <input type="hidden" name="samlBody" value="${encodedSAMLBody}"/>
-                    <input type="hidden" name="callbackUrl" id="callbackUrl" value="admin/dashboard"/>
+                    <input type="hidden" name="callbackUrl" id="callbackUrl" value="dashboard"/>
                 </form>
                 <script>
                     let registToken;
@@ -46,7 +46,7 @@ export default async (req, res) => {
                     }
                     registToken = getCookie('registrationToken')
                     if(registToken){
-                        document.getElementById('callbackUrl').value = 'register?registrationToken='+getCookie('registrationToken');
+                        document.getElementById('callbackUrl').value = 'scanners/register?registrationToken='+getCookie('registrationToken');
                     }
                     document.forms[0].submit();
                 </script>

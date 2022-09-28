@@ -21,7 +21,7 @@ export default function CardAvatar(props) {
     [className]: className !== undefined,
   });
   return (
-    <div className={cardAvatarClasses} {...rest}>
+    <div className={cardAvatarClasses} {...rest} style={{paddingTop: 50}}>
       {children}
     </div>
   );

@@ -155,12 +155,9 @@ class MyApp extends App {
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
           <title>Open Source Scanbot</title>
-          <link rel="shortcut icon" href={require("assets/img/favicon.png")} />
-          <link
-            rel="apple-touch-icon"
-            sizes="76x76"
-            href={require("assets/img/apple-icon.png")}
-          />
+          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-16.png" sizes="16x16" />
+          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-32.png" sizes="32x32" />
+          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-96.png" sizes="96x96" />
         </Head>
         <Layout>
           <AccountProvider {...pageProps} >

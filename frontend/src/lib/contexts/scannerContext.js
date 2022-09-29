@@ -19,6 +19,7 @@ export const ScannerProvider = ({
   sessionId,
   setSessionId,
   setStartCapture,
+  files,
   setFiles,
   statusClaim,
   setStatusClaim,
@@ -163,6 +164,8 @@ export const ScannerProvider = ({
     return (
         <ScannerContext.Provider
             value={{
+                scannerSettings,
+                setScannerSettings,
                 scannerHistory,
                 detailScanner,
                 scannerId,
@@ -253,6 +256,8 @@ export const ScannerProvider = ({
 
 export const useScanner = () => {
     const {
+        scannerSettings,
+        setScannerSettings,
         scannerHistory,
         detailScanner,
         scannerId,
@@ -280,6 +285,8 @@ export const useScanner = () => {
     } = useContext(ScannerContext);
 
     return {
+        scannerSettings,
+        setScannerSettings,
         scannerHistory,
         detailScanner,
         scannerId,

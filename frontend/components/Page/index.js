@@ -5,6 +5,7 @@ import Router from "next/router";
 import { withRouter, useRouter } from "next/router";
 import { authConstants } from "constants/auth";
 import { destroyCookie, parseCookies } from "nookies";
+import { getRouteTitle } from "routes";
 
 const whitelistedUrl = [
   "/scanners/register",
@@ -16,7 +17,7 @@ const Page = (props) => {
 
   const isWhiteListed = whitelistedUrl.includes(props.router.pathname);
 
-  const pageName = props.router.pathname.split("/").reverse()[0];
+  const pageTitle = getRouteTitle(props.router.pathname);
 
   useEffect(() => {
     if (!isWhiteListed) {
@@ -42,7 +43,7 @@ const Page = (props) => {
     <>
       <Head>
         <title>
-          {pageName ? pageName : process.env.siteTitle}
+          {pageTitle}
         </title>
       </Head>
       {props.children}

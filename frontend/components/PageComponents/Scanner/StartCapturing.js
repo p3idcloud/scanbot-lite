@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { Icon } from "@material-ui/core";
 import RegularButton from "components/CustomButtons/Button";
 import { fetchData } from "lib/fetch";
+import { capitalize } from "lib/helpers";
+import ButtonWithLoader from "components/CustomButtons/ButtonWithLoader";
 
 export default function StartCapture() {
   const {
@@ -52,8 +54,15 @@ export default function StartCapture() {
     setStartCapture(true);
   };
 
+  if (loading) {
+    return <ButtonWithLoader loading={loading} color="primary">
+      ...
+    </ButtonWithLoader>
+  }
+
   return (
         <RegularButton
+            color="primary"
             disabled={
                 !statusClaim ||
                 statusPoll?.status === "capturing" ||
@@ -61,30 +70,22 @@ export default function StartCapture() {
             }
             onClick={handleCapture}
         >
-            {loading ? (
-                <Box display='flex' alignItems='center' justifyContent='center'>
-                <CircularProgress />
-                <p>Loading...</p>
-                </Box>
-            ) : (
-                <>
-                {statusPoll?.state !== "ready" ? (
-                    <>
-                    <Box display='flex' alignItems='center' justifyContent='center'>
-                        <CircularProgress />{" "}
-                        <p className="ml-2 capitalize">{statusPoll?.state}</p>
-                    </Box>
-                    </>
-                ) : (
-                    <>
-                    <Icon>print</Icon>
-                    <p>
-                        {statusPoll?.status !== "capturing" && "Start "} Capturing
-                    </p>
-                    </>
-                )}
-                </>
-            )}
+          <>
+          {statusPoll?.state !== "ready" ? (
+              <>
+              <Box display='flex' alignItems='center' justifyContent='center'>
+                  <p>{capitalize(statusPoll?.state ?? '')}</p>
+              </Box>
+              </>
+          ) : (
+              <>
+              <Icon>print</Icon>
+              <p>
+                  {statusPoll?.status !== "capturing" && "Start "} Capturing
+              </p>
+              </>
+          )}
+          </>
         </RegularButton>
     );
 }

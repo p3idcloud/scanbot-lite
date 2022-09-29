@@ -18,42 +18,47 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
-import LibraryBooks from "@material-ui/icons/LibraryBooks";
-import BubbleChart from "@material-ui/icons/BubbleChart";
-import LocationOn from "@material-ui/icons/LocationOn";
-import Notifications from "@material-ui/icons/Notifications";
-import Unarchive from "@material-ui/icons/Unarchive";
-import Language from "@material-ui/icons/Language";
+import Print from "@material-ui/icons/Print";
 
 const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: Dashboard,
-
-    layout: "/admin",
   },
   {
-    path: "/user-profile",
+    path: "/scanner",
+    name: "Scanners",
+    icon: Print,
+  },
+  {
+    path: "/profile",
     name: "User Profile",
     icon: Person,
-
-    layout: "/admin",
-  },
-  {
-    path: "/typography",
-    name: "Typography",
-    icon: LibraryBooks,
-
-    layout: "/admin",
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: Notifications,
-
-    layout: "/admin",
   },
 ];
+
+export const getRouteTitle = (path) => {
+  switch(path) {
+    case '/dashboard':
+      return 'Scanbot Dashboard';
+    case '/scanner':
+      return 'Scanner Dashboard';
+    case '/profile':
+      return 'User Profile';
+    case '/api/auth/login/saml':
+    case '/api/auth/bypass/saml':
+      return 'Scanbot Login';
+    case '/scanners/register':
+      return 'Scanner Registration';
+    default:
+      // Scanner detail page
+      if (new RegExp(/^\/scanners\/.*$/).test(path)) {
+        return 'Scanner Detail';
+      }
+      // Not logged
+      return path;
+  }
+}
 
 export default dashboardRoutes;

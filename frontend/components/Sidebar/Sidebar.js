@@ -41,16 +41,16 @@ export default function Sidebar(props) {
           });
         } else {
           listItemClasses = classNames({
-            [" " + classes[color]]: activeRoute(prop.layout + prop.path),
+            [" " + classes[color]]: activeRoute(prop.path),
           });
         }
         const whiteFontClasses = classNames({
           [" " + classes.whiteFont]:
-            activeRoute(prop.layout + prop.path) ||
+            activeRoute(prop.path) ||
             prop.path === "/upgrade-to-pro",
         });
         return (
-          <Link href={prop.layout + prop.path} key={key}>
+          <Link href={prop.path} key={key}>
             <a className={activePro + classes.item}>
               <ListItem button className={classes.itemLink + listItemClasses}>
                 {typeof prop.icon === "string" ? (

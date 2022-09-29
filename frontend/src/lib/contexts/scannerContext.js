@@ -20,11 +20,15 @@ export const ScannerProvider = ({
   setSessionId,
   setStartCapture,
   setFiles,
+  statusClaim,
   setStatusClaim,
   loadingCapture,
   setLoadingCapture,
+  closeCloud,
+  setCloseCloud
 }) => {
     const [privetToken, setPrivetToken] = useState(0);
+    const [scannerSettings, setScannerSettings] = useState([]);
     const [scannerHistory, setScannerHistory] = useState(null);
     const [detailScanner, setDetailScanner] = useState(null);
     const [statusPoll, setStatusPoll] = useState(null);
@@ -38,29 +42,44 @@ export const ScannerProvider = ({
 
     
     const { data, error, isValidating } = useSWR(
-        `${process.env.backendUrl}api/scanners/${scannerId}`,
+        `${process.env.backendUrl}api/scanners/${scannerId}?ui=true`,
         fetchData
     );
+    const scannerStateData = useSWR(
+        `${process.env.backendUrl}api/scanners/state/${scannerId}`,
+        fetchData,
+        {
+            refreshInterval: 1000
+        }
+    ).data;
+    const scannerSettingsData = useSWR(
+        `${process.env.backendUrl}api/scannersetting`,
+        fetchData
+    ).data;
 
     useEffect(() => {
         if (data) {
             setDetailScanner(data.scanner ?? null);
         }
     }, [data]);
-
     useEffect(() => {
-        if (data !== "undefined") {
-        setStatusPoll(data);
-        setPrivetToken(data?.xPrivetToken);
-        setFiles(data?.imageUrl);
+        if (scannerSettingsData) {
+            setScannerSettings(scannerSettingsData.data ?? []);
         }
-    }, [data]);
+    },[scannerSettingsData])
     useEffect(() => {
-        if (data?.sessionId?.length > 0) {
-        setStartCapture(true);
+        if (scannerStateData) {
+            setStatusPoll(scannerStateData);
+            setPrivetToken(scannerStateData?.xPrivetToken);
+            setFiles(scannerStateData?.imageUrl);
         }
-        if (parseCookies()["sessionId"] && data?.sessionId?.length > 0) {
-        setStatusClaim(true);
+    }, [scannerStateData]);
+    useEffect(() => {
+        if (scannerStateData?.sessionId?.length > 0) {
+            setStartCapture(true);
+        }
+        if (parseCookies()["sessionId"] && scannerStateData?.sessionId?.length > 0) {
+            setStatusClaim(true);
         }
     });
 
@@ -162,6 +181,12 @@ export const ScannerProvider = ({
                 handleRefresh,
                 loadScannerHistory,
                 usedBy,
+                files,
+                setFiles,
+                statusClaim,
+                setStatusClaim,
+                closeCloud,
+                setCloseCloud
             }}
         >
         {children}
@@ -246,6 +271,12 @@ export const useScanner = () => {
         handleRefresh,
         loadScannerHistory,
         usedBy,
+        files,
+        setFiles,
+        statusClaim,
+        setStatusClaim,
+        closeCloud,
+        setCloseCloud
     } = useContext(ScannerContext);
 
     return {
@@ -267,5 +298,11 @@ export const useScanner = () => {
         handleRefresh,
         loadScannerHistory,
         usedBy,
+        files,
+        setFiles,
+        statusClaim,
+        setStatusClaim,
+        closeCloud,
+        setCloseCloud
     };
 }

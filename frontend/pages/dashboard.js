@@ -16,6 +16,7 @@ import { generateScannerDataTable, generateScannerTableHead } from "lib/scannerD
 import { useAccount } from "lib/contexts/accountContext";
 import CardFooter from "components/Card/CardFooter";
 import { TablePagination } from "@mui/material";
+import { generateScanHistoryDataTable, generateScanHistoryTableHead } from "lib/scanHistoryDataTable";
 
 const styles = {
   cardCategoryWhite: {
@@ -50,18 +51,29 @@ const styles = {
 function Dashboard() {
   const useStyles = makeStyles(styles);
   const classes = useStyles();
-  const { scannerList, setScannerList } = useAccount();
+  const { scannerList, setScannerList, scanHistory, setScanHistory } = useAccount();
 
   const rowsPerPage = 5;
   const [rowCount, setRowCount] = useState(0);
+  const [historyRowCount, setHistoryRowCount] = useState(0);
   const [pageIndex, setPageIndex] = useState(1);
   
   const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex);
 
   const { data, error, isValidating } = useSWR(
     `${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`,
-    fetchData
+    fetchData,
+    {
+      refreshInterval: 5000
+    }
   );
+  const scanHistoryData = useSWR(
+    `${process.env.backendUrl}api/scanners/history?page=${pageIndex}&limit=${rowsPerPage}`,
+    fetchData,
+    {
+      refreshInterval: 5000
+    }
+  ).data;
 
   useEffect(() => {
     if (data) {
@@ -69,6 +81,12 @@ function Dashboard() {
       setRowCount(data?.dataCount ?? 0);
     }
   }, [data]);
+  useEffect(() => {
+    if (scanHistoryData) {
+      setScanHistory(scanHistoryData?.data ?? []);
+      setHistoryRowCount(scanHistoryData?.dataCount ?? 0);
+    }
+  }, [scanHistoryData])
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
@@ -83,7 +101,7 @@ function Dashboard() {
             <Table
               tableHeadercolor="info"
               tableHead={generateScannerTableHead()}
-              tableData={generateScannerDataTable(scannerList)}
+              tableData={generateScannerDataTable(scannerList ?? [])}
             />
           </CardBody>
           <CardFooter>
@@ -108,33 +126,14 @@ function Dashboard() {
           <CardBody>
             <Table
               tableHeadercolor="info"
-              tableHead={["ID", "Name", "Country", "City", "Salary"]}
-              tableData={[
-                ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
-                ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
-                ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
-                [
-                  "4",
-                  "Philip Chaney",
-                  "$38,735",
-                  "Korea, South",
-                  "Overland Park",
-                ],
-                [
-                  "5",
-                  "Doris Greene",
-                  "$63,542",
-                  "Malawi",
-                  "Feldkirchen in Kärnten",
-                ],
-                ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"],
-              ]}
+              tableHead={generateScanHistoryTableHead()}
+              tableData={generateScanHistoryDataTable(scanHistory ?? [])}
             />
           </CardBody>
           <CardFooter>
               <TablePagination
                   component="div"
-                  count={rowCount}
+                  count={historyRowCount}
                   page={pageIndex-1}
                   onPageChange={handlePageIndexChange}
                   rowsPerPage={rowsPerPage}

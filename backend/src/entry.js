@@ -41,7 +41,7 @@ const claimRouter = require('./routes/registerScanner/claim');
 // Cloud API
 const scannersRouter = require('./routes/scanner');
 const accountRouter = require('./routes/account');
-const newBlocksRouter = require('./routes/block');
+const blocksRouter = require('./routes/block');
 const jobRouter = require('./routes/job');
 const scannerSettingRouter = require('./routes/scannersetting');
 const scannerStateRouter = require('./routes/scannerstate');
@@ -61,9 +61,10 @@ app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 var corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: process.env.FRONTEND_URL.slice(0,-1), //removes trailing slash
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
+console.log(corsOptions);
 app.use(cors(corsOptions));
 
 // app.use('/api/auth', authRouter);
@@ -173,16 +174,12 @@ app.use('/api/accounts', accountRouter);
 app.use('/api/jobs', jobRouter);
 app.use('/api/scannersetting', scannerSettingRouter);
 app.use('/api/dashboard', dashboardRouter);
+
 //to use scanner:
-//scannersRouter.use('/:scannerId/blocks', blocksRouter);
-scannersRouter.use('', newBlocksRouter);
-//scannersRouter.use('/:scannerId/infoex', localRouter);
-//scannersRouter.use('/:scannerId/twaindirect/session', localRouter);
+scannersRouter.use('', blocksRouter);
 scannersRouter.use('', localRouter);
 
 app.use('/buckets', require('./routes/upload'));
-
-//scannersRouter.use('/:scannerId/blocks', blocksRouter);
 
 // // v1 - original APIs with 'privet' prefix
 // //scannersRouter.use('/:scannerId/privet/infoex', localRouter);

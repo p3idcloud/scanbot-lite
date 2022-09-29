@@ -1,13 +1,13 @@
 'use strict';
 const logger = require('./logger')('dbClient');
 
-var clientIdToScannerIds = {};
+var accountIdToScannerIds = {};
 var scannerIdToScanners = {};
 
 // TODO: replace with promise / async
-module.exports.getScanners = function(clientId) {
-  logger.info(`Loading scanners for clientId: ${clientId}`);
-  const scannerIds = clientIdToScannerIds[clientId] || [];
+module.exports.getScanners = function(accountId) {
+  logger.info(`Loading scanners for accountId: ${accountId}`);
+  const scannerIds = accountIdToScannerIds[accountId] || [];
 
   const scanners = scannerIds
     .map(id => scannerIdToScanners[id])

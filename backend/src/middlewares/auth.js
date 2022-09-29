@@ -15,24 +15,9 @@ module.exports = async function (req, res, next) {
     }
 
     req.twain = {};
+    let plainToken = true;
     if (req.headers.authorization.includes("Bearer")) {
-        /**
-         * {
-user: {
-    name_id: 'kneal',
-    session_index: 'd3f92d09-380a-4247-bd9e-523dad63d71f',
-    attributes: {
-      firstname: [Array],
-      userid: [Array],
-      email: [Array],
-      username: [Array],
-      lastname: [Array]
-    }
-  },
-  iat: 1663933036,
-  exp: 1664537836
-}
-         */
+        plainToken = false;
         let decodedToken;
         req.twain.principalId = req.headers.authorization.split(' ')[1];
         decodedToken = cache.get(req.twain.principalId);
@@ -65,10 +50,17 @@ user: {
                 req.twain.principalId = decodedToken?.user?.attributes?.userid[0];
             }
         }
-
-        // console.log(req.twain.principalId);
     } else {
         req.twain.principalId = req.headers.authorization;
+    }
+
+    if (plainToken) {
+        const scannerFound = await getScannerFromLoginToken(req.twain.principalId);
+        if (!scannerFound) {
+            return res.status(403).json({ error: 'Invalid credentials!' });
+        } else {
+            req.twain.principalId = scannerFound.accountId;
+        }
     }
 
     return next();

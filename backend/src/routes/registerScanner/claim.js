@@ -18,7 +18,7 @@ function generateToken(n) {
 
 router.post('/',async function(req, res, next) {
   const account = await accountService.getAccountFromId(req.twain.principalId);
-  const clientId = account.id;
+  const accountId = account.id;
   const claimInfo = req.body;
 
   //const scannerId = claimInfo.scannerId;
@@ -39,7 +39,6 @@ router.post('/',async function(req, res, next) {
 
       // TODO: simplify this
       scanner.registrationToken = null;
-      scanner.clientId = clientId;
       scanner.accountId = account.id;
       scanner.loginToken = generateToken(36)
 

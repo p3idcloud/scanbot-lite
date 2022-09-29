@@ -125,21 +125,16 @@ exports.getScannerDeviceSessionFromId = async (req, res) => {
 
 exports.deleteScannerFromId = async (req, res) => {
     if (req.twain.principalId) {
-        const userId = req.twain.principalId;
+        const accountId = req.twain.principalId;
 
-        if (userId) {
+        if (accountId) {
             const scannerId = req.params.scannerId;
 
             //get user from token
             //const user = await userserv.getUserFromToken(req.twain.principalId)
-            const user = await userserv.getUserFromUserID(req.twain.principalId)
-            if (!user) {
-                return res.status(400).send("Couldn't find user")
-            }
-
-            //role under scanneradmin cant delete
-            if (user && !(user.role.includes(ROLE_CONST.SYSTEMADMIN) || user.role.includes(ROLE_CONST.SCANNERADMIN) || user.role.includes(ROLE_CONST.ACCOUNTADMIN))) {
-                return res.status(401).send("Higher permission access needed")
+            const account = await accountService.getAccountFromId(req.twain.principalId)
+            if (!account) {
+                return res.status(400).send("Couldn't find account")
             }
 
             const scanner = await scanserv.deleteScannerFromId(scannerId)
@@ -181,25 +176,17 @@ exports.updateScannerFromId = async (req, res) => {
 }
 
 exports.getScannerAnalytic = async (req, res) => {
-    const user = await userserv.getUserFromUserID(req.twain.principalId);
-    if (!user) {
-        return res.status(400).send("Couldn't find user")
+    const account = await accountService.getAccountFromId(req.twain.principalId);
+    if (!account) {
+        return res.status(400).send("Couldn't find account")
     }
 
-    // role User
-    let userId
-    if (user && !(user.role.includes(ROLE_CONST.SYSTEMADMIN) || user.role.includes(ROLE_CONST.SCANNERADMIN) || user.role.includes(ROLE_CONST.ACCOUNTADMIN))) {
-        userId = user.id;
-    }
-
-    const totalScanHistory = await scannerHistoryService.totalScanHistory(req.params.scannerId, userId)
-    const totalScanHistoryByUser = await scannerHistoryService.totalScanHistoryByUser(req.params.scannerId, userId)
-    const totalPageScan = await scannerHistoryService.totalPageScan(req.params.scannerId, userId)
+    const totalScanHistory = await scannerHistoryService.totalScanHistory(req.params.scannerId, account.id)
+    const totalPageScan = await scannerHistoryService.totalPageScan(req.params.scannerId, account.id)
 
     return res.send({
-        totalScan: totalScanHistory,
-        totalScanByUser: totalScanHistoryByUser,
-        totalPageScan: totalPageScan[0]?.total ? totalPageScan[0].total : 0
+        totalScan: totalScanHistory ?? 0,
+        totalPageScan: totalPageScan[0]?.total ?? 0
     })
 }
 

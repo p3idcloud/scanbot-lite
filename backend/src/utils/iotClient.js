@@ -168,7 +168,7 @@ module.exports.findPollCommandIdFromWaitForEventsThenSaveImagesToService = async
     let headers = aheaders;
     headers['x-twain-cloud-request-id'] = commandId;
     const method = "POST";
-    const url = `http://localhost:3000/api/scanners/`+ scannerId +`/twaindirect/session`;
+    const url = `${process.env.BASE_URL}api/scanners/${scannerId}/twaindirect/session`;
     const body = {
       "kind": "twainlocalscanner",
       "commandId": commandId,
@@ -552,19 +552,19 @@ module.exports.notifySession = function (sessionId, message) {
 };
 
 // TODO: remove duplication
-module.exports.getClientTopic = function (userId) {
-  return `twain/users/${userId}/+`;
+module.exports.getClientTopic = function (accountId) {
+  return `twain/accounts/${accountId}/+`;
 };
 
 module.exports.getDeviceRequestTopic = function (scannerId) {
   return `twain/devices/${scannerId}`;
 };
 
-module.exports.getDeviceResponseTopic = function (userId) {
+module.exports.getDeviceResponseTopic = function (accountId) {
   // TODO: ideally, it would be session ID. Let's think about this a bit.
   const randomTopicId = uuid.v4();
   
-  return `twain/users/${userId}/${randomTopicId}`;
+  return `twain/accounts/${accountId}/${randomTopicId}`;
 };
 
 module.exports.getCloudTopic = function () {

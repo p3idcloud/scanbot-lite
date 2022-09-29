@@ -1,4 +1,4 @@
-import { PaginationItem, Stack, TablePagination } from "@mui/material";
+import { Stack, TablePagination } from "@mui/material";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import CardHeader from "components/Card/CardHeader";
@@ -14,8 +14,14 @@ import styles from "assets/jss/nextjs-material-dashboard/views/dashboardStyle.js
 import CardFooter from "components/Card/CardFooter";
 import CardIcon from "components/Card/CardIcon";
 import { Icon } from "@material-ui/core";
+import useSWR from "swr";
+import { fetchData } from "lib/fetch";
+import { useRouter } from "next/router";
+import { generateScanHistoryTableHead, generateScanHistoryDataTable } from "lib/scanHistoryDataTable";
 
 export default function ScannerHistory() {
+    const router = useRouter();
+
     const [detailOpen, setDetailOpen] = useState(false);
     const [detailHistory, setDetailHistory] = useState(null);
 
@@ -24,6 +30,15 @@ export default function ScannerHistory() {
     const [rowCount, setRowCount] = useState(0);
 
     const {scannerHistory, loadScannerHistory} = useScanner();
+    const { scannerId } = router?.query;
+    
+    //analytic
+    const [totalScan, setTotalScan] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const { data: dataReport, error: errorReport } = useSWR(
+        `${process.env.backendUrl}api/scanners/${scannerId}/analytic`,
+        fetchData
+    );    
 
     const useStyles = makeStyles(styles);
     const classes = useStyles();
@@ -47,6 +62,17 @@ export default function ScannerHistory() {
         loadScannerHistory(pageIndex, rowsPerPage, rowCount);
     }, [pageIndex]);
 
+    useEffect(() => {
+        setRowCount(scannerHistory?.length ?? 0);
+    }, [scannerHistory])
+
+    useEffect(() => {
+        if (dataReport) {
+          setTotalScan(dataReport?.totalScan);
+          setTotalPage(dataReport?.totalPageScan);
+        }
+    }, [dataReport]);
+
     return (
         <GridContainer>
             <GridItem xs={12} md={7}>
@@ -61,8 +87,8 @@ export default function ScannerHistory() {
                     </CardHeader>
                     <CardBody>
                         <CustomTable
-                            tableHead={["Name", "Description", "Start Date", "Status", "Pages", ""]}
-                            tableData={[]} // scannerHistory
+                            tableHead={generateScanHistoryTableHead()}
+                            tableData={generateScanHistoryDataTable(scannerHistory ?? [])}
                         />
                     </CardBody>
                     <CardFooter>
@@ -84,8 +110,8 @@ export default function ScannerHistory() {
                             <Icon>file_copy</Icon>
                         </CardIcon>
                         <h3 className={classes.cardCategory}>Total Scans</h3>
-                        <h1 className={classes.cardTitle}>0 <small>scans</small></h1>
-                        <h1 className={classes.cardTitle}>0 <small>pages</small></h1>
+                        <h1 className={classes.cardTitle}>{totalScan} <small>scans</small></h1>
+                        <h1 className={classes.cardTitle}>{totalPage} <small>pages</small></h1>
                     </CardHeader>
                 </Card>
             </GridItem>

@@ -20,7 +20,7 @@ const mongoose = require('mongoose');
  *      type: string
  *      description: Queue id of scanner
  *      example: 12
- *     userId:
+ *     accountId:
  *      type: string
  *      description: Description of scanner
  *      example: 123

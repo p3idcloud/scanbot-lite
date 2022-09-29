@@ -6,7 +6,6 @@ const AccountService = require('../services/account');
 const ScannerService = require('../services/scanner');
 const QueueService = require('../services/queue');
 const JobService = require('../services/job');
-const ROLE_CONST = require("../constants/role");
 const { presignedGetObject, removeMinioObjects } = require('../lib/minio.lib');
 
 exports.getScannerHistoryFromQuery = async (req, res) => {

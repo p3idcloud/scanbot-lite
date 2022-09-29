@@ -17,10 +17,10 @@ const {getJobFromId, updateJob} = require("../services/job");
 const logger = require('../utils/logger')('api-blocks');
 
 const getFileId = function(req, blockId) {
-    const clientId = req.twain.principalId;
+    const accountId = req.twain.principalId;
     const scannerId = req.params.scannerId;
 
-    return `${clientId}/scannedDocuments/${scannerId}/${blockId}`;
+    return `${accountId}/scannedDocuments/${scannerId}/${blockId}`;
 };
 
 exports.blockGet = async (req, res) => {

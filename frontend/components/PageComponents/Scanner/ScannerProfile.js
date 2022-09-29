@@ -11,11 +11,12 @@ import StateBox from "./StateBox";
 
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/nextjs-material-dashboard/views/dashboardStyle.js";
+import StartSession from "./StartSession";
 
 export default function ScannerProfile() {
     const useStyles = makeStyles(styles);
     const classes = useStyles();
-    const { detailScanner } = useScanner();
+    const { detailScanner, statusClaim, setStatusClaim, setCloseCloud } = useScanner();
     return (
         <GridContainer>
             <GridItem xs={12} sm={7}>
@@ -74,6 +75,13 @@ export default function ScannerProfile() {
                     </CardHeader>
                     <CardBody>
                         <StateBox />
+                        <StartSession
+                            statusClaim={statusClaim}
+                            setStatusClaim={setStatusClaim}
+                            getStopSession={(callback) => {
+                                setCloseCloud(() => callback);
+                            }}
+                        />
                     </CardBody>
                 </Card>
             </GridItem>

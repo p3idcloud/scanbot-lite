@@ -15,10 +15,10 @@ const jobService = require("../services/job");
 const logger = require('../utils/logger')('api-blocks');
 
 const getFileId = function(req, blockId) {
-    const clientId = req.twain.principalId;
+    const accountId = req.twain.principalId;
     const scannerId = req.params.scannerId;
 
-    return `${clientId}/scannedDocuments/${scannerId}/${blockId}`;
+    return `${accountId}/scannedDocuments/${scannerId}/${blockId}`;
 };
 
 //idk how to fix this , i cannot move these code into blocks.controller , it makes 404

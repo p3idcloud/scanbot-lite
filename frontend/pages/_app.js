@@ -33,6 +33,7 @@ import { createWrapper } from "next-redux-wrapper";
 import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
@@ -165,16 +166,16 @@ class MyApp extends App {
           <AccountProvider {...pageProps} >
             <Page {...pageProps}>
               <Component {...pageProps} />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+              />
             </Page>
           </AccountProvider>
         </Layout>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-        />
       </React.Fragment>
     );
   }

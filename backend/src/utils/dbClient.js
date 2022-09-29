@@ -1,13 +1,13 @@
 'use strict';
 const logger = require('./logger')('dbClient');
 
-var clientIdToScannerIds = {};
+var accountIdToScannerIds = {};
 var scannerIdToScanners = {};
 
 // TODO: replace with promise / async
-module.exports.getScanners = function(clientId) {
-  logger.info(`Loading scanners for clientId: ${clientId}`);
-  const scannerIds = clientIdToScannerIds[clientId] || [];
+module.exports.getScanners = function(accountId) {
+  logger.info(`Loading scanners for accountId: ${accountId}`);
+  const scannerIds = accountIdToScannerIds[accountId] || [];
 
   const scanners = scannerIds
     .map(id => scannerIdToScanners[id])
@@ -34,16 +34,16 @@ module.exports.addScanner = function(scannerId, scanner) {
 };
 
 
-module.exports.assignScanner = function(scannerId, clientId) {
-  logger.info(`Assigning scanner with id: ${scannerId} to client: ${clientId}`);
-  let scanners = clientIdToScannerIds[clientId];
+module.exports.assignScanner = function(scannerId, accountId) {
+  logger.info(`Assigning scanner with id: ${scannerId} to client: ${accountId}`);
+  let scanners = accountIdToScannerIds[accountId];
   if (scanners) {
     scanners.push(scannerId);
   } 
   else {
     scanners = [scannerId];
   }
-  clientIdToScannerIds[clientId] = scanners;
+  accountIdToScannerIds[accountId] = scanners;
 
   return Promise.resolve();
 };

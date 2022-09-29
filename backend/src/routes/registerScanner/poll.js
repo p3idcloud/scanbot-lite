@@ -19,8 +19,8 @@ router.get('/:scannerId', async function(req, res, next) {
       throw new Error('Invalid scanner id.');
     }
 
-    if (!scanner.clientId) {
-      logger.warn('Scanner is not assigned to a client yet.');
+    if (!scanner.accountId) {
+      logger.warn('Scanner is not assigned to a account yet.');
       res.status(202).json({ message: "Scanner is not assigned yet."});
       return;
     }

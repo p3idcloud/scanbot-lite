@@ -19,12 +19,12 @@ exports.allLocal = async (req, res, next) => {
 
     var body = req.body;
     const method = req.method;
-    const authorizationstring = account.id;// this workaround , later change it to account id so scanner linked to an accountid
+    const authorizationstring = account.id;
     let headers = req.headers;
     headers.authorization = authorizationstring;
     const scannerId = req.params.scannerId;
     const commandId = req.headers["x-twain-cloud-request-id"];
-    const url = req.protocol + '://' + req.hostname + ':3000' + req.originalUrl;
+    const url = `${process.env.BASE_URL}${req.originalUrl.substring(1)}`;
 
     // TODO: check scanner is online
     // subscribe to mqtt topic to get the response
@@ -37,6 +37,9 @@ exports.allLocal = async (req, res, next) => {
         iot.subscribeToTopic(iot.getClientTopic(authorizationstring));
         iot.listenToTopicAndSave(iot.getClientTopic(authorizationstring), commandId);
     
+        // iot.subscribeToTopic(iot.getDeviceRequestTopic(scannerId));
+        // iot.listenToTopicAndSave(iot.getDeviceRequestTopic(scannerId), commandId);
+
         // wss://emq.lyr.id:8084/mqtt
         iot.notifyScanner(scannerId, {
             headers,
@@ -161,7 +164,7 @@ exports.allLocal = async (req, res, next) => {
             await createScannerHistory({
                 'id': uuid.v4(),
                 'queueId': queue.id,
-                'userId': user.id,
+                'accountId': account.id,
                 'scannerId': scannerId,
                 'name': body.name,
                 'description': body.description,
@@ -173,7 +176,7 @@ exports.allLocal = async (req, res, next) => {
             await scannerStateService.updateScannerState(scannerId,
                 {
                     "currentQueueId": queue.id,
-                    "currentlyUsedByUserId":user.id,
+                    "currentlyUsedByUserId":account.id,
                     "state": result.results.session.state,
                     "status": result.results.session.status.detected,
                     "sessionId": result.results.session.sessionId,

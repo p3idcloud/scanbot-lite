@@ -6,6 +6,7 @@ export const AccountContext = createContext({});
 export const AccountProvider = ({ children, user }) => {
     const [loading, setLoading] = useState(false);
     const [scannerList, setScannerList] = useState([]);
+    const [scanHistory, setScanHistory] = useState([]);
     const [account, setAccount] = useState(user);
 
     return (
@@ -14,7 +15,9 @@ export const AccountProvider = ({ children, user }) => {
                 account,
                 setAccount,
                 scannerList,
-                setScannerList
+                setScannerList,
+                scanHistory,
+                setScanHistory
             }}
         >
             {loading 
@@ -30,14 +33,18 @@ export const useAccount = () => {
         account,
         setAccount,
         scannerList,
-        setScannerList
+        setScannerList,
+        scanHistory,
+        setScanHistory
     } = useContext(AccountContext);
 
     return {
         account,
         setAccount,
         scannerList,
-        setScannerList
+        setScannerList,
+        scanHistory,
+        setScanHistory
     }
 }
 

@@ -1,5 +1,10 @@
+import { Icon } from "@material-ui/core";
+import { Box, Tooltip } from "@mui/material";
 import Button from "components/CustomButtons/Button.js";
+import TooltipButton from "components/CustomButtons/TooltipButton";
 import Router from "next/router";
+import { toast } from "react-toastify";
+import { fetchData } from "./fetch";
 
 export const generateScannerTableHead = () => {
     return ["id", "Name", "Model", "Description", ""];
@@ -12,14 +17,33 @@ export const generateScannerDataTable = (scannerData) => {
             data.name,
             data.model,
             data.description,
-            <Button 
-                color="info"
-                onClick={() => {
-                    Router.push(`/scanners/${data.id}`)
-                }}
-            >
-                Select
-            </Button>
+            <Box display='flex'>
+                <Button 
+                    color="info"
+                    onClick={() => {
+                        Router.push(`/scanners/${data.id}`)
+                    }}
+                >
+                    Select
+                </Button>
+                <Tooltip title="Delete">
+                    <TooltipButton
+                        color="danger"
+                        onClick={() => {
+                            fetchData(
+                                `${process.env.backendUrl}api/scanners/${data.id}`, 
+                                {
+                                    method: "DELETE"
+                                }
+                            )
+                            .then(res => scannerData.splice(index, 1))
+                            .catch(err => toast.error('Failed to delete scanner'))
+                        }}
+                    >
+                        <Icon>delete</Icon>
+                    </TooltipButton>
+                </Tooltip>
+            </Box>
         ]
     });
 }

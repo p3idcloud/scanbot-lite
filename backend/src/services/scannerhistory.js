@@ -62,61 +62,20 @@ exports.deleteScannerHistory = async (id) => {
     }
 }
 
-exports.totalScanHistory = async(scannerId, userId) => {
+exports.totalScanHistory = async(scannerId, accountId) => {
     try {
         const params = { scannerId }
-        if (userId) params['userId'] = userId
+        if (accountId) params['accountId'] = accountId
         return ScannerHistory.countDocuments(params).exec()
     }catch (e) {
         console.log(e);
     }
 }
 
-exports.totalScanHistoryByUser = async(scannerId, userId) => {
+exports.totalPageScan = async(scannerId, accountId) => {
     try {
         const match = { scannerId }
-        if (userId) match['userId'] = userId
-        const result = await ScannerHistory.aggregate([
-            { $match: match },
-            {
-                '$lookup': {
-                    'from': 'users',
-                    'localField': 'userId',
-                    'foreignField': 'id',
-                    'as': 'userLookup'
-                }
-            },
-            {
-                $unwind: "$userLookup",
-            },
-            {
-                $group: {
-                    _id: { userId: "$userId"},
-                    total: { $sum: 1 },
-                    userId: { $first: "$userId" },
-                    username: { $first: "$userLookup.fullname" }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    total: 1,
-                    userId: 1,
-                    username: 1,
-                }
-            },
-        ]).exec();
-
-        return result
-    }catch (e) {
-        console.log(e);
-    }
-}
-
-exports.totalPageScan = async(scannerId, userId) => {
-    try {
-        const match = { scannerId }
-        if (userId) match['userId'] = userId
+        if (accountId) match['accountId'] = accountId
         const result = await ScannerHistory.aggregate([
             { $match: match },
             {

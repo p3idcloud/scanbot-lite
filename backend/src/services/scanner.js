@@ -89,7 +89,7 @@ exports.getScannerDeviceSessionFromId = async (scannerId) => {
             type: 'mqtt',
             url: iotUrl,
             requestTopic: iot.getDeviceRequestTopic(scannerId),
-            responseTopic: iot.getDeviceResponseTopic(retValue.clientId)
+            responseTopic: iot.getDeviceResponseTopic(retValue.accountId)
         };
 
         return deviceSession

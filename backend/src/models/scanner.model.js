@@ -72,7 +72,6 @@ const ScannerSchema = new mongoose.Schema({
         port: Number,
         lastActive: Date,
         deletedAt: Date,
-        clientId: String,
         registrationToken: String,
         loginToken: String,
 }, { timestamps: true });

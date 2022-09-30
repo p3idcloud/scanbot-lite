@@ -10,7 +10,8 @@ export const generateScannerTableHead = () => {
     return ["id", "Name", "Model", "Description", ""];
 }
 
-export const generateScannerDataTable = (scannerData) => {
+export const generateScannerDataTable = (scannerData, setScannerData = (_) => {}) => {
+    if (!scannerData) return [];
     return scannerData.map((data, index) => {
         return [
             index,
@@ -36,7 +37,7 @@ export const generateScannerDataTable = (scannerData) => {
                                     method: "DELETE"
                                 }
                             )
-                            .then(res => scannerData.splice(index, 1))
+                            .then(res => setScannerData(scannerData.splice(index-1, 1)))
                             .catch(err => toast.error('Failed to delete scanner'))
                         }}
                     >

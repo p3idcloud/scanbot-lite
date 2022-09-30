@@ -30,7 +30,7 @@ export const ScannerProvider = ({
 }) => {
     const [privetToken, setPrivetToken] = useState(0);
     const [scannerSettings, setScannerSettings] = useState([]);
-    const [scannerHistory, setScannerHistory] = useState(null);
+    const [scannerHistory, setScannerHistory] = useState([]);
     const [detailScanner, setDetailScanner] = useState(null);
     const [statusPoll, setStatusPoll] = useState(null);
     const [infoexStatus, setInfoexStatus] = useState(false);
@@ -148,7 +148,7 @@ export const ScannerProvider = ({
         },
         })
         .then((res) => {
-            setScannerHistory(res.data ?? null);
+            setScannerHistory(res?.data ?? []);
             setRowCount(res?.dataCount ?? 0);
         })
         .catch((err) => toast.error("Api error something"));

@@ -94,7 +94,7 @@ export default function StartSession({
             page: 1,
           },
         })
-          .then((res) => setScannerHistory(res))
+          .then((res) => setScannerHistory(res?.data ?? []))
           .catch((err) => {});
       })
       .catch(() => {

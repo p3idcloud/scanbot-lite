@@ -29,7 +29,7 @@ export default function ScannerHistory() {
     const [pageIndex, setPageIndex] = useState(1);
     const [rowCount, setRowCount] = useState(0);
 
-    const {scannerHistory, loadScannerHistory} = useScanner();
+    const {scannerHistory, setScannerHistory, loadScannerHistory} = useScanner();
     const { scannerId } = router?.query;
     
     //analytic
@@ -88,7 +88,7 @@ export default function ScannerHistory() {
                     <CardBody>
                         <CustomTable
                             tableHead={generateScanHistoryTableHead()}
-                            tableData={generateScanHistoryDataTable(scannerHistory ?? [])}
+                            tableData={generateScanHistoryDataTable(scannerHistory ?? [], setScannerHistory)}
                         />
                     </CardBody>
                     <CardFooter>

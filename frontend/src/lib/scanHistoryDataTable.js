@@ -3,6 +3,7 @@ import { Box, Tooltip } from "@mui/material";
 import RegularButton from "components/CustomButtons/Button";
 import TooltipButton from "components/CustomButtons/TooltipButton";
 import { fetchData } from "./fetch";
+import { toast } from "react-toastify";
 
 export const generateScanHistoryTableHead = () => {
     return ["Name", "Description", "Start Date", "Status", "Pages", ""];
@@ -35,8 +36,8 @@ export const generateScanHistoryDataTable = (scanHistory, setScanHistory = (_) =
                                     method: "DELETE"
                                 }
                             )
-                            .then(res => setScanHistory(scanHistory.splice(index, 1)))
-                            // .catch(err => toast.error('Failed to delete history'))
+                            .then(res => setScanHistory(scanHistory))
+                            .catch(err => toast.error('Failed to delete history'))
                         }}
                     >
                         <Icon>delete</Icon>

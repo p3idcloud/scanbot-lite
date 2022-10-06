@@ -38,6 +38,8 @@ exports.getScannerHistoryFromQuery = async (req, res) => {
     }
 
     if (account) {
+        query.accountId = { '$eq': account.id };
+
         if (req.query.id) {
             query.id = { '$eq': req.query.id };
         }
@@ -64,7 +66,7 @@ exports.getScannerHistoryFromQuery = async (req, res) => {
             pages: Math.ceil(setting.count/limit),
             query: query
         };
-
+            
         return res.send(result)
     }
 

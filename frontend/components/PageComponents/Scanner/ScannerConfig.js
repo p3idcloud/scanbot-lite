@@ -1,134 +1,300 @@
-// export default function ScannerConfig() {
-//     return (
-//         <>
-//         <section className={`${style.scanner_view}`}>
-//             <Col xs={12} sm={6} className="mt-3 flex w-full flex-col">
-//             <span className="text-xs text-gray-500">Scan Profile</span>
-//             <div className="flex justify-between items-end space-x-2">
-//                 <div className=" flex flex-col w-full">
-//                 <Listbox
-//                     list={listProfileScanner}
-//                     selected={profileSelect}
-//                     setSelected={setProfileSelect}
-//                     itemTitle="name"
-//                     onChange={(item) => handleChange("profileSelect", item)}
-//                 />
-//                 </div>
-//             </div>
-//             </Col>
-//             <Col
-//             xs={12}
-//             sm={6}
-//             className="mt-3 self-end d-flex justify-content-end"
-//             >
-//             {profileSelect?.id && (
-//                 <button
-//                 onClick={handleDeleteProfile}
-//                 className="py-2 px-4 mx-2 text-white bg-red-500 border border-transparent rounded-md hover:bg-red-600 text-sm"
-//                 >
-//                 Delete
-//                 </button>
-//             )}
-//             {isChange && (
-//                 <button
-//                 onClick={() => setSaveProfile(true)}
-//                 className="py-2 px-4 text-white bg-blue-800 border border-transparent rounded-md hover:bg-blue-600 text-sm"
-//                 >
-//                 Save as New Profile
-//                 </button>
-//             )}
-//             </Col>
-//             <span className="block truncate"></span>
-//             {getConfigValues().map((data, i) => (
-//             <Col xs={12} sm={6} className="mt-3" key={i}>
-//                 {data.current_values && data.current_values.length >= 0 ? (
-//                 <div className="text-xs text-gray-500 flex flex-col space-y-1">
-//                     <span>{data.labelName}</span>
-//                     <button
-//                     className="relative text-black w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
-//                     type="button"
-//                     aria-haspopup="true"
-//                     aria-expanded="false"
-//                     >
-//                     <span className="block truncate">
-//                         {data.current_values.length > 1 || data.multiple ? (
-//                         <ReactTags
-//                             tags={data.current_values}
-//                             handleDelete={(index) => handleDelete(index, i)}
-//                             handleAddition={(tag) => handleAddition(tag, i)}
-//                             handleDrag={(tag, currPos, newPos) =>
-//                             handleDrag(tag, currPos, newPos, i)
-//                             }
-//                             delimiters={delimiters}
-//                             placeholder={`Add new ${data.labelName}`}
-//                         />
-//                         ) : (
-//                         <span>
-//                             {data.current_values[0].tag === "select" ||
-//                             !data.current_values[0].tag ? (
-//                             <FormGroup>
-//                                 <Input
-//                                 type="select"
-//                                 onChange={(e) =>
-//                                     handleChangeTag(e.target.value, i)
-//                                 }
-//                                 name="select"
-//                                 value={data.current_values[0].tagValue}
-//                                 >
-//                                 {data.possibleValues.map((pv) => (
-//                                     <option value={pv.value}>{pv.value}</option>
-//                                 ))}
-//                                 </Input>
-//                             </FormGroup>
-//                             ) : (
-//                             <>
-//                                 <FormGroup>
-//                                 <Input
-//                                     type="select"
-//                                     onChange={(e) =>
-//                                     handleChangeTag(e.target.value, i)
-//                                     }
-//                                     name="select"
-//                                     value={data.current_values[0].tagValue}
-//                                 >
-//                                     {data.possibleValues.map((pv) => (
-//                                     <option value={pv.value}>
-//                                         {pv.value}
-//                                     </option>
-//                                     ))}
-//                                 </Input>
-//                                 </FormGroup>
-//                                 <Input
-//                                 type="text"
-//                                 value={data.current_values[0].text}
-//                                 onChange={(e) =>
-//                                     setConfigValue(e.target.value, i)
-//                                 }
-//                                 />
-//                             </>
-//                             )}
-//                         </span>
-//                         )}
-//                     </span>
-//                     </button>
-//                 </div>
-//                 ) : null}
-//             </Col>
-//             ))}
-//             {(profileSelect?.name !== "default" ||
-//             isChange ||
-//             profileSelect?.id) && (
-//             <Col xs={12} sm={12} className="mt-3 d-flex justify-content-end">
-//                 <ProfileScanner
-//                 profileSelect={profileSelect}
-//                 listScannerSettings={listScannerSettings}
-//                 />
-//             </Col>
-//             )}
-//         </section>
-//         <div className="flex space-x-4 w-full">
-//             <StartCapture statusClaim={statusClaim} />
-//         </div>
-//         </>
-//     )
-// }
+import { FilledInput, MenuItem } from "@material-ui/core";
+import { FormGroup, Select } from "@mui/material";
+import RegularButton from "components/CustomButtons/Button";
+import GridContainer from "components/Grid/GridContainer";
+import GridItem from "components/Grid/GridItem";
+import { useScanner } from "lib/contexts/scannerContext";
+import ProfileScanner from "./ProfileScanner";
+import Card from "components/Card/Card";
+import CardHeader from "components/Card/CardHeader";
+
+
+export default function ScannerConfig() {
+    const { 
+        listProfileScanner,
+        profileSelect,
+        setProfileSelect,
+        setListScannerSettings,
+        formSetting,
+        setFormSetting,
+        setSaveProfile,
+        isChange,
+        setIsChange,
+        listScannerSettings,
+    } = useScanner();
+
+    const handleChange = (type, item) => {
+        if (type === "profileSelect") {
+          setListScannerSettings(null);
+          setFormSetting({
+            id: item.id,
+            name: "",
+            scannerSettings: item.listScannerSettings,
+          });
+          dispatch(getAllScannerSettings());
+          return setProfileSelect(item);
+        }
+    };
+    const handleDelete = (i, idx) => {
+        let scannerSettings = [...listScannerSettings];
+        if (profileSelect) {
+          let profileScannerSelect = profileSelect;
+          let profileScannerSettings =
+            profileScannerSelect?.scannerSettings?.filter(
+              (setting) =>
+                setting.value !== scannerSettings[idx].currentValue[i].id
+            );
+          profileScannerSelect.scannerSettings = profileScannerSettings;
+          setProfileSelect({ ...profileScannerSelect });
+        }
+    
+        scannerSettings[idx].currentValue = scannerSettings[
+          idx
+        ].currentValue.filter((_, index) => index !== i);
+        scannerSettings[idx].multiple = true;
+        setListScannerSettings([...scannerSettings]);
+    };
+    const setConfigValue = (value, idx) => {
+        let scannerSettings = [...listScannerSettings];
+        scannerSettings[idx].currentValue = value
+        setListScannerSettings([...scannerSettings]);
+        setIsChange(true);
+        setFormSetting({
+          ...formSetting,
+          scannerSettings: scannerSettings.map((item) => ({
+            id: item.id,
+            value: item.currentValue,
+          })),
+        });
+    
+        if (profileSelect) {
+          profileSelect?.scannerSettings?.forEach((setting, i) => {
+            if (setting.id === scannerSettings[idx].id) {
+              profileSelect.scannerSettings[i].value = value;
+            }
+          });
+          setProfileSelect({ ...profileSelect });
+        }
+    };
+    const handleAddition = (tag, idx) => {
+        let scannerSettings = [...listScannerSettings];
+        scannerSettings[idx].currentValue = [
+          ...scannerSettings[idx].currentValue,
+          tag,
+        ];
+        setListScannerSettings([...scannerSettings]);
+    
+        if (profileSelect) {
+          profileSelect.scannerSettings.push({
+            id: scannerSettings[idx].id,
+            value: tag.text,
+          });
+          setProfileSelect({ ...profileSelect });
+        }
+    };
+    const handleDrag = (tag, currPos, newPos, idx) => {
+        let scannerSettings = [...listScannerSettings];
+        const tags = [...scannerSettings[idx].currentValue];
+        const newTags = tags.slice();
+    
+        newTags.splice(currPos, 1);
+        newTags.splice(newPos, 0, tag);
+    
+        scannerSettings[idx].currentValue = newTags;
+        setListScannerSettings([...scannerSettings]);
+    
+        if (profileSelect) {
+          let profileScannerSettings = profileSelect.scannerSettings.filter(
+            (setting) => setting.id !== scannerSettings[idx].id
+          );
+    
+          newTags.forEach((t) => {
+            profileScannerSettings.push({
+              id: scannerSettings[idx].id,
+              value: t.text,
+            });
+          });
+    
+          profileSelect.scannerSettings = profileScannerSettings;
+          setProfileSelect({ ...profileSelect });
+        }
+    };
+    const setTagValue = (value, idx) => {
+        let scannerSettings = [...listScannerSettings];
+        const possibleValues = scannerSettings[idx].possibleValues.map(
+          (pv) => pv.value
+        );
+        const dynamicValueType = ["any", "integer"];
+        const idxPossibleValue = possibleValues.indexOf(value);
+        scannerSettings[idx].currentValue = {
+          ...scannerSettings[idx].currentValue,
+          tagValue: value,
+          tag:
+            idxPossibleValue !== -1 && dynamicValueType.indexOf(value) === -1
+              ? "select"
+              : "input",
+        };
+        setListScannerSettings([...scannerSettings]);
+        setIsChange(true);
+        setFormSetting({
+          ...formSetting,
+          scannerSettings: scannerSettings.map((item) => ({
+            id: item.id,
+            value: item.currentValue.text,
+          })),
+        });
+    
+        if (dynamicValueType.indexOf(value) >= 0) {
+          setConfigValue(0, idx);
+        } else {
+          setConfigValue(value, idx);
+        }
+    };
+    const handleChangeTag = (value, idx) => {
+        setTagValue(value, idx);
+        setFormSetting({
+          ...formSetting,
+          name: "",
+        });
+    };
+    const getConfigValues = () => {
+        if (listScannerSettings) {
+          let configFields = [...listScannerSettings];
+          profileSelect?.scannerSettings?.forEach((profile) => {
+            configFields.forEach((config) => {
+              if (config.id === profile.id) {
+                let tag = "input";
+                const possibleValues = config.possibleValues.map((pv) => pv.value);
+                let tagValue = possibleValues[0];
+                const idxPossibleValue = possibleValues.indexOf(profile.value);
+                if (idxPossibleValue >= 0) {
+                  tag = "select";
+                  tagValue = possibleValues[idxPossibleValue];
+                }
+                if (config.currentValue && config.currentValue.length > 0) {
+                  const find = config.currentValue.filter(
+                    (x) => x.id === profile.value
+                  );
+                  if (find.length <= 0) {
+                    config.currentValue.push({
+                      id: profile.value,
+                      text: profile.value,
+                      tagValue,
+                      tag,
+                    });
+                  }
+                } else {
+                  config.currentValue = [
+                    {
+                      id: profile.value,
+                      text: profile.value,
+                      tagValue,
+                      tag,
+                    },
+                  ];
+                }
+              }
+            });
+          });
+          return configFields;
+        }
+        return [];
+    };
+    
+    return (
+        <GridContainer>
+            <GridItem xs={12} sm={6}>
+            <div className="flex justify-between items-end space-x-2">
+                <div className=" flex flex-col w-full">
+                {/* <Listbox
+                    list={listProfileScanner}
+                    selected={profileSelect}
+                    setSelected={setProfileSelect}
+                    itemTitle="name"
+                    onChange={(item) => handleChange("profileSelect", item)}
+                /> */}
+                </div>
+            </div>
+            </GridItem>
+            <GridItem xs={12} sm={6}>
+            {profileSelect?.id && (
+                <RegularButton
+                    onClick={handleDeleteProfile}
+                    color='info'
+                >
+                Delete
+                </RegularButton>
+            )}
+            {isChange && (
+                <RegularButton
+                    disabled={true}
+                    onClick={() => setSaveProfile(true)}
+                    color='info'
+                >
+                Save as New Profile
+                </RegularButton>
+            )}
+            </GridItem>
+            {getConfigValues().map((data, i) => (
+            <GridItem xs={12} sm={6} className="mt-3" key={i}>
+                {data?.currentValue ? (
+                <Card>
+                    <CardHeader>
+                        <p>{data.labelName}</p>
+                    </CardHeader>
+                    <span className="block truncate">
+                        {/* {data.currentValue.length > 1 || data.multiple ? (
+                        <ReactTags
+                            tags={data.currentValue}
+                            handleDelete={(index) => handleDelete(index, i)}
+                            handleAddition={(tag) => handleAddition(tag, i)}
+                            handleDrag={(tag, currPos, newPos) =>
+                            handleDrag(tag, currPos, newPos, i)
+                            }
+                            delimiters={delimiters}
+                            placeholder={`Add new ${data.labelName}`}
+                        />
+                        ) : ( */}
+                        {(<span>
+                            {
+                            <>
+                                <FormGroup>
+                                    <Select
+                                        onChange={(e) =>
+                                        handleChangeTag(e.target.value, i)
+                                        }
+                                        value={data.possibleValues[0].value}
+                                    >
+                                        {data.possibleValues.map((pv) => (
+                                        <MenuItem value={pv.value}>
+                                            {pv.value}
+                                        </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormGroup>
+                                <FilledInput
+                                    fullWidth
+                                    value={data?.currentValue}
+                                    onChange={(e) =>
+                                        setConfigValue(e.target.value, i)
+                                }
+                                />
+                            </>
+                            }
+                        </span>
+                        )}
+                    </span>
+                </Card>
+                ) : null}
+            </GridItem>
+            ))}
+            {(profileSelect?.name !== "default" ||
+            isChange ||
+            profileSelect?.id) && (
+            <GridItem xs={12} sm={12}>
+                <ProfileScanner />
+            </GridItem>
+            )}
+        </GridContainer>
+    )
+}

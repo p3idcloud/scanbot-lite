@@ -27,7 +27,9 @@ export default function PdfViewer({ files, thumbnail }) {
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(null);
   const [minHeight, setMinHeight] = useState(null);
+  const [width, setWidth] = useState(400);
   const pdfDocRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     setFile(files || []);
@@ -42,6 +44,11 @@ export default function PdfViewer({ files, thumbnail }) {
       setMinHeight(pdfDocRef?.current?.clientHeight);
     }
   }, [pdfDocRef?.current?.clientHeight]);
+  useEffect(() => {
+    if (containerRef?.current?.clientWidth) {
+      setWidth(containerRef?.current?.clientWidth)
+    }
+  }, [containerRef?.current?.clientWidth]);
 
   function onFileChange(type) {
     if (type === "next" && page + 1 < file.length) {
@@ -62,7 +69,7 @@ export default function PdfViewer({ files, thumbnail }) {
   };
 
   return (
-    <div>
+    <div ref={containerRef}>
       <Card>
         <CardBody>
           <div>
@@ -141,10 +148,11 @@ export default function PdfViewer({ files, thumbnail }) {
                           loading={() => (
                             <Box
                               display='flex'
+                              flexDirection="column"
                               justifyContent='center'
                               alignItems='center'
                               width={1}
-                              sx={{ height: minHeight || 200 }}
+                              sx={{ height: minHeight || 200, width: width }}
                             >
                               <Image src={"/logo.png"} width={200} height={200} />
                               <h3>Please Wait...</h3>

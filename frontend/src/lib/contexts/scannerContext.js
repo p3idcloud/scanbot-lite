@@ -37,6 +37,13 @@ export const ScannerProvider = ({
     const [loadingInfoex, setLoadingInfoex] = useState(false);
     const [statusScanner, setStatusScanner] = useState(true);
     const [usedBy, setUsedBy] = useState(null);
+    const [profileSelect, setProfileSelect] = useState(null);
+    const [listProfileScanner, setListProfileScanner] = useState([]);
+    const [listScannerSettings, setListScannerSettings] = useState([]);
+    const [openScanProfile, setOpenScanProfile] = useState(false);
+    const [openSaveProfile, setSaveProfile] = useState(false);
+    const [formSetting, setFormSetting] = useState({});
+    const [isChange, setIsChange] = useState(false);
 
     const router = useRouter();
     const { scannerId } = router?.query;
@@ -66,6 +73,7 @@ export const ScannerProvider = ({
     useEffect(() => {
         if (scannerSettingsData) {
             setScannerSettings(scannerSettingsData.data ?? []);
+            setListScannerSettings(scannerSettingsData.data ?? []);
         }
     },[scannerSettingsData])
     useEffect(() => {
@@ -189,7 +197,21 @@ export const ScannerProvider = ({
                 statusClaim,
                 setStatusClaim,
                 closeCloud,
-                setCloseCloud
+                setCloseCloud,
+                profileSelect, 
+                setProfileSelect,
+                listProfileScanner,
+                setListProfileScanner,
+                listScannerSettings,
+                setListScannerSettings,
+                openScanProfile,
+                setOpenScanProfile,
+                openSaveProfile,
+                setSaveProfile,
+                formSetting,
+                setFormSetting,
+                isChange,
+                setIsChange
             }}
         >
         {children}
@@ -281,7 +303,21 @@ export const useScanner = () => {
         statusClaim,
         setStatusClaim,
         closeCloud,
-        setCloseCloud
+        setCloseCloud,
+        profileSelect, 
+        setProfileSelect,
+        listProfileScanner,
+        setListProfileScanner,
+        listScannerSettings,
+        setListScannerSettings,
+        openScanProfile,
+        setOpenScanProfile,
+        openSaveProfile,
+        setSaveProfile,
+        formSetting,
+        setFormSetting,
+        isChange,
+        setIsChange
     } = useContext(ScannerContext);
 
     return {
@@ -310,6 +346,20 @@ export const useScanner = () => {
         statusClaim,
         setStatusClaim,
         closeCloud,
-        setCloseCloud
+        setCloseCloud,
+        profileSelect, 
+        setProfileSelect,
+        listProfileScanner,
+        setListProfileScanner,
+        listScannerSettings,
+        setListScannerSettings,
+        openScanProfile,
+        setOpenScanProfile,
+        openSaveProfile,
+        setSaveProfile,
+        formSetting,
+        setFormSetting,
+        isChange,
+        setIsChange
     };
 }

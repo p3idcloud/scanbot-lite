@@ -75,7 +75,7 @@ export default function ScannerHistory() {
 
     return (
         <GridContainer>
-            <GridItem xs={12} md={7}>
+            <GridItem xs={12} lg={7}>
                 <Card>
                     <CardHeader stats color="info">
                         <CardIcon color="primary">
@@ -103,7 +103,7 @@ export default function ScannerHistory() {
                     </CardFooter>
                 </Card>
             </GridItem>
-            <GridItem xs={12} md={5}>
+            <GridItem xs={12} lg={5}>
                 <Card>
                     <CardHeader color="info" stats icon>
                         <CardIcon color="info">

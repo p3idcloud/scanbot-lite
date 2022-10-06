@@ -319,12 +319,12 @@ module.exports.findPollCommandIdFromWaitForEventsThenSaveImagesToService = async
                   return
                 }
               }
-              if (waitContainerFound.results.code === 'invalidSessionId') {
+              if (waitContainerFound?.results.code === 'invalidSessionId') {
                 mqttWaitEventsClient.end();
                 weDoneYet=true;
                 return
               }
-              if ( waitContainerFound.results.events && waitContainerFound.results.events[0] && waitContainerFound.results.events[0].session.imageBlocks && waitContainerFound.results.events[0].session.imageBlocks != [] ) {
+              if ( waitContainerFound?.results.events && waitContainerFound.results.events[0] && waitContainerFound.results.events[0].session.imageBlocks && waitContainerFound.results.events[0].session.imageBlocks != [] ) {
                 //update state and session
                 await updateScannerSessionFromId(scannerSession.id,{
                   'state': waitContainerFound.results.events[0].session.state,

@@ -4,12 +4,15 @@ import Head from "next/head";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import uuid from "uuid";
-// import ScannerConfig from "./ScannerConfig";
+import ScannerConfig from "./ScannerConfig";
 import ScannerHistory from "./ScannerHistory";
 import ScannerProfile from "./ScannerProfile";
 import StartCapture from "./StartCapturing";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
+import Card from "components/Card/Card";
+import CardBody from "components/Card/CardBody";
+import CardHeader from "components/Card/CardHeader";
 
 const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
     ssr: false,
@@ -22,11 +25,6 @@ export default function Scanner() {
         startCapturing: false,
     });
 
-    const [profileSelect, setProfileSelect] = useState(null);
-    const [listProfileScanner, setListProfileScanner] = useState([]);
-    const [listScannerSettings, setListScannerSettings] = useState([]);
-    const [openScanProfile, setOpenScanProfile] = useState(false);
-    const [openSaveProfile, setSaveProfile] = useState(false);
     const [statusClaim, setStatusClaim] = useState(false);
     const [startCapture, setStartCapture] = useState(false);
     const [successUpload, setSuccessUpload] = useState(false);
@@ -51,23 +49,25 @@ export default function Scanner() {
             closeCloud={closeCloud}
             setCloseCloud={setCloseCloud}
         >
-            <Head>
-                <title>Scanner Detail</title>
-            </Head>
             <GridContainer>
-                <GridItem xs={12} md={6}>
+                <GridItem xs={12} xl={7}>
                     {statusClaim && (
-                        <>
-                            {/* <ScannerConfig /> */}
-                            <StartCapture />
-                        </>
+                        <Card>
+                            <CardHeader color='info'>
+                                <h2>Scanner Config</h2>
+                            </CardHeader>
+                            <CardBody>
+                                <ScannerConfig />
+                                <StartCapture />
+                            </CardBody>
+                        </Card>
                     )}
                 </GridItem>
-                <GridItem xs={12} md={6}>
+                <GridItem xs={12} xl={5}>
                     {loadingCapture && !files?.length && (
-                    <CustomLoader message="Loading Capture" />
+                        <CustomLoader message="Loading Capture" />
                     )}
-                    {startCapture && statusClaim && files?.length && (
+                    {startCapture && statusClaim && files?.length > 0 && (
                         <PdfViewer files={files} />
                     )}
                 </GridItem>

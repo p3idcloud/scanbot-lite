@@ -10,6 +10,7 @@ import { generateHistoryName } from "lib/helpers";
 import { useScanner } from "lib/contexts/scannerContext";
 import { Box, CircularProgress, FilledInput, FormGroup, FormHelperText, InputLabel, Modal } from "@mui/material";
 import RegularButton from "components/CustomButtons/Button";
+import ButtonWithLoader from "components/CustomButtons/ButtonWithLoader";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("required"),
@@ -232,13 +233,13 @@ export default function StartSession({
                     </FormGroup>
                   </div>
                   <div>
-                    <RegularButton
-                      disabled={loading}
+                    <ButtonWithLoader
+                      loading={loading}
                       color='info'
                       type="submit"
                     >
-                      {loading ? <CircularProgress /> : 'Start'}
-                    </RegularButton>
+                      Start
+                    </ButtonWithLoader>
                     {!loading && (
                       <RegularButton
                         type="reset"

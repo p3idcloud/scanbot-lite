@@ -92,10 +92,19 @@ class MyApp extends App {
           ctx.res.clearCookie(authConstants.CSRF_TOKEN);
           ctx.res.clearCookie(authConstants.CALLBACK_URL);
           ctx.res.writeHead(302, {
-            Location: '/signin?error=Unauthorized. Please login again.&disabled=1',
+            Location: '/signin',
           });
           return ctx.res.end();
         } else {
+          
+          pageProps.user = {
+            username: decoded.user?.attributes?.username?.[0],
+            email: decoded.user?.attributes?.email?.[0],
+            accountId: decoded.user?.attributes?.userid?.[0],
+            firstName: decoded.user?.attributes?.firstname?.[0],
+            lastName: decoded.user?.attributes?.lastname?.[0]
+          };
+
           try {
             const accountResult = await fetchApp({
               url: `${process.env.backendUrl}api/accounts/${decoded.user?.attributes?.userid[0]}`,
@@ -118,7 +127,6 @@ class MyApp extends App {
                 }
               })
                 .then(result => {
-                  pageProps.user = result;
                   console.log('Account created Successfully');
                 })
                 .catch(err => {

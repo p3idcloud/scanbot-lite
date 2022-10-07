@@ -1,4 +1,4 @@
-const UserService = require('../services/user');
+const AccountService = require('../services/account');
 const Minio = require('minio');
 
 const minioClient = new Minio.Client({
@@ -12,9 +12,9 @@ const minioClient = new Minio.Client({
 
 exports.getFileFromURI = async (req, res) => {
     const uri = req.params.uri + req.params[0];
-    const user = await UserService.getUserFromUserID(req.twain.principalId);
-
-    minioClient.getObject(user.accountId, uri, function(e, dataStream) {
+    const account = await AccountService.getAccountFromId(req.twain.principalId);
+    
+    minioClient.getObject(account.id, uri, function(e, dataStream) {
         if (e) {
             return res.status(400).send(e)
         }else{

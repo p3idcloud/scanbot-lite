@@ -13,21 +13,7 @@ export const ScannerContext = createContext(null);
 
 const headers = { "x-twain-cloud-request-id": uuid.v4() };
 
-export const ScannerProvider = ({
-  children,
-  requestId,
-  sessionId,
-  setSessionId,
-  setStartCapture,
-  files,
-  setFiles,
-  statusClaim,
-  setStatusClaim,
-  loadingCapture,
-  setLoadingCapture,
-  closeCloud,
-  setCloseCloud
-}) => {
+export const ScannerProvider = ({children}) => {
     const [privetToken, setPrivetToken] = useState(0);
     const [scannerSettings, setScannerSettings] = useState([]);
     const [scannerHistory, setScannerHistory] = useState([]);
@@ -43,7 +29,15 @@ export const ScannerProvider = ({
     const [openScanProfile, setOpenScanProfile] = useState(false);
     const [openSaveProfile, setSaveProfile] = useState(false);
     const [formSetting, setFormSetting] = useState({});
-    const [isChange, setIsChange] = useState(false);
+    const [isChange, setIsChange] = useState(false);    
+    const [statusClaim, setStatusClaim] = useState(false);
+    const [startCapture, setStartCapture] = useState(false);
+    const [successUpload, setSuccessUpload] = useState(false);
+    const [closeCloud, setCloseCloud] = useState(() => {});
+    const [requestId, setRequestId] = useState(uuid.v4());
+    const [sessionId, setSessionId] = useState(0);
+    const [files, setFiles] = useState([]);
+    const [loadingCapture, setLoadingCapture] = useState(false);
 
     const router = useRouter();
     const { scannerId } = router?.query;
@@ -168,6 +162,9 @@ export const ScannerProvider = ({
         })
         .catch((err) => toast.error("Api error something"));
     }
+    function resetStatusClaimStates() {
+        setFiles([]);
+    }
 
     return (
         <ScannerContext.Provider
@@ -183,6 +180,7 @@ export const ScannerProvider = ({
                 sessionId,
                 setSessionId,
                 statusPoll,
+                startCapture,
                 setStartCapture,
                 loadingCapture,
                 setLoadingCapture,
@@ -211,13 +209,12 @@ export const ScannerProvider = ({
                 formSetting,
                 setFormSetting,
                 isChange,
-                setIsChange
+                setIsChange,
+                resetStatusClaimStates
             }}
         >
         {children}
-        <Modal
-            open={loadingInfoex}
-        >
+        <Modal open={loadingInfoex}>
             <Box 
                 display='flex' 
                 sx={{
@@ -238,9 +235,7 @@ export const ScannerProvider = ({
                 <CustomLoader message="Checking Scanner" />
             </Box>
         </Modal>
-        <Modal 
-            open={infoexStatus}
-        >
+        <Modal open={infoexStatus}>
             <Box 
                 display='flex' 
                 sx={{
@@ -289,6 +284,7 @@ export const useScanner = () => {
         sessionId,
         setSessionId,
         statusPoll,
+        startCapture,
         setStartCapture,
         loadingCapture,
         setLoadingCapture,
@@ -317,7 +313,8 @@ export const useScanner = () => {
         formSetting,
         setFormSetting,
         isChange,
-        setIsChange
+        setIsChange,
+        resetStatusClaimStates
     } = useContext(ScannerContext);
 
     return {
@@ -332,6 +329,7 @@ export const useScanner = () => {
         sessionId,
         setSessionId,
         statusPoll,
+        startCapture,
         setStartCapture,
         loadingCapture,
         setLoadingCapture,
@@ -360,6 +358,7 @@ export const useScanner = () => {
         formSetting,
         setFormSetting,
         isChange,
-        setIsChange
+        setIsChange,
+        resetStatusClaimStates
     };
 }

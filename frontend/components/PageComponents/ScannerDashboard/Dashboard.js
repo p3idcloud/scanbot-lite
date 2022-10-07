@@ -15,6 +15,7 @@ import { useAccount } from "lib/contexts/accountContext";
 import CardFooter from "components/Card/CardFooter";
 import { TablePagination } from "@mui/material";
 import { generateScanHistoryDataTable, generateScanHistoryTableHead } from "lib/scanHistoryDataTable";
+import { useMemo } from "react";
 
 const styles = {
   cardCategoryWhite: {
@@ -52,11 +53,30 @@ function ScannerDashboard() {
   const { scannerList, setScannerList, scanHistory, setScanHistory } = useAccount();
 
   const rowsPerPage = 5;
+  const { setAppModalAndOpen } = useAccount();
   const [rowCount, setRowCount] = useState(0);
   const [historyRowCount, setHistoryRowCount] = useState(0);
   const [pageIndex, setPageIndex] = useState(1);
+  const [historyPageIndex, setHistoryPageIndex] = useState(1);
+  const scannerTableData = useMemo(() => 
+    generateScannerDataTable(scannerList ?? [], () => {
+      mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
+    }), 
+    [scannerList]
+  );
+  const historyTableData = useMemo(() =>
+    generateScanHistoryDataTable(
+      scanHistory ?? [], 
+      () => {
+        mutate(`${process.env.backendUrl}api/scanners/history?page=${historyPageIndex}&limit=${rowsPerPage}&sort=-createdAt`)
+      },
+      setAppModalAndOpen
+    ),
+    [scanHistory]
+  );
 
-  const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex);
+  const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex+1);
+  const handleHistoryPageIndexChange = (e, newIndex) => setHistoryPageIndex(newIndex+1);
 
   const { data, error, isValidating } = useSWR(
     `${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`,
@@ -66,7 +86,7 @@ function ScannerDashboard() {
     }
   );
   const scanHistoryData = useSWR(
-    `${process.env.backendUrl}api/scanners/history?page=${pageIndex}&limit=${rowsPerPage}`,
+    `${process.env.backendUrl}api/scanners/history?page=${historyPageIndex}&limit=${rowsPerPage}&sort=-createdAt`,
     fetchData,
     {
       refreshInterval: 5000
@@ -99,7 +119,7 @@ function ScannerDashboard() {
               <Table
                 tableHeadercolor="info"
                 tableHead={generateScannerTableHead()}
-                tableData={generateScannerDataTable(scannerList ?? [], setScannerList)}
+                tableData={scannerTableData}
               />
             </CardBody>
             <CardFooter>
@@ -125,15 +145,15 @@ function ScannerDashboard() {
               <Table
                 tableHeadercolor="info"
                 tableHead={generateScanHistoryTableHead()}
-                tableData={generateScanHistoryDataTable(scanHistory ?? [], setScanHistory)}
+                tableData={historyTableData}
               />
             </CardBody>
             <CardFooter>
                 <TablePagination
                     component="div"
                     count={historyRowCount}
-                    page={pageIndex-1}
-                    onPageChange={handlePageIndexChange}
+                    page={historyPageIndex-1}
+                    onPageChange={handleHistoryPageIndexChange}
                     rowsPerPage={rowsPerPage}
                     rowsPerPageOptions={[]}
                 />

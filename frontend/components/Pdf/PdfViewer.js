@@ -16,6 +16,8 @@ import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import { Box } from "@mui/material";
 import Image from "next/image";
+import { parseCookies } from "nookies";
+import { authConstants } from "constants/auth";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const dummyFile = [
@@ -143,7 +145,12 @@ export default function PdfViewer({ files, thumbnail }) {
                       <TransformComponent>
                         <Document
                           className="pdf-doc"
-                          file={file[page]}
+                          file={{
+                            url: file[page],
+                            httpHeaders: {
+                              Authorization: `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`
+                            }
+                          }}
                           onLoadSuccess={onDocumentLoadSuccess}
                           loading={() => (
                             <Box

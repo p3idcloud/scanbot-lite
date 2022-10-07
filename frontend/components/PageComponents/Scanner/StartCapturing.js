@@ -8,6 +8,9 @@ import RegularButton from "components/CustomButtons/Button";
 import { fetchData } from "lib/fetch";
 import { capitalize } from "lib/helpers";
 import ButtonWithLoader from "components/CustomButtons/ButtonWithLoader";
+import Card from "components/Card/Card";
+import CardBody from "components/Card/CardBody";
+import CardHeader from "components/Card/CardHeader";
 
 export default function StartCapture() {
   const {
@@ -53,39 +56,47 @@ export default function StartCapture() {
       .finally(() => setLoading(false));
     setStartCapture(true);
   };
-
-  if (loading) {
-    return <ButtonWithLoader loading={loading} color="primary">
-      ...
-    </ButtonWithLoader>
-  }
-
   return (
-        <RegularButton
-            color="primary"
-            disabled={
-                !statusClaim ||
-                statusPoll?.status === "capturing" ||
-                statusPoll?.state !== "ready"
-            }
-            onClick={handleCapture}
-        >
-          <>
-          {statusPoll?.state !== "ready" ? (
-              <>
-              <Box display='flex' alignItems='center' justifyContent='center'>
-                  <p>{capitalize(statusPoll?.state ?? '')}</p>
-              </Box>
-              </>
-          ) : (
-              <>
-              <Icon>print</Icon>
-              <p>
-                  {statusPoll?.status !== "capturing" && "Start "} Capturing
-              </p>
-              </>
-          )}
-          </>
-        </RegularButton>
+    <Card>
+      <CardHeader color="info">
+        <h1>Capture Scan</h1>
+      </CardHeader>
+      <CardBody>
+        <h2>Click the button to start scanning</h2>
+
+        {loading ? (
+          <ButtonWithLoader loading={loading} color="primary">
+            ...
+          </ButtonWithLoader>
+        ) : (
+          <RegularButton
+              color="primary"
+              disabled={
+                  !statusClaim ||
+                  statusPoll?.status === "capturing" ||
+                  statusPoll?.state !== "ready"
+              }
+              onClick={handleCapture}
+          >
+            <>
+            {statusPoll?.state !== "ready" ? (
+                <>
+                <Box display='flex' alignItems='center' justifyContent='center'>
+                    <p>{capitalize(statusPoll?.state ?? '')}</p>
+                </Box>
+                </>
+            ) : (
+                <>
+                <Icon>print</Icon>
+                <p>
+                    {statusPoll?.status !== "capturing" && "Start "} Capturing
+                </p>
+                </>
+            )}
+            </>
+          </RegularButton>
+        )}
+      </CardBody>
+    </Card>
     );
 }

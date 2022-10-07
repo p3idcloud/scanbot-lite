@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 import { fetchData } from "./fetch";
 
 export const generateScannerTableHead = () => {
-    return ["id", "Name", "Model", "Description", ""];
+    return ["no", "Name", "Model", "Description", ""];
 }
 
-export const generateScannerDataTable = (scannerData, setScannerData = (_) => {}) => {
+export const generateScannerDataTable = (scannerData, mutate = () => {}) => {
     if (!scannerData) return [];
     return scannerData.map((data, index) => {
         return [
-            index,
+            index+1,
             data.name,
             data.model,
             data.description,
@@ -25,7 +25,7 @@ export const generateScannerDataTable = (scannerData, setScannerData = (_) => {}
                         Router.push(`/scanners/${data.id}`)
                     }}
                 >
-                    Select
+                    Detail
                 </Button>
                 <Tooltip title="Delete">
                     <TooltipButton
@@ -38,8 +38,7 @@ export const generateScannerDataTable = (scannerData, setScannerData = (_) => {}
                                 }
                             )
                             .then(res => {
-                                scannerData.splice(index, 1);
-                                setScannerData(scannerData);
+                                mutate();
                             })
                             .catch(err => toast.error('Failed to delete scanner'))
                         }}

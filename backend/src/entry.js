@@ -37,6 +37,8 @@ const registerRouter = require('./routes/register');
 const pollRouter = require('./routes/registerScanner/poll');
 const claimRouter = require('./routes/registerScanner/claim');
 
+// Storage API
+const storageRouter = require('./routes/storage');
 
 // Cloud API
 const scannersRouter = require('./routes/scanner');
@@ -158,8 +160,12 @@ app.use('/api/poll', pollRouter);
 //user register here
 app.post('/api/accounts/register', createAccount);
 
+
 // Auth middleware
 app.use('/api*', authMiddleware);
+
+// Storage
+app.use('/api/storage', storageRouter);
 
 // APIs that do require authentication
 app.use('/api/claim', claimRouter);

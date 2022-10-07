@@ -8,17 +8,16 @@ import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { generateHistoryName } from "lib/helpers";
 
 import { useScanner } from "lib/contexts/scannerContext";
-import { Box, CircularProgress, FilledInput, FormGroup, FormHelperText, InputLabel, Modal } from "@mui/material";
+import { Box, FilledInput, FormGroup, FormHelperText, InputLabel, Modal } from "@mui/material";
 import RegularButton from "components/CustomButtons/Button";
 import ButtonWithLoader from "components/CustomButtons/ButtonWithLoader";
+import { mutate } from "swr";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("required"),
 });
 
 export default function StartSession({
-  statusClaim,
-  setStatusClaim,
   getStopSession,
 }) {
   const [openHistory, setOpenHistory] = useState(false);
@@ -31,10 +30,14 @@ export default function StartSession({
     setSessionId,
     sessionId,
     setLoadingCapture,
+    loadScannerHistory,
+    statusClaim,
+    setStatusClaim,
     statusScanner,
     handleRefresh,
     statusPoll,
     usedBy,
+    resetStatusClaimStates
   } = useScanner();
 
   let initialValues = {
@@ -129,7 +132,12 @@ export default function StartSession({
       .finally(() => {
         destroyCookie({}, "sessionId");
         setLoadingCapture(false);
-        return setStatusClaim(false);
+        setStatusClaim(false);
+        resetStatusClaimStates();
+        setTimeout(() => {
+          loadScannerHistory();
+          mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`);
+        }, 1000)
       });
   };
 
@@ -204,6 +212,7 @@ export default function StartSession({
                       <InputLabel><h4>Name</h4></InputLabel>
                       <FilledInput
                           id='name'
+                          defaultValue={initialValues.name}
                           aria-invalid={Boolean(touched.name && errors.name)}
                           onChange={handleChange}
                           onBlur={handleBlur}

@@ -61,6 +61,7 @@ const ScannerHistorySchema = new mongoose.Schema({
     queueId: String,
     accountId: String,
     scannerId: String,
+    jobId: String,
     name: String,
     description: String,
     pageCount: Number,

@@ -4,12 +4,17 @@ import RegularButton from "components/CustomButtons/Button";
 import TooltipButton from "components/CustomButtons/TooltipButton";
 import { fetchData } from "./fetch";
 import { toast } from "react-toastify";
+import dynamic from "next/dynamic";
+
+const ScanPdfView = dynamic(() => import("components/AppModals/ScanPdfView"), {
+    ssr: false,
+});
 
 export const generateScanHistoryTableHead = () => {
     return ["Name", "Description", "Start Date", "Status", "Pages", ""];
 }
 
-export const generateScanHistoryDataTable = (scanHistory, setScanHistory = (_) => {}) => {
+export const generateScanHistoryDataTable = (scanHistory, mutate = () => {}, openModal) => {
     if (!(Array.isArray(scanHistory))) return [];
     return scanHistory?.map((history, index) => {
         return [
@@ -22,7 +27,13 @@ export const generateScanHistoryDataTable = (scanHistory, setScanHistory = (_) =
                 <RegularButton
                     disabled={history.status === "In Progress"}
                     color="info"
-                    onClick={()=>{console.log('View Pdf')}}
+                    onClick={async()=>{
+                        fetchData(`${process.env.backendUrl}api/scanners/history/${history.id}`)
+                            .then(data => {
+                                openModal(<ScanPdfView files={data?.url} />);
+                            })
+                            .catch(err => toast.error('Failed to fetch pdf'));
+                    }}
                 >
                     View Pdf
                 </RegularButton>
@@ -36,7 +47,9 @@ export const generateScanHistoryDataTable = (scanHistory, setScanHistory = (_) =
                                     method: "DELETE"
                                 }
                             )
-                            .then(res => setScanHistory(scanHistory))
+                            .then(res => {
+                                mutate();
+                            })
                             .catch(err => toast.error('Failed to delete history'))
                         }}
                     >

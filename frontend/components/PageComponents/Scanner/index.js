@@ -53,7 +53,7 @@ export default function Scanner() {
                                     <CustomLoader message="Loading Capture" />
                                 )}
                                 {value.startCapture && value.statusClaim && value.files?.length > 0 && (
-                                    <PdfViewer files={value.files} />
+                                    <PdfViewer files={value.files} newScan />
                                 )}
                             </GridItem>
                         </GridContainer>

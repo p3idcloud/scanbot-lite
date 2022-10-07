@@ -18,12 +18,10 @@ export default function ScanPdfView({files}) {
         return <CustomLoader />
     }
 
-    console.log(files);
-
     return (
         <GridContainer style={{maxWidth: '500px'}}>
             <GridItem xs={12}>
-                <PdfViewer files={files} />
+                <PdfViewer files={files} newScan={false}/>
             </GridItem>
 
             <GridItem xs={12}>

@@ -24,7 +24,7 @@ const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
 
-export default function PdfViewer({ files, thumbnail }) {
+export default function PdfViewer({ files, thumbnail, newScan }) {
   const [file, setFile] = useState(files || dummyFile);
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(null);
@@ -145,12 +145,12 @@ export default function PdfViewer({ files, thumbnail }) {
                       <TransformComponent>
                         <Document
                           className="pdf-doc"
-                          file={{
+                          file={!newScan ? ({
                             url: file[page],
                             httpHeaders: {
                               Authorization: `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`
                             }
-                          }}
+                          }) : (file[page])}
                           onLoadSuccess={onDocumentLoadSuccess}
                           loading={() => (
                             <Box

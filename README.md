@@ -1,7 +1,33 @@
 # Setting up and running
 
-### Front end
+This repo has 5 services total to run:
 
+1. emqx
+2. mongodb
+3. minio
+4. frontend
+5. backend
+
+# Setting up docker containers
+
+### 1. EMQX
+```
+docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8883:8883 -p 8084:8084 -p 18083:18083 emqx/emqx
+```
+
+### 2. Mongodb
+```
+docker run --name mongodb -d -p 27017:27017 mongo
+```
+
+### 3. Minio
+```
+docker run  -p 9000:9000  -p 9001:9001  -e "MINIO_ROOT_USER=minioadmin"  -e "MINIO_ROOT_PASSWORD=minioadmin"  quay.io/minio/minio server /data --console-address ":9001"
+```
+
+### Additional Notes:
+Scanbot-lite uses Keycloak SAML to login, steps to setup are shown below.
+For setting up the front end and back end, refer to the README.md at their respective root directories.
 
 
 # Implement Keycloak as IdP

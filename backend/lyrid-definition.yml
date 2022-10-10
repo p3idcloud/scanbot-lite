@@ -1,4 +1,4 @@
-name: scanbot-backend-express
+name: scanbot-lite-backend-express
 description: Backend service for Scanbot project built with Express.js
 ignoreFiles: .git node_modules
 modules:

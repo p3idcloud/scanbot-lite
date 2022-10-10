@@ -273,4 +273,19 @@ app.use('/buckets', require('./routes/upload'));
 //     }
 //     ,process.env.JWT_SECRET,{expiresIn: process.env.LOGIN_SESSION_DAY+'d'}))
 
-module.exports = { app };
+// Load scanner settings
+const checkAndLoadScannerSettings = async () => {
+  const scannerSettingsList = require('./lib/config/scannerSettings.json');
+  const { insertFromJSON, getAllScannerSettings } = require('./services/scannersetting');
+  console.log('Checking scanner settings...')
+  const scannerSettings = await getAllScannerSettings();
+  if (scannerSettings.length === 0) {
+      console.log('Loading default settings...')
+      await insertFromJSON(scannerSettingsList);
+  } else {
+      console.log('Settings already loaded...')
+  }
+}
+checkAndLoadScannerSettings();
+
+module.exports = app;

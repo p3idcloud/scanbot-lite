@@ -1,0 +1,12 @@
+name: scanbot-backend-express
+description: Backend service for Scanbot project built with Express.js
+ignoreFiles: .git node_modules
+modules:
+- name: nodejs14-express4
+  language: nodejs14.x
+  web: express
+  description: NodeJS v14.x module using Express web framework v4.x
+  functions:
+  - name: entry
+    entry: entry.js
+    description: the entry point for the function

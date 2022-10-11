@@ -37,8 +37,6 @@ const Button = ({ children, variant, text, loading, startIcon, autoWidth, onClic
     };
   };
 
-  console.log(buttonVariant().color)
-
   return (
     <ButtonWrapper
       variant={buttonVariant().variant}

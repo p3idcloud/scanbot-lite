@@ -1,4 +1,3 @@
-import { Icon } from "@mui/core";
 import { Box, Tooltip } from "@mui/material";
 import Button from "components/CustomButtons/Button.js";
 import TooltipButton from "components/CustomButtons/TooltipButton";
@@ -18,35 +17,7 @@ export const generateScannerDataTable = (scannerData, mutate = () => {}) => {
             data.name,
             data.model,
             data.description,
-            <Box display='flex'>
-                <Button 
-                    
-                    onClick={() => {
-                        Router.push(`/scanners/${data.id}`)
-                    }}
-                >
-                    Detail
-                </Button>
-                <Tooltip title="Delete">
-                    <TooltipButton
-                        color="danger"
-                        onClick={() => {
-                            fetchData(
-                                `${process.env.backendUrl}api/scanners/${data.id}`, 
-                                {
-                                    method: "DELETE"
-                                }
-                            )
-                            .then(res => {
-                                mutate();
-                            })
-                            .catch(err => toast.error('Failed to delete scanner'))
-                        }}
-                    >
-                        <Icon>delete</Icon>
-                    </TooltipButton>
-                </Tooltip>
-            </Box>
+            <></>
         ]
     });
 }

@@ -1,32 +1,49 @@
-import CustomLoader from "components/Loader";
+// import CustomLoader from "components/Loader";
 import { ScannerContext, ScannerProvider } from "lib/contexts/scannerContext";
 import dynamic from "next/dynamic";
-import ScannerConfig from "./ScannerConfig";
-import ScannerHistory from "./ScannerHistory";
-import ScannerProfile from "./ScannerProfile";
-import StartCapture from "./StartCapturing";
-import ScannerStatus from "./ScannerStatus";
-import ScanAnalytics from "./ScanAnalytics";
+// import ScannerConfig from "./ScannerConfig";
+// import ScannerHistory from "./ScannerHistory";
+// import StartCapture from "./StartCapturing";
+// import ScannerStatus from "./ScannerStatus";
+// import ScanAnalytics from "./ScanAnalytics";
 import Header from "components/Header";
-import { Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import StartSession from "./StartSession";
+import ScannerDetail from "./ScannerDetail";
+import StateBox from "./StateBox/";
+import ScannerReport from "./ScannerReport";
+import { useEffect, useRef, useState } from "react";
 
-const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
-    ssr: false,
-});
+// const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
+//     ssr: false,
+// });
 
 export default function Scanner() {
+    const ref = useRef(null);
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+
     const headerComponent = (
-        <Grid container spacing={2}>
-            <Grid item xs={12} md={8}>
-                
-            </Grid>
-            <Grid item xs={12} md={4}>
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <StartSession />
-                </Stack>
-            </Grid>
-        </Grid>
+        <Stack 
+            direction={{
+                xs: "column",
+                md: "row"
+            }} 
+            justifyContent="space-between" 
+            spacing={2}
+        >
+            <ScannerDetail />
+            <Box display='flex' flexDirection='column' alignItems="end">
+                <StartSession />
+                <StateBox />
+            </Box>
+        </Stack>
+    )
+
+    const titleHeader = (
+        <Typography sx={{fontWeight: 500}}>
+            <span style={{color: "#673AB7"}}>Scanner</span> <span style={{color: '#848484'}}>/ Detail Scanner</span>
+        </Typography>
     )
     
 
@@ -35,14 +52,16 @@ export default function Scanner() {
             <ScannerContext.Consumer>
                 {value => (
                     <>
-                        <Header 
-                            titleHeader={
-                                <>
-                                    <span color="#673AB7">Scanner</span> / Detail Scanner
-                                </>
-                            }
+                        <Header
+                            setHeight={setHeaderHeight}
+                            titleHeader={titleHeader}
                             component={headerComponent}
                         />
+                        <Grid container marginTop={`${headerHeight}px`} py={3}>
+                            <Grid item xs={12} md={4}>
+                                <ScannerReport open={true}/>
+                            </Grid>
+                        </Grid>
                         {/* {value.statusClaim && (
                             <GridContainer>
                                 <GridItem xs={12} sm={5}>

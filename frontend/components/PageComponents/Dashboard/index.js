@@ -5,6 +5,7 @@ import { generateScannerDataTable } from "lib/scannerDataTable";
 import useSWR, { mutate } from "swr";
 import { fetchData } from "lib/fetch";
 import ScannerListContainer from "./ScannerListContainer";
+import Card from "components/Card";
 
 function Dashboard() {
   const { scannerList, setScannerList } = useAccount();
@@ -51,7 +52,38 @@ function Dashboard() {
           </Typography>
         </Grid>
 
-        {scannerList.map((scanner) => (
+        {scannerList?.length === 0 && (
+          <Grid item xs={12} container display="flex" alignItems="center" justifyContent="center">
+            <Card withpadding={5}>
+              <Typography 
+                textAlign='center'
+                mb={2}
+                sx={{ 
+                  fontWeight: 500, 
+                  fontSize: '20px', 
+                  lineHeight: '24px', 
+                  color: '#190D29' 
+                }}
+              >
+                You have no scanners set up
+              </Typography>
+
+              <Typography 
+                textAlign='center'
+                sx={{ 
+                  fontWeight: 500, 
+                  fontSize: '16px', 
+                  lineHeight: '19px', 
+                  color: '#190D29' 
+                }}
+              >
+                connect a scanner
+              </Typography>
+            </Card>
+          </Grid>
+        )}
+
+        {scannerList?.map((scanner) => (
           <Grid item xs={12} md={6}>
             <ScannerListContainer {...scanner} pageIndex={pageIndex} rowsPerPage={rowsPerPage} />
           </Grid>

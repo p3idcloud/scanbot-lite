@@ -11,12 +11,11 @@ import {
   TitleAccount,
   LogoutButton
 } from './style';
-import { Avatar, Box, Grid } from '@mui/material';
+import { Avatar, Box, Grid, IconButton } from '@mui/material';
 import { useRef, useState } from 'react';
 import { getInitialName } from 'lib/helpers';
 import { useAccount } from 'lib/contexts/accountContext';
 import TitleLogo from 'components/TitleLogo';
-import { IconButton } from '@mui/core';
 import SettingsIcon from 'components/SettingsIcon';
 
 const HeaderMain = () => {

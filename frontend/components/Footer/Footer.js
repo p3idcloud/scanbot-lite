@@ -1,29 +1,23 @@
 /*eslint-disable*/
+import { Box } from "@mui/material";
 import React from "react";
-// @mui/core components
-import { makeStyles } from "@mui/core/styles";
-// core components
-import styles from "assets/jss/nextjs-material-dashboard/components/footerStyle.js";
 
-export default function Footer(props) {
-  const useStyles = makeStyles(styles);
-  const classes = useStyles();
+export default function Footer() {
   return (
-    <footer className={classes.footer}>
-      <div className={classes.container}>
-        <p className={classes.right}>
+    <footer>
+      <Box display='flex' alignItems='center' justifyContent='center' width={1}>
+        <p>
           <span>
             &copy; {1900 + new Date().getYear()}{" "}
             <a
               href="https://github.com/p3idcloud"
               target="_blank"
-              className={classes.a}
             >
-              Open Source Scanbot
+              Scanbot Lite
             </a>
           </span>
         </p>
-      </div>
+      </Box>
     </footer>
   );
 }

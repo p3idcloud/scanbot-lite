@@ -6,6 +6,8 @@ import { withRouter, useRouter } from "next/router";
 import { authConstants } from "constants/auth";
 import { destroyCookie, parseCookies } from "nookies";
 import { getRouteTitle } from "routes";
+import { Container } from "@mui/material";
+import HeaderMain from "components/Navbars";
 
 const whitelistedUrl = [
   "/scanners/register",
@@ -32,7 +34,6 @@ const Page = (props) => {
           if (parseCookies()[authConstants.REGISTRATION_TOKEN]) {
             destroyCookie({}, authConstants.REGISTRATION_TOKEN);
           }
-          console.log('reached');
           Router.push('/api/auth/login/saml');
         }
       }
@@ -46,7 +47,10 @@ const Page = (props) => {
           {pageTitle}
         </title>
       </Head>
-      {props.children}
+      <HeaderMain />
+      <Container maxWidth="lg">
+        {props.children}
+      </Container>
     </>
   );
 };

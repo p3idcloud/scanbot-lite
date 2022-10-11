@@ -1,7 +1,6 @@
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, IconButton, Stack, Typography } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Image from "next/image";
-import { IconButton } from "@mui/core";
 import Card from "components/Card";
 import { useState } from "react";
 import {

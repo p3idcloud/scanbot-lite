@@ -173,7 +173,7 @@ export default function FixedPlugin(props) {
           </li>
           <li className="button-container">
             <Button
-              color="info"
+              
               fullWidth
               href="https://www.creative-tim.com/learning-lab/nextjs/overview/material-dashboard?ref=njsmd-fixed-plugin"
               target="_blank"

@@ -1,20 +1,3 @@
-/*!
-
-=========================================================
-* NextJS Material Dashboard v1.1.0 based on Material Dashboard React v1.9.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/nextjs-material-dashboard
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/nextjs-material-dashboard/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "next/app";
@@ -26,7 +9,8 @@ import Page from "components/Page";
 import nookies from "nookies";
 import jwt from 'jsonwebtoken';
 
-import "assets/css/nextjs-material-dashboard.css?v=1.1.0";
+import "assets/css/global.css";
+
 import { authConstants } from "constants/auth";
 import store from "redux/store";
 import { createWrapper } from "next-redux-wrapper";
@@ -34,6 +18,7 @@ import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import ThemeProvider from "config/theme/ThemeProvider";
 
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
@@ -52,26 +37,6 @@ Router.events.on("routeChangeError", () => {
 });
 
 class MyApp extends App {
-  componentDidMount() {
-    let comment = document.createComment(`
-
-=========================================================
-* * NextJS Material Dashboard v1.1.0 based on Material Dashboard React v1.9.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/nextjs-material-dashboard
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/nextjs-material-dashboard/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-`);
-    document.insertBefore(comment, document.documentElement);
-  }
   static async getInitialProps({ Component, router, ctx }) {
     let pageProps = {};
 
@@ -138,13 +103,6 @@ class MyApp extends App {
           }
         }
       }
-
-      // if (ctx.req.originalUrl === "/signin") {
-      //   ctx.res.writeHead(302, {
-      //     Location: "/signin",
-      //   });
-      //   return ctx.res.end();
-      // }
     }
 
     return { pageProps };
@@ -163,24 +121,43 @@ class MyApp extends App {
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
           <title>Open Source Scanbot</title>
-          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-16.png" sizes="16x16" />
-          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-32.png" sizes="32x32" />
-          <link rel="shortcut icon" href="/favicons/icons8-portrait-mode-scanning-color-96.png" sizes="96x96" />
+          <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png"/>
+          <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png"/>
+          <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png"/>
+          <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png"/>
+          <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png"/>
+          <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png"/>
+          <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png"/>
+          <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png"/>
+          <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-icon-180x180.png"/>
+          <link rel="icon" type="image/png" sizes="192x192"  href="/favicons/android-icon-192x192.png"/>
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"/>
+          <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png"/>
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"/>
+          <link rel="manifest" href="/favicons/manifest.json"/>
+          <meta name="msapplication-TileColor" content="#ffffff"/>
+          <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png"/>
+          <meta name="theme-color" content="#ffffff"/>
         </Head>
-        <Layout>
+        <ThemeProvider>
           <AccountProvider {...pageProps} >
-            <Page {...pageProps}>
-              <Component {...pageProps} />
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-              />
-            </Page>
+            <Layout>
+                <Page {...pageProps}>
+                  <Component {...pageProps} />
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    style={{
+                      marginTop: 50
+                    }}
+                  />
+                </Page>
+            </Layout>
           </AccountProvider>
-        </Layout>
+        </ThemeProvider>
       </React.Fragment>
     );
   }

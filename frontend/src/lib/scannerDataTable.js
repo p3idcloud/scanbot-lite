@@ -1,4 +1,4 @@
-import { Icon } from "@material-ui/core";
+import { Icon } from "@mui/core";
 import { Box, Tooltip } from "@mui/material";
 import Button from "components/CustomButtons/Button.js";
 import TooltipButton from "components/CustomButtons/TooltipButton";
@@ -20,7 +20,7 @@ export const generateScannerDataTable = (scannerData, mutate = () => {}) => {
             data.description,
             <Box display='flex'>
                 <Button 
-                    color="info"
+                    
                     onClick={() => {
                         Router.push(`/scanners/${data.id}`)
                     }}

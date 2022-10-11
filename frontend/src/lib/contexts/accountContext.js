@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import CustomLoader from "components/Loader";
 import { Box, Modal } from "@mui/material";
+import { destroyCookie } from "nookies/dist";
+import { authConstants } from "constants/auth";
+import Router from 'next/router';
 
 export const AccountContext = createContext({});
 
@@ -11,6 +14,14 @@ export const AccountProvider = ({ children, user }) => {
     const [scannerList, setScannerList] = useState([]);
     const [scanHistory, setScanHistory] = useState([]);
     const [account, setAccount] = useState(user);
+
+    const handleLogout = () => {
+        destroyCookie({}, authConstants.SESSION_TOKEN);
+        destroyCookie({}, authConstants.CSRF_TOKEN);
+        destroyCookie({}, authConstants.CALLBACK_URL);
+        destroyCookie({}, authConstants.REGISTRATION_TOKEN);
+        Router.push("/api/auth/logout/saml");
+      }
 
     const setAppModalAndOpen = (modalChild) => {
         setAppModalChild(modalChild);
@@ -31,7 +42,8 @@ export const AccountProvider = ({ children, user }) => {
                 scanHistory,
                 setScanHistory,
                 setAppModalAndOpen,
-                closeAppModal
+                closeAppModal,
+                handleLogout
             }}
         >
             {loading 
@@ -72,7 +84,8 @@ export const useAccount = () => {
         scanHistory,
         setScanHistory,
         setAppModalAndOpen,
-        closeAppModal
+        closeAppModal,
+        handleLogout
     } = useContext(AccountContext);
 
     return {
@@ -83,7 +96,8 @@ export const useAccount = () => {
         scanHistory,
         setScanHistory,
         setAppModalAndOpen,
-        closeAppModal
+        closeAppModal,
+        handleLogout
     }
 }
 

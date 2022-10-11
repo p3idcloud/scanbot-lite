@@ -9,7 +9,7 @@ function ScannerDashboardPage() {
 
   return (
     <>
-      <AppBar color="info" position='relative' sx={{mb: 3, bgcolor: 'white'}}>
+      <AppBar  position='relative' sx={{mb: 3, bgcolor: 'white'}}>
           <Tabs
               value={tabValue}
               onChange={handleTabChange}

@@ -9,7 +9,7 @@ import Card from 'components/Card/Card';
 import CardHeader from 'components/Card/CardHeader';
 import CardBody from 'components/Card/CardBody';
 import { FormGroup } from '@mui/material';
-import { FilledInput, InputLabel } from '@material-ui/core';
+import { FilledInput, InputLabel } from '@mui/core';
 
 const arrForm = [
   { title: 'Id', name: 'id' },
@@ -185,7 +185,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
                                             </GridItem>
                                             <GridItem xs={12}>
                                                 <RegularButton
-                                                    color="info"
+                                                    
                                                     onClick={() => remove(index)}
                                                 >
                                                     Remove
@@ -193,7 +193,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
                                                 {values.possibleValues.length ===
                                                     index + 1 && (
                                                     <RegularButton
-                                                        color="info"
+                                                        
                                                         onClick={() =>
                                                             push({ label: "", value: "" })
                                                         }

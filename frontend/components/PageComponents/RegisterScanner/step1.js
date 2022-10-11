@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/core/styles";
 
 import Button from "components/CustomButtons/Button";
 import CardAvatar from "components/Card/CardAvatar.js";
@@ -49,7 +49,7 @@ export default function Step1() {
                     You are about to claim an ownership for a scanner.
                     Confirm your identity using the button below:
                 </p>
-                <Button color="info" onClick={onClick}>
+                <Button  onClick={onClick}>
                     Sign in with SSO
                 </Button>
             </CardBody>

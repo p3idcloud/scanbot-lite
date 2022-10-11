@@ -1,6 +1,6 @@
 import React from "react";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+// @mui/core components
+import { makeStyles } from "@mui/core/styles";
 // layout for this page
 import Admin from "layouts/Admin.js";
 // core components
@@ -57,7 +57,7 @@ function TypographyPage() {
   const classes = useStyles();
   return (
     <Card>
-      <CardHeader color="info">
+      <CardHeader >
         <h4 className={classes.cardTitleWhite}>Material Dashboard Heading</h4>
         <p className={classes.cardCategoryWhite}>
           Created using Roboto Font Family

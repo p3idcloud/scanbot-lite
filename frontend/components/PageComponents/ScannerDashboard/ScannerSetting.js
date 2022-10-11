@@ -39,7 +39,7 @@ export default function ScannerSetting() {
         <GridContainer>
             <GridItem xs={12} lg={3}>
                 <Card>
-                    <CardHeader color="info">
+                    <CardHeader >
                         <h3>Scanner Configuration</h3>
                     </CardHeader>
                     <CardBody>
@@ -75,7 +75,7 @@ export default function ScannerSetting() {
                 
                 {tab !== '' && (
                     <RegularButton
-                        color="info"
+                        
                         onClick={() => setTab('')}
                     >
                         Add New

@@ -5,25 +5,45 @@ import ScannerConfig from "./ScannerConfig";
 import ScannerHistory from "./ScannerHistory";
 import ScannerProfile from "./ScannerProfile";
 import StartCapture from "./StartCapturing";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import Card from "components/Card/Card";
-import CardBody from "components/Card/CardBody";
-import CardHeader from "components/Card/CardHeader";
 import ScannerStatus from "./ScannerStatus";
 import ScanAnalytics from "./ScanAnalytics";
+import Header from "components/Header";
+import { Grid, Stack } from "@mui/material";
+import StartSession from "./StartSession";
 
 const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
     ssr: false,
 });
 
 export default function Scanner() {
+    const headerComponent = (
+        <Grid container spacing={2}>
+            <Grid item xs={12} md={8}>
+                
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <Stack direction="row" spacing={2} justifyContent="flex-end">
+                    <StartSession />
+                </Stack>
+            </Grid>
+        </Grid>
+    )
+    
+
     return (
         <ScannerProvider>
             <ScannerContext.Consumer>
                 {value => (
                     <>
-                        {value.statusClaim && (
+                        <Header 
+                            titleHeader={
+                                <>
+                                    <span color="#673AB7">Scanner</span> / Detail Scanner
+                                </>
+                            }
+                            component={headerComponent}
+                        />
+                        {/* {value.statusClaim && (
                             <GridContainer>
                                 <GridItem xs={12} sm={5}>
                                     <ScannerStatus />
@@ -79,7 +99,7 @@ export default function Scanner() {
                                     </GridItem>
                                 </GridContainer>
                             </>
-                        )}
+                        )} */}
 
                     </>
                 )}

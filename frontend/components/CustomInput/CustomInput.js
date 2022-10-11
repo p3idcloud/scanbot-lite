@@ -1,14 +1,14 @@
 import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
-// @material-ui/icons
-import Clear from "@material-ui/icons/Clear";
-import Check from "@material-ui/icons/Check";
+// @mui/core components
+import { makeStyles } from "@mui/core/styles";
+import FormControl from "@mui/core/FormControl";
+import InputLabel from "@mui/core/InputLabel";
+import Input from "@mui/core/Input";
+// @mui/icons
+import Clear from "@mui/icons/Clear";
+import Check from "@mui/icons/Check";
 // core components
 import styles from "assets/jss/nextjs-material-dashboard/components/customInputStyle.js";
 

@@ -10,7 +10,7 @@ import {
     HighlightOffRounded,
     CalendarViewWeek 
 } from "@mui/icons-material";
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid, IconButton } from "@mui/core";
 import RegularButton from "components/CustomButtons/Button";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
@@ -124,7 +124,7 @@ export default function PdfViewer({ files, thumbnail, newScan }) {
                                   <ChevronRight className="w-5" />
                                 </IconButton>
                               )}
-                              <RegularButton color="info" disabled>
+                              <RegularButton  disabled>
                                 Total: {file.length}
                               </RegularButton>
                             </>

@@ -8,7 +8,7 @@ This repo has 5 services total to run:
 4. frontend
 5. backend
 
-# Setting up docker containers
+## Setting up docker containers
 
 ### 1. EMQX
 ```
@@ -63,7 +63,7 @@ Sample file output:
 cert.pem
 ```
 -----BEGIN CERTIFICATE-----
-<mark>MIIE2DCCAsACCQCsLqBWPMe5TDANBgkqhkiG9w0BAQsFADAuMQswCQYDVQQGEwJJ
+MIIE2DCCAsACCQCsLqBWPMe5TDANBgkqhkiG9w0BAQsFADAuMQswCQYDVQQGEwJJ
 TjELMAkGA1UECAwCVVAxEjAQBgNVBAcMCU5ldyBEZWxoaTAeFw0yMTA3MTkxOTQ2
 MTNaFw0yNDAxMDUxOTQ2MTNaMC4xCzAJBgNVBAYTAklOMQswCQYDVQQIDAJVUDES
 MBAGA1UEBwwJTmV3IERlbGhpMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC
@@ -88,7 +88,7 @@ UnPHvlG/eo6gafT7UWy9/MwLzp7z3V6LFYtCc5EefJrGlLijC0L/3XQ4cOLA3okJ
 nMLwIzgYWgjnYmicFBzYuuTZWorBHRea0GuhWnFToz9+YA0FIVpVuexQLhxSFJbP
 ZfwwS6Y8dz309OCiIQFVYcL8GdMun6/HWjCM8HD56MUHCtp4b2Um/HZBmhgwXIB+
 1IGzk5wMNxKZ7BICOqhhe3RVxN3mUwKwCAFx7xNG8vMHNaz/Mn5vf////XiEIS+g
-AgJQy5omxAz7kBbiz8oU/EwzAge5zS1udqoBm02g1cSrlo98EgUwXcF6emM=</mark>
+AgJQy5omxAz7kBbiz8oU/EwzAge5zS1udqoBm02g1cSrlo98EgUwXcF6emM=
 -----END CERTIFICATE-----
 ```
 

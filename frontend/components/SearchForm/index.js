@@ -1,6 +1,6 @@
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, makeStyles } from "@mui/core";
 import CustomInput from "components/CustomInput/CustomInput";
-import Search from "@material-ui/icons/Search";
+import Search from "@mui/icons/Search";
 import styles from "assets/jss/nextjs-material-dashboard/components/searchFormStyle";
 
 export default function SearchForm() {

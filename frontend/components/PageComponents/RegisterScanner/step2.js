@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@mui/core/styles";
 
 import CardBody from "components/Card/CardBody.js";
 import CustomLoader from "components/Loader";

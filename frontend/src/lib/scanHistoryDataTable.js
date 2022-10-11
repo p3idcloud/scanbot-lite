@@ -1,4 +1,4 @@
-import { Icon } from "@material-ui/core";
+import { Icon } from "@mui/core";
 import { Box, Tooltip } from "@mui/material";
 import RegularButton from "components/CustomButtons/Button";
 import TooltipButton from "components/CustomButtons/TooltipButton";
@@ -26,7 +26,7 @@ export const generateScanHistoryDataTable = (scanHistory, mutate = () => {}, ope
             <Box display='flex'>
                 <RegularButton
                     disabled={history.status === "In Progress"}
-                    color="info"
+                    
                     onClick={async()=>{
                         fetchData(`${process.env.backendUrl}api/scanners/history/${history.id}`)
                             .then(data => {

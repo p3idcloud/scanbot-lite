@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+// @mui/core components
+import { makeStyles } from "@mui/core/styles";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -109,7 +109,7 @@ function ScannerDashboard() {
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>
-            <CardHeader color="info">
+            <CardHeader >
               <h4 className={classes.cardTitleWhite}>Scanner List</h4>
               <p className={classes.cardCategoryWhite}>
                 list of connected scanners
@@ -117,7 +117,7 @@ function ScannerDashboard() {
             </CardHeader>
             <CardBody>
               <Table
-                tableHeadercolor="info"
+                tableHeader
                 tableHead={generateScannerTableHead()}
                 tableData={scannerTableData}
               />
@@ -136,14 +136,14 @@ function ScannerDashboard() {
         </GridItem>
         <GridItem xs={12} sm={12} md={12}>
           <Card plain>
-            <CardHeader plain color="info">
+            <CardHeader plain >
               <h4 className={classes.cardTitleWhite}>
                 Scan History
               </h4>
             </CardHeader>
             <CardBody>
               <Table
-                tableHeadercolor="info"
+                tableHeader
                 tableHead={generateScanHistoryTableHead()}
                 tableData={historyTableData}
               />

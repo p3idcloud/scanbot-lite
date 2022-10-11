@@ -149,6 +149,10 @@ const apikeys = require("./controllers/apikeys.controller");
 
 // app.use('/api/status', serviceStatusRouter);
 
+app.get('/', (req, res) => {
+  res.status(301).redirect(process.env.FRONTEND_URL);
+})
+
 // Register scanner
 app.use('/api/register', registerRouter);
 

@@ -12,14 +12,14 @@ import { Box, FilledInput, FormGroup, FormHelperText, InputLabel, Modal } from "
 import RegularButton from "components/CustomButtons/Button";
 import ButtonWithLoader from "components/CustomButtons/ButtonWithLoader";
 import { mutate } from "swr";
+import Button from "components/Button";
+import { HiOutlineLightningBolt } from 'react-icons/hi';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("required"),
 });
 
-export default function StartSession({
-  getStopSession,
-}) {
+export default function StartSession() {
   const [openHistory, setOpenHistory] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
@@ -37,13 +37,17 @@ export default function StartSession({
     handleRefresh,
     statusPoll,
     usedBy,
-    resetStatusClaimStates
+    resetStatusClaimStates,
+    setCloseCloud
   } = useScanner();
 
   let initialValues = {
     name: generateHistoryName(),
     description: "",
   };
+  const getStopSession = (callback) => {
+    setCloseCloud(() => callback);
+  }
   const handleStartSession = () => {
     getStopSession(stopSession);
     if (!statusScanner) {
@@ -154,6 +158,17 @@ export default function StartSession({
 
   //   return false;
   // };
+
+  return (
+    <Button 
+      startIcon={<HiOutlineLightningBolt />} 
+      sx={{ width: 'fit-content', fontSize: 13 }} 
+      onClick={handleStartSession}
+    >
+      Start Session
+    </Button>
+  )
+
   return (
     <>
       <div>

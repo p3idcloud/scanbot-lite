@@ -257,11 +257,11 @@ export const ScannerProvider = ({children}) => {
                     <h3>Scanner Error, Please check the service</h3>
                 </Box>
                 <Box my={4} display='flex' justifyContent='center'>
-                    <RegularButton color="info" onClick={handleRefresh}>
+                    <RegularButton  onClick={handleRefresh}>
                         Retry
                     </RegularButton>
                     <div style={{padding: 5}}/>
-                    <RegularButton color="info" onClick={()=>setInfoexStatus(false)}>
+                    <RegularButton  onClick={()=>setInfoexStatus(false)}>
                         OK
                     </RegularButton>
                 </Box>

@@ -1,7 +1,7 @@
 import React from "react";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
+// @mui/core components
+import { makeStyles } from "@mui/core/styles";
+import InputLabel from "@mui/core/InputLabel";
 // layout for this page
 import Admin from "layouts/Admin.js";
 // core components
@@ -44,7 +44,7 @@ function UserProfile() {
       <GridContainer>
         <GridItem xs={12} sm={12} md={8}>
           <Card>
-            <CardHeader color="info">
+            <CardHeader >
               <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
               <p className={classes.cardCategoryWhite}>Complete your profile</p>
             </CardHeader>
@@ -148,7 +148,7 @@ function UserProfile() {
               </GridContainer>
             </CardBody>
             <CardFooter>
-              <Button color="info">Update Profile</Button>
+              <Button >Update Profile</Button>
             </CardFooter>
           </Card>
         </GridItem>
@@ -167,7 +167,7 @@ function UserProfile() {
                 human foundation in truth And I love you like Kanye loves Kanye
                 I love Rick Owens’ bed design but the back is...
               </p>
-              <Button color="info" round>
+              <Button  round>
                 Follow
               </Button>
             </CardBody>

@@ -1,20 +1,7 @@
-const dashboardRoutes = [
-  {
-    path: "/dashboard",
-    name: "Dashboard"
-  },
-  {
-    path: "/scanner",
-    name: "Scanners"
-  },
-];
-
 export const getRouteTitle = (path) => {
   switch(path) {
     case '/dashboard':
       return 'Scanbot Dashboard';
-    case '/scanner':
-      return 'Scanner Dashboard';
     case '/api/auth/login/saml':
     case '/api/auth/bypass/saml':
       return 'Scanbot Login';
@@ -31,5 +18,3 @@ export const getRouteTitle = (path) => {
       return path;
   }
 }
-
-export default dashboardRoutes;

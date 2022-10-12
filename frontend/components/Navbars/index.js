@@ -34,7 +34,7 @@ const HeaderMain = () => {
   };
 
   return (
-    <Box sx={{ position: 'sticky', width: '100%', zIndex: 99999, top: 0 }}>
+    <Box sx={{ position: 'sticky', width: '100%', zIndex: 500, top: 0 }}>
       <Header container>
         <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
           <Logo>

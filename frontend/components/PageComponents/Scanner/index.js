@@ -2,7 +2,7 @@
 import { ScannerContext, ScannerProvider } from "lib/contexts/scannerContext";
 import dynamic from "next/dynamic";
 // import ScannerConfig from "./ScannerConfig";
-// import ScannerHistory from "./ScannerHistory";
+import ScannerHistory from "./ScannerHistory";
 // import StartCapture from "./StartCapturing";
 // import ScannerStatus from "./ScannerStatus";
 // import ScanAnalytics from "./ScanAnalytics";
@@ -12,14 +12,13 @@ import StartSession from "./StartSession";
 import ScannerDetail from "./ScannerDetail";
 import StateBox from "./StateBox/";
 import ScannerReport from "./ScannerReport";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 // const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
 //     ssr: false,
 // });
 
 export default function Scanner() {
-    const ref = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(0);
 
 
@@ -57,9 +56,12 @@ export default function Scanner() {
                             titleHeader={titleHeader}
                             component={headerComponent}
                         />
-                        <Grid container marginTop={`${headerHeight}px`} py={3}>
+                        <Grid container marginTop={`${headerHeight}px`} spacing={3}>
                             <Grid item xs={12} md={4}>
                                 <ScannerReport open={true}/>
+                            </Grid>
+                            <Grid item xs={12} md={8}>
+                                <ScannerHistory open={true}/>
                             </Grid>
                         </Grid>
                         {/* {value.statusClaim && (

@@ -1,7 +1,6 @@
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 
-import Card from "components/Card/Card.js";
-import CardHeader from "components/Card/CardHeader.js";
+import Card from "components/Card";
 import { useRegister } from "lib/contexts/registerContext";
 import Step1 from "./step1";
 import Step2 from "./step2";
@@ -32,14 +31,10 @@ export default function Register() {
             alignItems='center' 
             justifyContent='center'
         >
-            <Container>
-                <Card profile>
-                    <CardHeader >
-                        <h2>Scanbot</h2>
-                    </CardHeader>
-                    <StepComponent />
-                </Card>
-            </Container>
+            <Card withpadding="20px">
+                <h2>Scanbot</h2>
+                <StepComponent />
+            </Card>
         </Box>
     );
 }

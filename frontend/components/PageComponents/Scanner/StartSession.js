@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { Form, Formik } from "formik";
 import { fetchData } from "lib/fetch";
-import { toast } from "react-toastify";
 import uuid from "uuid";
-import * as Yup from "yup";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
-import { generateHistoryName } from "lib/helpers";
 
 import { useScanner } from "lib/contexts/scannerContext";
 import { Box, FilledInput, FormGroup, FormHelperText, InputLabel, Modal } from "@mui/material";
@@ -15,12 +12,14 @@ import { mutate } from "swr";
 import Button from "components/Button";
 import { HiOutlineLightningBolt } from 'react-icons/hi';
 
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required("required"),
-});
+const StartSessionForm = dynamic(() => import("components/AppModals/StartSessionForm"), {
+  ssr: false
+})
+import dynamic from "next/dynamic";
+
 
 export default function StartSession() {
-  const [openHistory, setOpenHistory] = useState(false);
+  const [openSession, setOpenSession] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
     scannerId,
@@ -36,15 +35,10 @@ export default function StartSession() {
     statusScanner,
     handleRefresh,
     statusPoll,
-    usedBy,
     resetStatusClaimStates,
     setCloseCloud
   } = useScanner();
 
-  let initialValues = {
-    name: generateHistoryName(),
-    description: "",
-  };
   const getStopSession = (callback) => {
     setCloseCloud(() => callback);
   }
@@ -60,55 +54,8 @@ export default function StartSession() {
   };
   const handleOpenForm = () => {
     if (!loading) {
-      setOpenHistory(!openHistory);
+      setOpenSession(!openSession);
     }
-  };
-  const handleSaveForm = () => {
-    setStatusClaim(true);
-    handleOpenForm();
-  };
-
-  const handleSubmit = (e) => {
-    setLoading(true);
-    const commandId = uuid.v4();
-    const data = {
-      commandId: commandId,
-      kind: "twainlocalscanner",
-      name: e.name,
-      description: e.description,
-      method: "createSession",
-    };
-    const headers = {
-      "x-twain-cloud-request-id": commandId,
-      "x-privet-token": privetToken,
-    };
-    fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
-      headers,
-      method: "POST",
-      data,
-    })
-      .then((res) => {
-        setSessionId(res?.results?.session?.sessionId);
-        setCookie({},"sessionId", res?.results?.session?.sessionId);
-        toast.success("Session Ready, Start capturing to scan document");
-        handleSaveForm();
-      })
-      .then(() => {
-        fetchData(`${process.env.backendUrl}api/scanners/history`, {
-          headers,
-          params: {
-            scannerId,
-            sort: "-createdAt",
-            page: 1,
-          },
-        })
-          .then((res) => setScannerHistory(res?.data ?? []))
-          .catch((err) => {});
-      })
-      .catch(() => {
-        toast.error("Scanner offline, please check your scanner");
-      })
-      .finally(() => setLoading(false));
   };
 
   const stopSession = (id) => {
@@ -145,54 +92,29 @@ export default function StartSession() {
       });
   };
 
-  // const handleStatus = () => {
-  //   const statusState = statusPoll?.state?.toLowerCase();
-  //   const status = statusPoll?.status?.toLowerCase();
-  //   if (
-  //     statusState === 'ready' ||
-  //     (status == "paperjam" && statusState == "capturing") ||
-  //     (status == "nomedia" && statusState == "capturing")
-  //   ) {
-  //     return true;
-  //   }
-
-  //   return false;
-  // };
-
   return (
-    <Button 
-      startIcon={<HiOutlineLightningBolt />} 
-      sx={{ width: 'fit-content', fontSize: 13 }} 
-      onClick={handleStartSession}
-    >
-      Start Session
-    </Button>
+    <>
+      <Button 
+        startIcon={<HiOutlineLightningBolt />} 
+        color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
+        sx={{ width: 'fit-content', fontSize: 13 }} 
+        onClick={handleStartSession}
+      >
+        {statusClaim && statusPoll?.state !== "noSession"
+                  ? "Stop Session"
+                  : !statusScanner
+                  ? "Re-start Scanner"
+                  : "Start Session"
+        }
+      </Button>
+      <StartSessionForm 
+        open={openSession}
+      />
+    </>
   )
 
   return (
     <>
-      <div>
-        {usedBy ? (
-          <RegularButton
-            disabled={true}
-          >
-            <strong>In Use</strong>
-          </RegularButton>
-        ) : (
-          <RegularButton
-            color={statusClaim && statusPoll?.state !== "noSession" ? 'primary' : 'info'}
-            onClick={handleStartSession}
-          >
-            <strong>
-              {statusClaim && statusPoll?.state !== "noSession"
-                ? "Stop Session"
-                : !statusScanner
-                ? "Re-start Scanner"
-                : "Start Session"}
-            </strong>
-          </RegularButton>
-        )}
-      </div>
       <Modal open={openHistory}>
         <Box
           display='flex' 

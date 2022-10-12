@@ -1,4 +1,4 @@
-import { IconButton, Typography, Stack, Box } from "@mui/material";
+import { IconButton, Typography, Stack, Box, Collapse } from "@mui/material";
 import Card from "components/Card";
 import { useState } from "react";
 import { RiAddLine, RiSubtractLine } from "react-icons/ri";
@@ -21,11 +21,11 @@ export default function CardDrawer({...props}) {
                     )}
                 </IconButton>
             </Stack>
-            {isOpened && (
+            <Collapse in={isOpened}>
                 <Box mt={3}>
                     {children}
                 </Box>
-            )}
+            </Collapse>
         </Card>
     )
 }

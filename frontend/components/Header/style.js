@@ -8,5 +8,5 @@ export const Wrapper = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '72px',
   left: 0,
-  width: '100vw'
+  width: '100%'
 }));

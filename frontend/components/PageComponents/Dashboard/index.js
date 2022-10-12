@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Grid, TablePagination, Typography } from "@mui/material";
 import { useAccount } from "lib/contexts/accountContext";
 import { generateScannerDataTable } from "lib/scannerDataTable";
 import useSWR, { mutate } from "swr";
@@ -88,6 +88,17 @@ function Dashboard() {
             <ScannerListContainer {...scanner} pageIndex={pageIndex} rowsPerPage={rowsPerPage} />
           </Grid>
         ))}
+
+        {scannerList.length > 0 && (
+          <TablePagination
+              component="div"
+              count={rowCount}
+              page={pageIndex-1}
+              onPageChange={handlePageIndexChange}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[]}
+          />
+        )}
       </Grid>
     </>
   );

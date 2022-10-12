@@ -140,18 +140,22 @@ exports.deleteScannerHistory = async (req, res) => {
 
     if (account) {
         const scannerHistory = await ScannerHistoryService.getScannerHistoryFromId(id);
-        const queue = await QueueService.getQueueFromId(scannerHistory.queueId);
-        const job = await JobService.getJobFromId(queue.jobId);
-
-        //remove minio files
-        if (job.imageURI) {
-            const minioremove = await removeMinioObjects(account.id, job.imageURI);
+        if (scannerHistory) {
+            const queue = await QueueService.getQueueFromId(scannerHistory.queueId);
+            const job = await JobService.getJobFromId(queue.jobId);
+    
+            //remove minio files
+            if (job.imageURI) {
+                const minioremove = await removeMinioObjects(account.id, job.imageURI);
+            }
+    
+            await JobService.deleteJob(job.id)
+            await QueueService.deleteQueue(queue.id)
+            const deleteScannerHistory = await ScannerHistoryService.deleteScannerHistory(id);
+            return res.send(deleteScannerHistory);
         }
 
-        await JobService.deleteJob(job.id)
-        await QueueService.deleteQueue(queue.id)
-        const deleteScannerHistory = await ScannerHistoryService.deleteScannerHistory(id);
-        return res.send(deleteScannerHistory);
+        return res.status(404).send({message: 'History not found'});
     }
 
     return res.status(401).send('You need to login first!');

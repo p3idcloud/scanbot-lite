@@ -1,34 +1,47 @@
-import RegularButton from "components/CustomButtons/Button";
-import GridContainer from "components/Grid/GridContainer";
-import GridItem from "components/Grid/GridItem";
-import { useAccount } from "lib/contexts/accountContext";
+import { Box, Typography } from "@mui/material";
+import Button from "components/Button";
+import Modal from "components/Modal";
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
+import { RiCloseFill } from "react-icons/ri";
 
 const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
     ssr: false,
 });
-const CustomLoader = dynamic(() => import("components/Loader"), {
-    ssr: false
-})
 
-export default function ScanPdfView({files}) {
-    const { closeAppModal } = useAccount();
-
-    if (!files) {
-        return <CustomLoader />
-    }
+export default function ScanPdfView({open, onClose, name, files}) {
 
     return (
-        <GridContainer style={{maxWidth: '500px'}}>
-            <GridItem xs={12}>
-                <PdfViewer files={files} newScan={false}/>
-            </GridItem>
-
-            <GridItem xs={12}>
-                <RegularButton color='info' onClick={() => closeAppModal()}>
-                    Close
-                </RegularButton>
-            </GridItem>
-        </GridContainer>
-    )
+        <Modal
+            open={open}
+            onClose={onClose}
+            maxWidth={"md"}
+            sx={{zIndex: 501}}
+            customBodyFooter={
+                <>
+                    <Button
+                        startIcon={<RiCloseFill size={20} />}
+                        onClick={()=> onClose()
+                        }
+                        variant="outlined"
+                        color="primaryBlack"
+                        autoWidth
+                        size="medium"
+                    >
+                        Close
+                    </Button>
+                </>
+            }
+        >
+            <Box>
+                <Typography fontWeight={600} fontSize={18} mt={1} mb={3}>
+                    Pdf result for {name}
+                </Typography>
+                <PdfViewer 
+                    files={files} 
+                    newScan={false}
+                />
+            </Box>
+        </Modal>
+    );
 }

@@ -10,7 +10,7 @@ import Card from "components/Card";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { AiOutlineCompress } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
-import { RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
+import { RiFile3Line, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const dummyFile = [
@@ -211,8 +211,7 @@ export default function PdfViewer({ files, newScan }) {
                         width={width}
                         sx={{ height: minHeight || 200}}
                       >
-                        <Image src={"/logo.png"} width={108} height={152} />
-                        <h3>Please Wait...</h3>
+                        <RiFile3Line size={200} style={{color: '#EDEDED'}}/>
                       </Box>
                     )}
                   >

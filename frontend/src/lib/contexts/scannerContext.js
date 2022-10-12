@@ -2,12 +2,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import uuid from "uuid";
-import { Modal, Box } from "@mui/material";
+import { Modal, Box, Typography } from "@mui/material";
 import CustomLoader from "components/Loader";
-import RegularButton from "components/CustomButtons/Button";
 import { parseCookies } from "nookies";
 import useSWR from "swr";
 import { fetchData } from "lib/fetch";
+import Card from "components/Card";
+import Button from "components/Button";
 
 export const ScannerContext = createContext(null);
 
@@ -219,20 +220,17 @@ export const ScannerProvider = ({children}) => {
                 display='flex' 
                 sx={{
                     position: 'absolute',
-                    boxShadow: 24,
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    boxShadow: 24,
-                    p: 4,
                 }}
                 flexDirection="row"
                 justifyContent="center"
                 alignItems="center"
             >
-                <CustomLoader message="Checking Scanner" />
+                <Card withpadding="20px">
+                    <CustomLoader message="Checking Scanner" />
+                </Card>
             </Box>
         </Modal>
         <Modal open={infoexStatus}>
@@ -240,31 +238,30 @@ export const ScannerProvider = ({children}) => {
                 display='flex' 
                 sx={{
                     position: 'absolute',
-                    boxShadow: 24,
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    boxShadow: 24,
-                    p: 4,
                 }}
                 flexDirection="row"
                 justifyContent="center"
                 alignItems="center"
             >
-                <Box py={4} px={1}>
-                    <h3>Scanner Error, Please check the service</h3>
-                </Box>
-                <Box my={4} display='flex' justifyContent='center'>
-                    <RegularButton  onClick={handleRefresh}>
-                        Retry
-                    </RegularButton>
-                    <div style={{padding: 5}}/>
-                    <RegularButton  onClick={()=>setInfoexStatus(false)}>
-                        OK
-                    </RegularButton>
-                </Box>
+                <Card withpadding="20px">
+                    <Box mt={4} px={1}>
+                        <Typography textAlign='center' fontWeight={600} fontSize="20px">
+                            Scanner Error, Please check the service
+                        </Typography>
+                    </Box>
+                    <Box my={4} display='flex' justifyContent='center' alignItems='center'>
+                        <Button size="small" autoWidth onClick={handleRefresh}>
+                            Retry
+                        </Button>
+                        <div style={{padding: 5}}/>
+                        <Button size="small" autoWidth onClick={()=>setInfoexStatus(false)}>
+                            Ok
+                        </Button>
+                    </Box>
+                </Card>
             </Box>
         </Modal>
         </ScannerContext.Provider>

@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { mutate } from "swr";
 import { fetchData } from "lib/fetch";
 import { useRouter } from "next/router";
+import EditDetailScannerForm from "components/AppModals/EditDetailScannerForm";
 
 const DeleteConfirmation = dynamic(() => import("components/AppModals/DeleteConfirmation"));
 
@@ -21,6 +22,7 @@ export default function ScannerListContaner({...props}) {
     const [anchorEl, setAnchorEl] = useState(null);
     const [loadingRemove, setLoadingRemove] = useState(false);
     const [removeScannerOpen, setRemoveScanner] = useState(false);
+    const [editScannerOpen, setEditScanner] = useState(false);
     const router = useRouter();
   
     const open = Boolean(anchorEl);
@@ -35,10 +37,10 @@ export default function ScannerListContaner({...props}) {
     };
 
     const handleEdit = (e) => {
-        // Show edit popup modal
         if (e.stopPropagation)
             e.stopPropagation();
-        console.log('edit');
+        setEditScanner(true);
+        setAnchorEl(null);
     }
 
     const handleRemoveButton = (e) => {
@@ -120,10 +122,15 @@ export default function ScannerListContaner({...props}) {
                 </Grid>
                 </Grid>
             </Card>
+            <EditDetailScannerForm
+                open={editScannerOpen}
+                close={()=>setEditScanner(false)}
+                {...props}
+            />
             <DeleteConfirmation
                 open={removeScannerOpen}
                 title="Remove Scanner"
-                subtitle={`Are you sure you want to remove ${model}?`}
+                subTitle={`Do you really want to remove ${model}? This process cannot be undone`}
                 loading={loadingRemove}
                 onDelete={handleRemoveScanner}
                 onClose={()=>setRemoveScanner(false)}

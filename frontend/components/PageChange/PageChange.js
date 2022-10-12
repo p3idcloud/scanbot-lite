@@ -8,6 +8,6 @@ export default function PageChange(props) {
   const pageTitle = getRouteTitle(props.path);
 
   return (
-    <CustomLoader message={`Loading ${pageTitle}`} />
+    <CustomLoader message={`Loading ${pageTitle}`} overlay />
   );
 }

@@ -1,25 +1,20 @@
 import { Container, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { Wrapper } from './style';
+import { HeaderWrapper, Wrapper } from './style';
 
-const Header = ({ titleHeader, component, setHeight }) => {
-  const ref = useRef(null);
-  
-  useEffect(() => {
-    const height = ref?.current?.clientHeight;
-    if (height) {
-        setHeight(height);
-    }
-},[ref?.current?.clientHeight]);
-
+const Header = ({ titleHeader, component, children }) => {
   return (
-    <Wrapper ref={ref}>
-      <Container>
-        <Typography fontSize="1.1em" fontWeight="500" marginBottom={2}>
-          {titleHeader}
-        </Typography>
-        {component}
+    <Wrapper>
+      <HeaderWrapper style={{backgroundColor: '#ffffff'}}>
+        <Container>
+          <Typography fontSize="1.1em" fontWeight="500" marginBottom={2}>
+            {titleHeader}
+          </Typography>
+          {component}
+        </Container>
+      </HeaderWrapper>
+      <Container maxWidth="lg">
+        {children}
       </Container>
     </Wrapper>
   );

@@ -1,15 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import CardDrawer from "components/CardDrawer";
+import { useScanner } from "lib/contexts/scannerContext";
 import { fetchData } from "lib/fetch";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 export default function ScannerReport({...props}) {
     const { open } = props;
-    
-    const router = useRouter();
-    const { scannerId } = router?.query;
+
+    const { scannerId } = useScanner();
     
     //analytic
     const [totalScan, setTotalScan] = useState(0);

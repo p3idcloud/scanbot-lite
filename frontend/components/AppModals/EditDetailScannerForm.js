@@ -4,79 +4,47 @@ import InputField from 'components/InputField';
 import * as Yup from "yup";
 import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
 import { Formik, Form } from 'formik';
-import uuid from "uuid";
 import { useState } from 'react';
-import { generateHistoryName } from "lib/helpers";
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
-import { useScanner } from 'lib/contexts/scannerContext';
-import { setCookie } from 'nookies';
+import { mutate } from 'swr';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("required"),
+  model: Yup.string().required("required")
 });
 
-const StartSessionForm = ({ open, close }) => {
+const EditDetailScannerForm = ({ open, close, ...rest }) => {
   const [loading, setLoading] = useState(false);
-  const { 
-    privetToken, 
-    scannerId,
-    setSessionId,
-    setScannerHistory,
-    setStatusClaim
-  } = useScanner();
+  const { id, name, model, description, pageIndex, rowsPerPage } = rest;
 
   const initialValues = {
-    name: generateHistoryName(),
-    description: "",
-  };
-  
-  const handleSaveForm = () => {
-    setStatusClaim(true);
-    handleOpenForm();
+    name: name ?? "",
+    model: model ?? "",
+    description: description ?? ""
   };
 
   const handleSubmit = (e) => {
     setLoading(true);
-    const commandId = uuid.v4();
     const data = {
-      commandId: commandId,
-      kind: "twainlocalscanner",
-      name: e.name,
-      description: e.description,
-      method: "createSession",
-    };
-    const headers = {
-      "x-twain-cloud-request-id": commandId,
-      "x-privet-token": privetToken,
-    };
-    fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
-      headers,
-      method: "POST",
+        name: e.name,
+        model: e.model,
+        description: e.description
+    }
+    fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
+      method: "PATCH",
       data,
     })
       .then((res) => {
-        setSessionId(res?.results?.session?.sessionId);
-        setCookie({},"sessionId", res?.results?.session?.sessionId);
-        toast.success("Session Ready, Start capturing to scan document");
-        handleSaveForm();
-      })
-      .then(() => {
-        fetchData(`${process.env.backendUrl}api/scanners/history`, {
-          headers,
-          params: {
-            scannerId,
-            sort: "-createdAt",
-            page: 1,
-          },
-        })
-          .then((res) => setScannerHistory(res?.data ?? []))
-          .catch((err) => {});
+        mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`);
       })
       .catch(() => {
-        toast.error("Scanner offline, please check your scanner");
+        toast.error("Failed to update scanner");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        close();
+        });
   };
   
   return (
@@ -109,7 +77,7 @@ const StartSessionForm = ({ open, close }) => {
                   size="medium"
                   loading={loading}
                 >
-                  Start
+                  Update
                 </Button>
               </>
             }
@@ -124,10 +92,10 @@ const StartSessionForm = ({ open, close }) => {
             >
               <Form style={{width: '100%'}}>
                 <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
-                  Start Session
+                  Edit Scanner Detail
                 </Typography>
                 <Divider sx={{my: 4}}/>
-                <FormGroup sx={{my: 1}}>
+                <FormGroup sx={{my: 2}}>
                   <InputField
                     label="Name"
                     fullWidth
@@ -142,7 +110,22 @@ const StartSessionForm = ({ open, close }) => {
                       <Typography color="red">{errors.name}</Typography>
                   </FormHelperText>
                 </FormGroup>
-                <FormGroup>
+                <FormGroup sx={{my: 2}}>
+                  <InputField
+                    label="Model"
+                    fullWidth
+                    id='model'
+                    defaultValue={initialValues.model}
+                    aria-invalid={Boolean(touched.model && errors.model)}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Model"
+                  />
+                  <FormHelperText>
+                      <Typography color="red">{errors.model}</Typography>
+                  </FormHelperText>
+                </FormGroup>
+                <FormGroup sx={{my: 2}}>
                   <InputField
                     label="Description"
                     variant="outlined"
@@ -168,4 +151,4 @@ const StartSessionForm = ({ open, close }) => {
   );
 };
 
-export default StartSessionForm;
+export default EditDetailScannerForm;

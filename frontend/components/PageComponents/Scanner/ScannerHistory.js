@@ -16,10 +16,7 @@ import ScanPdfView from "components/AppModals/ScanPdfView";
 
 export default function ScannerHistory({...props}) {
     const { open } = props;
-
-    const router = useRouter();
-    const { scannerId } = router?.query;
-
+    
     const [deleteHistory, setDeleteHistory] = useState(null);
     const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -57,7 +54,7 @@ export default function ScannerHistory({...props}) {
     const [pageIndex, setPageIndex] = useState(1);
     const [rowCount, setRowCount] = useState(0);
 
-    const {scannerHistory, loadScannerHistory} = useScanner();
+    const {scannerId, scannerHistory, loadScannerHistory} = useScanner();
 
     const tableData = useMemo(() =>
         scannerHistory?.map((history) => [

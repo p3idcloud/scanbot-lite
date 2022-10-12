@@ -148,22 +148,15 @@ exports.deleteScannerFromId = async (req, res) => {
 
 exports.updateScannerFromId = async (req, res) => {
     if (req.twain.principalId) {
-        const userId = req.twain.principalId;
+        const accountId = req.twain.principalId;
 
-        if (userId) {
+        if (accountId) {
             const scannerId = req.params.scannerId;
             const updateScanner = req.body
 
-            //get user from token
-            //const user = await userserv.getUserFromToken(req.twain.principalId)
-            const user = await userserv.getUserFromUserID(req.twain.principalId)
-            if (!user) {
-                return res.status(400).send("Couldn't find user")
-            }
-
-            //role under scanneradmin cant update
-            if (user && !(user.role.includes(ROLE_CONST.SYSTEMADMIN) || user.role.includes(ROLE_CONST.SCANNERADMIN) || user.role.includes(ROLE_CONST.ACCOUNTADMIN))) {
-                return res.status(401).send("Higher permission access needed")
+            const account = await accountService.getAccountFromId(req.twain.principalId)
+            if (!account) {
+                return res.status(400).send("Couldn't find account")
             }
 
             const scanner = await scanserv.updateScannerFromId(scannerId,updateScanner)

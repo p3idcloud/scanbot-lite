@@ -6,7 +6,6 @@ import { withRouter, useRouter } from "next/router";
 import { authConstants } from "constants/auth";
 import { destroyCookie, parseCookies } from "nookies";
 import { getRouteTitle } from "routes";
-import { Container } from "@mui/material";
 import HeaderMain from "components/Navbars";
 
 const whitelistedUrl = [
@@ -47,10 +46,8 @@ const Page = (props) => {
           {pageTitle}
         </title>
       </Head>
-      <HeaderMain />
-      <Container maxWidth="lg">
-        {props.children}
-      </Container>
+      {!isWhiteListed && <HeaderMain />}
+      {props.children}
     </>
   );
 };

@@ -1,6 +1,7 @@
-// layout for this page
 import Admin from "layouts/Admin.js";
-import Scanner from "components/PageComponents/Scanner";
+import dynamic from "next/dynamic";
+
+const Scanner = dynamic(() => import("components/PageComponents/Scanner", {ssr: false}));
 
 const ScannerPage = () => <Scanner />
 

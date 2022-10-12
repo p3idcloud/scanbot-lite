@@ -84,8 +84,8 @@ const palette = {
     contrastText: '#FFE2E2'
   },
   green: {
-    dark: '#02841B',
-    main: '#26D347',
+    main: '#02841B',
+    dark: '#26D347',
     light: '#A3F7B3',
     contrastText: '#E2FFE7'
   },

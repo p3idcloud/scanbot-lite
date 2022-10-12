@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Grid, TablePagination, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Container, Grid, TablePagination, Typography } from "@mui/material";
 import { useAccount } from "lib/contexts/accountContext";
-import { generateScannerDataTable } from "lib/scannerDataTable";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { fetchData } from "lib/fetch";
 import ScannerListContainer from "./ScannerListContainer";
 import Card from "components/Card";
@@ -13,13 +12,6 @@ function Dashboard() {
   const rowsPerPage = 6;
   const [rowCount, setRowCount] = useState(0);
   const [pageIndex, setPageIndex] = useState(1);
-  const scannerTableData = useMemo(() => 
-    generateScannerDataTable(scannerList ?? [], () => {
-      mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
-    }), 
-    [scannerList]
-  );
-
   const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex+1);
 
   const { data, error, isValidating } = useSWR(
@@ -38,7 +30,7 @@ function Dashboard() {
   }, [data]);
 
   return (
-    <>
+    <Container>
       <Grid container sx={{ padding: '30px 0' }} spacing={2}>
         <Grid item xs={12} display="flex" alignItems="center">
             <Typography sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
@@ -90,17 +82,20 @@ function Dashboard() {
         ))}
 
         {scannerList.length > 0 && (
-          <TablePagination
-              component="div"
-              count={rowCount}
-              page={pageIndex-1}
-              onPageChange={handlePageIndexChange}
-              rowsPerPage={rowsPerPage}
-              rowsPerPageOptions={[]}
-          />
+          <Grid item xs={12}>
+            <TablePagination
+                component="div"
+                style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                count={rowCount}
+                page={pageIndex-1}
+                onPageChange={handlePageIndexChange}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[]}
+            />
+          </Grid>
         )}
       </Grid>
-    </>
+    </Container>
   );
 }
 

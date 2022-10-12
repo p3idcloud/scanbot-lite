@@ -2,26 +2,27 @@
 import { ScannerContext, ScannerProvider } from "lib/contexts/scannerContext";
 import dynamic from "next/dynamic";
 // import ScannerConfig from "./ScannerConfig";
-import ScannerHistory from "./ScannerHistory";
-// import StartCapture from "./StartCapturing";
 // import ScannerStatus from "./ScannerStatus";
 // import ScanAnalytics from "./ScanAnalytics";
 import Header from "components/Header";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import StartSession from "./StartSession";
-import ScannerDetail from "./ScannerDetail";
-import StateBox from "./StateBox/";
-import ScannerReport from "./ScannerReport";
 import { useState } from "react";
+import { TbSettings } from "react-icons/tb";
+import CustomLoader from "components/Loader";
+import Card from "components/Card";
 
-// const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
-//     ssr: false,
-// });
+const AdvancedSettingForm = dynamic(() => import("components/AppModals/AdvancedSettingForm"), {ssr: false});
+const StateBox = dynamic(() => import("./StateBox/"), {ssr: false});
+const StartSession = dynamic(() => import("./StartSession"), {ssr: false});
+const ScannerDetail = dynamic(() => import("./ScannerDetail"), {ssr: false});
+const ScannerReport = dynamic(() => import("./ScannerReport"), {ssr: false});
+const StartCaptureButton = dynamic(() => import("./StartCaptureButton"), {ssr: false});
+const ScannerHistory = dynamic(() => import("./ScannerHistory"), {ssr: false});
+const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {ssr: false});
 
 export default function Scanner() {
-    const [headerHeight, setHeaderHeight] = useState(0);
-
-
+    const [advancedSettingOpen, setAdvancedSettingOpen] = useState(false);
+    
     const headerComponent = (
         <Stack 
             direction={{
@@ -52,18 +53,63 @@ export default function Scanner() {
                 {value => (
                     <>
                         <Header
-                            setHeight={setHeaderHeight}
                             titleHeader={titleHeader}
                             component={headerComponent}
+                            children={(
+                                <Grid container spacing={3} mt={0}>
+                                    {value.statusClaim && (
+                                        <Grid 
+                                            item 
+                                            xs={12} 
+                                            display='flex'
+                                            flexDirection='row'
+                                            justifyContent='space-between' 
+                                            alignItems='center'
+                                        >
+                                            <StartCaptureButton />
+                                            <Box 
+                                                onClick={()=>setAdvancedSettingOpen(true)} 
+                                                display='flex' 
+                                                alignItems='center'
+                                                sx={{
+                                                    '&:hover': {
+                                                        cursor: 'pointer'
+                                                    }
+                                                }}
+                                            >
+                                                <TbSettings size={22} style={{marginRight: 10}} />
+                                                <Typography fontWeight={600} fontSize='16px'>
+                                                    Advanced Setting
+                                                </Typography>
+                                            </Box>
+                                        </Grid>
+                                    )}
+                                    
+                                    
+                                    {value.loadingCapture && !value.files?.length && (
+                                        <Grid item xs={12}>
+                                            <Card withpadding="20px">
+                                                <CustomLoader message="Loading Capture" />
+                                            </Card>
+                                        </Grid>
+                                    )}
+                                    {value.startCapture && value.statusClaim && value.files?.length > 0 && (
+                                        <PdfViewer files={value.files} newScan />
+                                    )}
+
+                                    <Grid item xs={12} md={4}>
+                                        <ScannerReport open={!Boolean(value.statusClaim)}/>
+                                    </Grid>
+                                    <Grid item xs={12} md={8}>
+                                        <ScannerHistory open={!Boolean(value.statusClaim)}/>
+                                    </Grid>
+                                </Grid>
+                            )}
                         />
-                        <Grid container marginTop={`${headerHeight}px`} spacing={3}>
-                            <Grid item xs={12} md={4}>
-                                <ScannerReport open={true}/>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <ScannerHistory open={true}/>
-                            </Grid>
-                        </Grid>
+                        <AdvancedSettingForm
+                            open={advancedSettingOpen}
+                            close={()=>setAdvancedSettingOpen(false)}
+                        />
                         {/* {value.statusClaim && (
                             <GridContainer>
                                 <GridItem xs={12} sm={5}>

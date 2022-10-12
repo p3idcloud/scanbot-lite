@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 
 import Card from "components/Card";
 import { useRegister } from "lib/contexts/registerContext";
@@ -23,18 +23,20 @@ export default function Register() {
     }
 
     return (
-        <Box 
-            height={'100vh'} 
-            width={1} 
-            display='flex'
-            flexDirection='column'
-            alignItems='center' 
-            justifyContent='center'
-        >
-            <Card withpadding="20px">
-                <h2>Scanbot</h2>
-                <StepComponent />
-            </Card>
-        </Box>
+        <Container>
+            <Box 
+                height={'100vh'} 
+                width={1} 
+                display='flex'
+                flexDirection='column'
+                alignItems='center' 
+                justifyContent='center'
+            >
+                <Card withpadding="20px">
+                    <h2>Scanbot</h2>
+                    <StepComponent />
+                </Card>
+            </Box>
+        </Container>
     );
 }

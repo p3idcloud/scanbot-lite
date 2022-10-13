@@ -77,7 +77,11 @@ export default function ScannerListContaner({...props}) {
 
     return (
         <>
-            <Card withpadding onClick={handleScannerDetailClick}>
+            <Card 
+                withpadding 
+                onClick={handleScannerDetailClick} 
+                hover
+            >
                 <Grid container spacing={2}>
                 <Grid item xs={12} display='flex' justifyContent="space-between">
                     <Stack direction='row' width={0.8} spacing={1}>

@@ -6,7 +6,7 @@ import Router from "next/router";
 
 import PageChange from "components/PageChange/PageChange.js";
 import Page from "components/Page";
-import nookies from "nookies";
+import nookies, { setCookie } from "nookies";
 import jwt from 'jsonwebtoken';
 
 import "assets/css/global.css";
@@ -48,6 +48,23 @@ class MyApp extends App {
 
     if (cookies && cookies[authConstants.SESSION_TOKEN] && pageProps) {
       pageProps[authConstants.SESSION_TOKEN] = cookies[authConstants.SESSION_TOKEN];
+      
+      //verify the jwt
+      const { verified } = await fetch(`${process.env.backendUrl}api/auth/verify`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: cookies[authConstants.SESSION_TOKEN]})
+      }).then(res => res.json());
+
+      if (!verified) {
+        ctx.res.writeHead(302, {
+          Location: '/signin',
+        });
+        return ctx.res.end();
+      }
+      
       const decoded = jwt.decode(pageProps[authConstants.SESSION_TOKEN]);
       if (decoded) {
         const expiredinMS = decoded.exp * 1000;
@@ -69,6 +86,8 @@ class MyApp extends App {
             firstName: decoded.user?.attributes?.firstname?.[0],
             lastName: decoded.user?.attributes?.lastname?.[0]
           };
+
+          setCookie(ctx, authConstants.SESSION_TOKEN, pageProps[authConstants.SESSION_TOKEN]);
 
           try {
             const accountResult = await fetchApp({

@@ -30,7 +30,7 @@ db.connectDB()
 // const serviceStatusRouter = require('../../routes/servicestatus');
 
 // Authentication API
-// const authRouter = require('./routes/auth');
+const authRouter = require('./routes/auth');
 
 // Registration API
 const registerRouter = require('./routes/register');
@@ -74,7 +74,7 @@ app.use(cors(corsOptions));
 //   next();
 // })
 
-// app.use('/api/auth', authRouter);
+app.use('/api/auth', authRouter);
 
 // Documentation Route
 // const swaggerJSDoc = require('swagger-jsdoc');

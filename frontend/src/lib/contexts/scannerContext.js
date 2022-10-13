@@ -228,7 +228,7 @@ export const ScannerProvider = ({children}) => {
                 justifyContent="center"
                 alignItems="center"
             >
-                <Card withpadding="20px">
+                <Card withpadding>
                     <CustomLoader message="Checking Scanner" />
                 </Card>
             </Box>
@@ -246,7 +246,7 @@ export const ScannerProvider = ({children}) => {
                 justifyContent="center"
                 alignItems="center"
             >
-                <Card withpadding="20px">
+                <Card withpadding>
                     <Box mt={4} px={1}>
                         <Typography textAlign='center' fontWeight={600} fontSize="20px">
                             Scanner Error, Please check the service

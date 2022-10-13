@@ -27,7 +27,7 @@ function Dashboard() {
       setScannerList(data?.data ?? []);
       setRowCount(data?.dataCount ?? 0);
     }
-  }, [data]);
+  }, [data, pageIndex]);
 
   return (
     <Container>
@@ -77,7 +77,12 @@ function Dashboard() {
 
         {scannerList?.map((scanner) => (
           <Grid item xs={12} md={6}>
-            <ScannerListContainer {...scanner} pageIndex={pageIndex} rowsPerPage={rowsPerPage} />
+            <ScannerListContainer 
+              {...scanner} 
+              setPageIndex={setPageIndex} 
+              pageIndex={pageIndex} 
+              rowsPerPage={rowsPerPage} 
+            />
           </Grid>
         ))}
 

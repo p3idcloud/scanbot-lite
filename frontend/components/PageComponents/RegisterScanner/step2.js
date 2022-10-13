@@ -1,3 +1,4 @@
+import { Box, Typography } from "@mui/material";
 import CustomLoader from "components/Loader";
 import { authConstants } from "constants/auth";
 import { useRegister } from "lib/contexts/registerContext";
@@ -43,12 +44,15 @@ export default function Step2() {
 
     if (error) {
         return (
-            <>
-                <h1>Scanner Registration</h1>
-                <p>
+            <Box textAlign='center'>
+                <Typography fontWeight={600} fontSize="20px">
+                    Scanner Registration
+                </Typography>
+
+                <Typography fontWeight={400} fontSize="16px" sx={{color: "#A767FF"}}>
                     There was an error: {error}
-                </p>
-            </>
+                </Typography>
+            </Box>
         )
     }
 

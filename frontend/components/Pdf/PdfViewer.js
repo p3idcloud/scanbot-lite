@@ -11,11 +11,23 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { AiOutlineCompress } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import { RiFile3Line, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
+import { fetchData } from "lib/fetch";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
+function base64ToArrayBuffer(data) {
+	var input = data.substring(data.indexOf(',') + 1);
+	var binaryString = window.atob(input);
+	var binaryLen = binaryString.length;
+	var bytes = new Uint8Array(binaryLen);
+	for (var i = 0; i < binaryLen; i++) {
+		var ascii = binaryString.charCodeAt(i);
+		bytes[i] = ascii;
+	}
+	return bytes;
+};
 
 export default function PdfViewer({ files, newScan }) {
   const [file, setFile] = useState(files || dummyFile);
@@ -56,11 +68,26 @@ export default function PdfViewer({ files, newScan }) {
 
   const handlePage = (index) => setPage(index);
   const handleDownload = () => {
-    window.open(file[page], "_blank");
+    if (newScan) {
+      window.open(file[page], "_blank");
+    } else {
+      fetchData(file[page], {
+        headers: {
+          'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
+        },
+        method: 'GET'
+      }).then((pdfData) => {
+        const blobArrayBuffer = base64ToArrayBuffer(pdfData);
+        const blobPdf = new Blob([blobArrayBuffer], {type: 'application/pdf'});
+        const blobUrl = URL.createObjectURL(blobPdf);
+        console.log(blobPdf)
+        window.open(blobUrl, "_blank");
+      });
+    }
   };
 
   return (
-    <Card withpadding="20px" background='#F8F8FA'>
+    <Card withpadding background='#F8F8FA'>
       <Grid direction="column" container alignItems='center'>
           <Grid item>
           <TransformWrapper wheel={{ disabled: true }}>
@@ -188,10 +215,7 @@ export default function PdfViewer({ files, newScan }) {
                   </Typography>
                 </IconButton>
               </Stack>
-              <div
-                className="pdf-document_view flex justify-center w-full bg-gray-300"
-                style={{ minHeight: minHeight }}
-              >
+              <div style={{ minHeight: minHeight }}>
                 <TransformComponent>
                   <Document
                     className="pdf-doc"
@@ -209,7 +233,7 @@ export default function PdfViewer({ files, newScan }) {
                         justifyContent='center'
                         alignItems='center'
                         width={width}
-                        sx={{ height: minHeight || 200}}
+                        sx={{ height: minHeight || 200 }}
                       >
                         <RiFile3Line size={200} style={{color: '#EDEDED'}}/>
                       </Box>

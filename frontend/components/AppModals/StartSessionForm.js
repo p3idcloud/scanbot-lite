@@ -76,7 +76,10 @@ const StartSessionForm = ({ open, close }) => {
       .catch(() => {
         toast.error("Scanner offline, please check your scanner");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        close();
+      });
   };
   
   return (

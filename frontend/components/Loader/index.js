@@ -42,7 +42,7 @@ export default function CustomLoader({...props}) {
         left={0}
         bgcolor='rgba(0, 0, 0, 0.5);'
       >
-        <Card withpadding="20px">
+        <Card withpadding>
           {LoaderComponent}
         </Card>
       </Box>         

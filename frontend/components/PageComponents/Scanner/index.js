@@ -88,13 +88,20 @@ export default function Scanner() {
                                     
                                     {value.loadingCapture && !value.files?.length && (
                                         <Grid item xs={12}>
-                                            <Card withpadding="20px">
+                                            <Card withpadding>
                                                 <CustomLoader message="Loading Capture" />
                                             </Card>
                                         </Grid>
                                     )}
                                     {value.startCapture && value.statusClaim && value.files?.length > 0 && (
-                                        <PdfViewer files={value.files} newScan />
+                                        <Grid item xs={12}>
+                                            <Card withpadding>
+                                                <Typography mb={3} fontWeight={600} fontSize='16px'>
+                                                    Preview Result
+                                                </Typography>
+                                                <PdfViewer files={value.files} newScan />
+                                            </Card>
+                                        </Grid>
                                     )}
 
                                     <Grid item xs={12} md={4}>

@@ -1,20 +1,19 @@
 import Image from "next/image";
-import { useRegister } from "lib/contexts/registerContext";
+import { Box, Typography } from "@mui/material";
 
 export default function Step3() {
-    const { scannerData } = useRegister();
-
     return (
         <>
             <Image 
-                src="/logo.png" 
+                src="/caca.jpeg" 
                 width={200}
                 height={200}
             />
-            <h1>Successfully Registered</h1>
-            <p>
-                {scannerData?.description}
-            </p>
+            <Box textAlign='center'>
+                <Typography fontWeight={600} fontSize="20px">
+                    Successfully Registered
+                </Typography>
+            </Box>
         </>
     )
 }

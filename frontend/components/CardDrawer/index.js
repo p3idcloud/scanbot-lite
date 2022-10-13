@@ -8,7 +8,7 @@ export default function CardDrawer({...props}) {
     const [isOpened, setOpened] = useState(open ?? false);
 
     return (
-        <Card withpadding="20px">
+        <Card withpadding>
             <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography sx={{fontWeight:600, fontSize: '16px', fontColor: '#0D0D0D'}}>
                     {cardTitle}

@@ -18,11 +18,11 @@ import EditDetailScannerForm from "components/AppModals/EditDetailScannerForm";
 const DeleteConfirmation = dynamic(() => import("components/AppModals/DeleteConfirmation"));
 
 export default function ScannerListContaner({...props}) {
-    const { id, name, model, description, pageIndex, rowsPerPage } = props;
+    const { id, name, model, description, rowsPerPage, pageIndex, setPageIndex } = props;
     const [anchorEl, setAnchorEl] = useState(null);
     const [loadingRemove, setLoadingRemove] = useState(false);
     const [removeScannerOpen, setRemoveScanner] = useState(false);
-    const [editScannerOpen, setEditScanner] = useState(false);
+    const [editScannerData, setEditScanner] = useState(null);
     const router = useRouter();
   
     const open = Boolean(anchorEl);
@@ -39,7 +39,9 @@ export default function ScannerListContaner({...props}) {
     const handleEdit = (e) => {
         if (e.stopPropagation)
             e.stopPropagation();
-        setEditScanner(true);
+        setEditScanner({
+            id, name, model, description
+        });
         setAnchorEl(null);
     }
 
@@ -57,8 +59,10 @@ export default function ScannerListContaner({...props}) {
             }
         )
         .then(res => {
+            setPageIndex(1);
             mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`);
             setLoadingRemove(false);
+            setRemoveScanner(false);
         })
         .catch(err => {
             toast.error('Failed to delete scanner');
@@ -73,7 +77,7 @@ export default function ScannerListContaner({...props}) {
 
     return (
         <>
-            <Card withpadding="20px" onClick={handleScannerDetailClick}>
+            <Card withpadding onClick={handleScannerDetailClick}>
                 <Grid container spacing={2}>
                 <Grid item xs={12} display='flex' justifyContent="space-between">
                     <Stack direction='row' width={0.8} spacing={1}>
@@ -123,8 +127,8 @@ export default function ScannerListContaner({...props}) {
                 </Grid>
             </Card>
             <EditDetailScannerForm
-                open={editScannerOpen}
-                close={()=>setEditScanner(false)}
+                open={Boolean(editScannerData)}
+                close={()=>setEditScanner(null)}
                 {...props}
             />
             <DeleteConfirmation

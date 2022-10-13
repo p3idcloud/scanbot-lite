@@ -1,6 +1,8 @@
-import { Box, Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 
 import Card from "components/Card";
+import Footer from "components/Footer/Footer";
+import TitleLogo from "components/TitleLogo";
 import { useRegister } from "lib/contexts/registerContext";
 import Step1 from "./step1";
 import Step2 from "./step2";
@@ -32,9 +34,19 @@ export default function Register() {
                 alignItems='center' 
                 justifyContent='center'
             >
-                <Card withpadding="20px">
-                    <h2>Scanbot</h2>
-                    <StepComponent />
+                <Card withpadding>
+                    <Box 
+                        display='flex'
+                        width={1}
+                        flexDirection='column'
+                        alignItems='center' 
+                        justifyContent='center'
+                        gap={3}
+                    >
+                        <TitleLogo />
+                        <StepComponent />
+                        <Footer />
+                    </Box>
                 </Card>
             </Box>
         </Container>

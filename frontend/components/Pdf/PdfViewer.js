@@ -11,23 +11,11 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { AiOutlineCompress } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import { RiFile3Line, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
-import { fetchData } from "lib/fetch";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
-function base64ToArrayBuffer(data) {
-	var input = data.substring(data.indexOf(',') + 1);
-	var binaryString = window.atob(input);
-	var binaryLen = binaryString.length;
-	var bytes = new Uint8Array(binaryLen);
-	for (var i = 0; i < binaryLen; i++) {
-		var ascii = binaryString.charCodeAt(i);
-		bytes[i] = ascii;
-	}
-	return bytes;
-};
 
 export default function PdfViewer({ files, newScan }) {
   const [file, setFile] = useState(files || dummyFile);
@@ -71,16 +59,16 @@ export default function PdfViewer({ files, newScan }) {
     if (newScan) {
       window.open(file[page], "_blank");
     } else {
-      fetchData(file[page], {
+      fetch(file[page], {
         headers: {
           'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
         },
         method: 'GET'
-      }).then((pdfData) => {
-        const blobArrayBuffer = base64ToArrayBuffer(pdfData);
-        const blobPdf = new Blob([blobArrayBuffer], {type: 'application/pdf'});
+      })
+      .then((res) => res.blob())
+      .then((pdfData) => {
+        const blobPdf = new Blob([pdfData], {type: 'application/pdf'});
         const blobUrl = URL.createObjectURL(blobPdf);
-        console.log(blobPdf)
         window.open(blobUrl, "_blank");
       });
     }

@@ -46,7 +46,7 @@ function Dashboard() {
 
         {scannerList?.length === 0 && (
           <Grid item xs={12} container display="flex" alignItems="center" justifyContent="center">
-            <Card withpadding={5}>
+            <Card withpadding>
               <Typography 
                 textAlign='center'
                 mb={2}

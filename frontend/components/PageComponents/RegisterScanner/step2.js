@@ -22,17 +22,13 @@ export default function Step2() {
         })
             .then(async (data) => {
                 setScannerData(data);
+                destroyCookie({}, authConstants.REGISTRATION_TOKEN, {path: '/'});
                 setStep(3);
                 // console.log(data);
             })
             .catch((err) => {
                 setError(err.response?.data?.message || err.message);
             })
-
-        destroyCookie({}, authConstants.REGISTRATION_TOKEN);
-        destroyCookie({}, authConstants.CALLBACK_URL);
-        destroyCookie({}, authConstants.SESSION_TOKEN);
-        destroyCookie({}, authConstants.CSRF_TOKEN);
     }
     
     useEffect(() => {

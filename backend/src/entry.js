@@ -68,6 +68,12 @@ var corsOptions = {
 }
 app.use(cors(corsOptions));
 
+//DEBUGGER
+// app.use('*', (req, res, next) => {
+//   console.log(req.originalUrl);
+//   next();
+// })
+
 // app.use('/api/auth', authRouter);
 
 // Documentation Route

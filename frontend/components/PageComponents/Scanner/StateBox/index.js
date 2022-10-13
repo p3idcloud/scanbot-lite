@@ -7,17 +7,13 @@ export default function StateBox() {
 
     return (
         <Grid container pt={2} direction='row' justifyContent='flex-end' alignItems='center' spacing={2}>
-            <Grid item>
+            <Grid item display='flex'>
                 <StatusIcon status={statusPoll?.status} />
+                <Typography ml={1.5} sx={{color: '#959595'}}>Status : {usedBy ? "Under use" : statusPoll?.status || "Not ready"}</Typography>
             </Grid>
-            <Grid item>
-                <Typography sx={{color: '#959595'}}>Status : {usedBy ? "Under use" : statusPoll?.status || "Not ready"}</Typography>
-            </Grid>
-            <Grid item>
+            <Grid item display='flex'>
                 <StatusIcon status={statusPoll?.state} />
-            </Grid>
-            <Grid item>
-                <Typography sx={{color: '#959595'}}>State : {statusPoll?.state || "Offline"}</Typography>
+                <Typography ml={1.5} sx={{color: '#959595'}}>State : {statusPoll?.state || "Offline"}</Typography>
             </Grid>
         </Grid>
     )

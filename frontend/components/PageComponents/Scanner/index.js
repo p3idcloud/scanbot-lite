@@ -24,20 +24,27 @@ export default function Scanner() {
     const [advancedSettingOpen, setAdvancedSettingOpen] = useState(false);
     
     const headerComponent = (
-        <Stack 
+        <Grid 
             direction={{
                 xs: "column",
                 md: "row"
-            }} 
-            justifyContent="space-between" 
-            spacing={2}
+            }}
+            container
+            maxWidth="lg"
+            justifyContent="space-between"
         >
-            <ScannerDetail />
-            <Box display='flex' flexDirection='column' alignItems="end">
-                <StartSession />
-                <StateBox />
-            </Box>
-        </Stack>
+            <Grid item xs={8} container>
+                <Box>
+                    <ScannerDetail />
+                </Box>
+            </Grid>
+            <Grid item xs={4}>
+                <Box display='flex' flexDirection='column' alignItems="end">
+                    <StartSession />
+                    <StateBox />
+                </Box>
+            </Grid>
+        </Grid>
     )
 
     const titleHeader = (

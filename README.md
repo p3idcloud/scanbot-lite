@@ -1,3 +1,5 @@
+# UPGRADE MONGODB VERSION TO ^6.0.1, mongoose library not working for newer versions
+
 # Setting up and running
 
 This repo has 5 services total to run:

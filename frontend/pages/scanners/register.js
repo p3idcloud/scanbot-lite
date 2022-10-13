@@ -1,5 +1,5 @@
 import Register from "components/PageComponents/RegisterScanner";
-import { parseCookies, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { authConstants } from "constants/auth";
 import jwt from 'jsonwebtoken';
 import { RegisterProvider } from "lib/contexts/registerContext";
@@ -10,6 +10,15 @@ export default ({...props}) => <RegisterProvider {...props} >
 
 export function getServerSideProps(ctx) {
     const { registrationToken } = ctx.query;
+    destroyCookie(ctx, authConstants.CALLBACK_URL, {
+        path: '/'
+    });
+    // destroyCookie(ctx, authConstants.SESSION_TOKEN,{
+    //     path: '/'
+    // });
+    // destroyCookie(ctx, authConstants.CSRF_TOKEN,{
+    //     path: '/'
+    // });
     setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
         path: '/'
     });

@@ -40,7 +40,6 @@ export async function fetchData(...args) {
     baseURL: process.env.BACKEND_URL,
     timeout: 20000,
   });
-  console.log(parseCookies({}));
   Axios.interceptors.request.use(
     async (config) => {
       const token = localStorage?.getItem("token") || parseCookies()[authConstants.SESSION_TOKEN];

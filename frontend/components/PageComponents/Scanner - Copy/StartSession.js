@@ -218,9 +218,7 @@ export default function StartSession({
                           onBlur={handleBlur}
                           placeholder="Name"
                       />
-                      <FormHelperText>
                           <p>{errors.description}</p>
-                      </FormHelperText>
                     </FormGroup>
                     <FormGroup>
                       <InputLabel><h4>Description</h4></InputLabel>
@@ -236,9 +234,7 @@ export default function StartSession({
                           value={values.description}
                           placeholder="Description"
                       />
-                      <FormHelperText>
                           <p>{errors.description}</p>
-                      </FormHelperText>
                     </FormGroup>
                   </div>
                   <div>

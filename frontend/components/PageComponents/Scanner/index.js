@@ -48,9 +48,9 @@ export default function Scanner() {
     )
 
     const titleHeader = (
-        <Typography sx={{fontWeight: 500}}>
+        <>
             <span style={{color: "#673AB7"}}>Scanner</span> <span style={{color: '#848484'}}>/ Detail Scanner</span>
-        </Typography>
+        </>
     )
     
 

@@ -141,9 +141,7 @@ const StartSessionForm = ({ open, close }) => {
                     onBlur={handleBlur}
                     placeholder="Name"
                   />
-                  <FormHelperText>
                       <Typography color="red">{errors.name}</Typography>
-                  </FormHelperText>
                 </FormGroup>
                 <FormGroup>
                   <InputField

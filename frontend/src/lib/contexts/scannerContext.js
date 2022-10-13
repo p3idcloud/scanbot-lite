@@ -140,7 +140,7 @@ export const ScannerProvider = ({children}) => {
         }
     }
 
-    function loadScannerHistory(page = 1, rowsPerPage = 5, setRowCount = (_) => {}) {
+    function loadScannerHistory(page = 1, rowsPerPage = 5/* , setRowCount = (_) => {} */) {
         fetchData(`${process.env.backendUrl}api/scanners/history`, {
         headers,
         params: {
@@ -151,10 +151,15 @@ export const ScannerProvider = ({children}) => {
         },
         })
         .then((res) => {
+            // console.log(res)
             setScannerHistory(res?.data ?? []);
-            setRowCount(res?.dataCount ?? 0);
+            // setRowCount(res?.dataCount ?? 0);
         })
-        .catch((err) => toast.error("Api error something"));
+        .catch((err) => {
+            // console.error(err)
+            // TypeError: setRowCount is not a function
+            toast.error("Api error something")
+        });
     }
     function loadScannerDetail() {
         fetchData(`${process.env.backendUrl}api/scanners/${scannerId}?ui=true`)

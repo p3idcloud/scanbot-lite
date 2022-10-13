@@ -106,9 +106,7 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     onBlur={handleBlur}
                     placeholder="Name"
                   />
-                  <FormHelperText>
                       <Typography color="red">{errors.name}</Typography>
-                  </FormHelperText>
                 </FormGroup>
                 <FormGroup sx={{my: 2}}>
                   <InputField
@@ -121,9 +119,7 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     onBlur={handleBlur}
                     placeholder="Model"
                   />
-                  <FormHelperText>
                       <Typography color="red">{errors.model}</Typography>
-                  </FormHelperText>
                 </FormGroup>
                 <FormGroup sx={{my: 2}}>
                   <InputField

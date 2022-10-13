@@ -60,6 +60,7 @@ export default function Table({...props}) {
                     ))}
                 </TableBody>
                 <TableFooter>
+                    <TableRow>
                     <TablePagination
                         count={rowCount}
                         page={pageIndex-1}
@@ -67,6 +68,7 @@ export default function Table({...props}) {
                         rowsPerPage={rowsPerPage}
                         rowsPerPageOptions={[]}
                     />
+                    </TableRow>
                 </TableFooter>
             </MuiTable>
         </TableContainer>

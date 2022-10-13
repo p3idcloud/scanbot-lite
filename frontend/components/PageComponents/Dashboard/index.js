@@ -76,7 +76,7 @@ function Dashboard() {
         )}
 
         {scannerList?.map((scanner) => (
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6} key={pageIndex}>
             <ScannerListContainer 
               {...scanner} 
               setPageIndex={setPageIndex} 

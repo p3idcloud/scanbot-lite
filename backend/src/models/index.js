@@ -11,7 +11,6 @@ db.scanner = require('./scanner.model');
 db.job = require('./job.model');
 db.queue = require('./queue.model');
 db.scannersetting = require('./scannersetting.model');
-db.profiledefinition = require('./profiledefinition.model');
 db.scannersession = require('./scannersession.model');
 db.scannerstate = require('./scannerstate.model');
 db.scannerhistory = require('./scannerhistory.model');

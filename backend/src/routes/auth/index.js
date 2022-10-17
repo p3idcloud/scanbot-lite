@@ -6,7 +6,6 @@ var { serviceProvider } = require("../../lib/serviceProvider");
 var { identityProvider } = require("../../lib/identityProvider");
 var Cookies = require('cookies');
 var express = require('express');
-var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 var router = express.Router();
 

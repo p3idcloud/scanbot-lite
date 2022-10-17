@@ -4,7 +4,6 @@
 const ScannerStateService = require('../services/scannerstate');
 const accountService = require('../services/account');
 const ScannerService = require('../services/scanner');
-const ROLE_CONST = require("../constants/role");
 
 exports.getScannerStateFromQuery = async (req, res) => {
     const account = await accountService.getAccountFromId(req.twain.principalId);

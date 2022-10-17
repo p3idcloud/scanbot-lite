@@ -1,9 +1,6 @@
 'use strict';
 
 const scanner = require('../controllers/scanner.controller');
-const { getScannerDefault,
-    setScannerDefault
-} = require('../controllers/scanner.controller');
 var router = require('express').Router();
 
 /**
@@ -96,49 +93,6 @@ router.get('/', scanner.getScannersFromQuery); // read query
  *        description: Create scanner failure
  */
 router.post('/', scanner.insertScanner); // create
-
-/**
- * @swagger
- * /api/scanners/default:
- *  get:
- *    summary: Get user-account-linked default scanner
- *    description: Will return default scannerId
- *    security:
- *    - bearerAuth: []
- *    tags:
- *      - Scanners
- *    responses:
- *      200:
- *        description: Successfully get default scanner
- *      500:
- *        description: Get default scanner error
- */
-router.get('/default', getScannerDefault);
-
-/**
- * @swagger
- * /api/scanners/default/{scannerId}:
- *  get:
- *    summary: Update user-account-linked default scanner
- *    description: Will update default scannerId
- *    security:
- *    - bearerAuth: []
- *    tags:
- *      - Scanners
- *    parameters:
- *      - in: path
- *        name: scannerId
- *        schema:
- *          type: string
- *        required: true
- *        description: Scanner Id
- *    responses:
- *      200:
- *        description: Successfully updated default scannerId
- *      500:
- *        description: Get default scanner error
- */
-router.get('/default/:scannerId', setScannerDefault);
 
 /**
  * @swagger

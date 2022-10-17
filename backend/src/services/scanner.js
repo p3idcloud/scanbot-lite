@@ -1,5 +1,4 @@
 'use strict';
-const uuid = require('uuid')
 const mongo = require('../models')
 const Scanner = mongo.db.scanner
 const iot = require('../utils/iotClient')

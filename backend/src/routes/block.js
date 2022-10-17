@@ -61,23 +61,10 @@ router.post('/:scannerId/blocks', express.raw({type:'*/*',inflate:true, limit: '
     const url = await presignedGetObject(user.id, uri);
 
     //append url to scannerState
-    // scannerState.imageUrl.push(url);
-    // await updateScannerState(scannerState.scannerId, scannerState);
-    // the code above are unsafe
     const newScannerState = await pushInsertImageURI(scannerState.scannerId, url);
 
 
     return res.json(url)
-
-    //in case cannot pipe, this is technically bad
-    // const blockId = uuid.v4();
-    // const fileId = getFileId(req, blockId);
-    // const fileContent = req.body;
-
-    // logger.info(`saving file: ${fileId}`);  
-    // ensureDirectoryExistence(fileId)
-    // .then(() => writeFile(fileId, fileContent))
-    // .catch(next);
 });
 
 router.get('/:scannerId/blocks', block.blockGet);

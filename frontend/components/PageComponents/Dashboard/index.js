@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { fetchData } from "lib/fetch";
 import ScannerListContainer from "./ScannerListContainer";
 import Card from "components/Card";
+import CustomLoader from "components/Loader";
 
 function Dashboard() {
   const { scannerList, setScannerList } = useAccount();
@@ -21,7 +22,6 @@ function Dashboard() {
       refreshInterval: 5000
     }
   );
-
   useEffect(() => {
     if (data) {
       setScannerList(data?.data ?? []);
@@ -44,7 +44,7 @@ function Dashboard() {
           </Typography>
         </Grid>
 
-        {scannerList?.length === 0 && (
+        {scannerList?.length === 0 && data && (
           <Grid item xs={12} container display="flex" alignItems="center" justifyContent="center">
             <Card withpadding>
               <Typography 
@@ -75,8 +75,9 @@ function Dashboard() {
           </Grid>
         )}
 
-        {scannerList?.map((scanner) => (
-          <Grid item xs={12} md={6} key={pageIndex}>
+        {data ? (
+          scannerList?.map((scanner, index) => (
+          <Grid item xs={12} md={6} key={index}>
             <ScannerListContainer 
               {...scanner} 
               setPageIndex={setPageIndex} 
@@ -84,7 +85,11 @@ function Dashboard() {
               rowsPerPage={rowsPerPage} 
             />
           </Grid>
-        ))}
+        ))) : (
+          <Grid item xs={12}>
+            <CustomLoader message="Loading scanners" />
+          </Grid>
+        )}
 
         {scannerList.length > 0 && (
           <Grid item xs={12}>

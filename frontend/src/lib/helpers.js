@@ -17,6 +17,7 @@ export const getInitialName = name => {
 };
 
 export const capitalize = text => {
+  if (!text) return null;
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 

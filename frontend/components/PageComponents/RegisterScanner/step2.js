@@ -20,9 +20,11 @@ export default function Step2() {
             method: "POST",
             data: { registrationToken: registrationToken },
         })
-            .then(async (data) => {
+            .then((data) => {
                 setScannerData(data);
                 destroyCookie({}, authConstants.REGISTRATION_TOKEN, {path: '/'});
+                destroyCookie({}, authConstants.SESSION_TOKEN, { path: '/scanners' });
+                destroyCookie({}, authConstants.SESSION_TOKEN, { path: '/' });
                 setStep(3);
                 // console.log(data);
             })

@@ -1,6 +1,6 @@
 'use-strict';
 
-const {SESSION_TOKEN, CALLBACK_URL, CSRF_TOKEN} = require("./constants");
+const {SESSION_TOKEN, CALLBACK_URL, REGISTRATION_TOKEN} = require("./constants");
 
 var { serviceProvider } = require("../../lib/serviceProvider");
 var { identityProvider } = require("../../lib/identityProvider");
@@ -17,6 +17,11 @@ router.post('/signout', async (req, res) => {
 })
 
 router.get('/signin', async (req, res) => {
+    const cookies = new Cookies(req, res);
+
+    
+    var registrationToken = cookies.get(REGISTRATION_TOKEN);
+
     const createLoginRequestUrl = (identityProvider, options = {}) =>
         new Promise((resolve, reject) => {
             serviceProvider.create_login_request_url(
@@ -33,6 +38,9 @@ router.get('/signin', async (req, res) => {
 
     try {
         const loginUrl = await createLoginRequestUrl(identityProvider, { force_authn: true });
+        if (registrationToken !== "undefined") {
+            res.cookie(REGISTRATION_TOKEN, registrationToken, { httpOnly: true, sameSite: false });
+        }
         return res.redirect(loginUrl);
     } catch (error) {
         console.error(error);
@@ -41,11 +49,14 @@ router.get('/signin', async (req, res) => {
 })
 
 router.post('/signin', async (req, res, next) => {
-    const { registrationToken, ...samlBody } = req.body;
+    const { ...samlBody } = req.body;
+    const cookies = new Cookies(req, res);
+
+    var registrationToken = cookies.get(REGISTRATION_TOKEN);
 
     // pass in post variables
     res.locals.samlBody = samlBody;
-    if (registrationToken) {
+    if (registrationToken !== "undefined") {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}`
     } else {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}dashboard`;
@@ -89,6 +100,9 @@ router.post('/signin', async (req, res) => {
     var token = await jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: process.env.LOGIN_SESSION_DAY+'d'});
 
     //now set the session cookie
+    if (cookies.get(REGISTRATION_TOKEN)) {
+        cookies.set(REGISTRATION_TOKEN, null, {expires: Date.now(), httpOnly: true, sameSite: false});
+    }
     let expireCookie = new Date();
     expireCookie.setDate(expireCookie.getDate() + process.env.LOGIN_SESSION_DAY);
     if (redirectUrl.includes('register')){

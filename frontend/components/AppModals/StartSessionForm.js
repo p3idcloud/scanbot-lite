@@ -22,8 +22,8 @@ const StartSessionForm = ({ open, close }) => {
     privetToken, 
     scannerId,
     setSessionId,
-    setScannerHistory,
-    setStatusClaim
+    setStatusClaim,
+    loadScannerHistory
   } = useScanner();
 
   const initialValues = {
@@ -33,7 +33,6 @@ const StartSessionForm = ({ open, close }) => {
   
   const handleSaveForm = () => {
     setStatusClaim(true);
-    handleOpenForm();
   };
 
   const handleSubmit = (e) => {
@@ -62,16 +61,7 @@ const StartSessionForm = ({ open, close }) => {
         handleSaveForm();
       })
       .then(() => {
-        fetchData(`${process.env.backendUrl}api/scanners/history`, {
-          headers,
-          params: {
-            scannerId,
-            sort: "-createdAt",
-            page: 1,
-          },
-        })
-          .then((res) => setScannerHistory(res?.data ?? []))
-          .catch((err) => {});
+        loadScannerHistory();
       })
       .catch(() => {
         toast.error("Scanner offline, please check your scanner");

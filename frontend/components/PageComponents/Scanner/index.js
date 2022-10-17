@@ -1,15 +1,13 @@
 // import CustomLoader from "components/Loader";
 import { ScannerContext, ScannerProvider } from "lib/contexts/scannerContext";
 import dynamic from "next/dynamic";
-// import ScannerConfig from "./ScannerConfig";
-// import ScannerStatus from "./ScannerStatus";
-// import ScanAnalytics from "./ScanAnalytics";
 import Header from "components/Header";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import { TbSettings } from "react-icons/tb";
 import CustomLoader from "components/Loader";
 import Card from "components/Card";
+import Link from "next/link";
 
 const AdvancedSettingForm = dynamic(() => import("components/AppModals/AdvancedSettingForm"), {ssr: false});
 const StateBox = dynamic(() => import("./StateBox/"), {ssr: false});
@@ -49,7 +47,7 @@ export default function Scanner() {
 
     const titleHeader = (
         <>
-            <span style={{color: "#673AB7"}}>Scanner</span> <span style={{color: '#848484'}}>/ Detail Scanner</span>
+            <Link href='/dashboard'><a style={{color: "#673AB7", textDecoration: 'none'}}>Scanner</a></Link> <span style={{color: '#848484'}}>/ Detail Scanner</span>
         </>
     )
     
@@ -124,64 +122,6 @@ export default function Scanner() {
                             open={advancedSettingOpen}
                             close={()=>setAdvancedSettingOpen(false)}
                         />
-                        {/* {value.statusClaim && (
-                            <GridContainer>
-                                <GridItem xs={12} sm={5}>
-                                    <ScannerStatus />
-                                </GridItem>
-
-                                <GridItem xs={12} sm={7}>
-                                    <StartCapture />
-                                </GridItem>
-                            </GridContainer>
-                        )}
-
-                        <GridContainer>
-                            <GridItem xs={12} xl={7}>
-                                {value.statusClaim && (
-                                    <Card>
-                                        <CardHeader color='info'>
-                                            <h2>Scanner Config</h2>
-                                        </CardHeader>
-                                        <CardBody>
-                                            <ScannerConfig />
-                                        </CardBody>
-                                    </Card>
-                                )}
-                            </GridItem>
-                            <GridItem xs={12} xl={5}>
-                                {value.loadingCapture && !value.files?.length && (
-                                    <CustomLoader message="Loading Capture" />
-                                )}
-                                {value.startCapture && value.statusClaim && value.files?.length > 0 && (
-                                    <PdfViewer files={value.files} newScan />
-                                )}
-                            </GridItem>
-                        </GridContainer>
-                        
-                        {!value.statusClaim && (
-                            <>
-                                <GridContainer>
-                                    <GridItem xs={12} sm={5}>
-                                        <ScannerStatus />
-                                    </GridItem>
-                                    <GridItem xs={12} sm={7}>
-                                        <ScannerProfile />
-                                    </GridItem>
-                                </GridContainer>
-
-                                <GridContainer>
-                                    <GridItem xs={12} lg={5}>
-                                        <ScanAnalytics />
-                                    </GridItem>
-
-                                    <GridItem xs={12} lg={7}>
-                                        <ScannerHistory />
-                                    </GridItem>
-                                </GridContainer>
-                            </>
-                        )} */}
-
                     </>
                 )}
             </ScannerContext.Consumer>

@@ -18,9 +18,12 @@ export async function getServerSideProps(ctx) {
     // destroyCookie(ctx, authConstants.CSRF_TOKEN,{
     //     path: '/'
     // });
-    setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
-        path: '/'
-    });
+    if (registrationToken) {
+        setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
+            path: '/',
+            sameSite: 'lax'
+        });
+    }
 
     // Check if user is authorized
     const token = parseCookies(ctx)[authConstants.SESSION_TOKEN];

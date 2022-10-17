@@ -8,7 +8,6 @@ const accountService = require("../services/account")
 const scannerHistoryService = require("../services/scannerhistory")
 const ROLE_CONST = require("../constants/role")
 const {getScannerStateFromScannerId, updateScannerState, resetScannerState} = require("../services/scannerstate");
-const {SYSTEMADMIN} = require("../constants/role");
 const { getScannerDefaultFromUserAccountID,
     updateScannerDefaultFromUserAccountId
 } = require('../services/scannerdefault');

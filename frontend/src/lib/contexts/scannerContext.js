@@ -18,6 +18,7 @@ export const ScannerProvider = ({children}) => {
     const [privetToken, setPrivetToken] = useState(0);
     const [scannerSettings, setScannerSettings] = useState([]);
     const [scannerHistory, setScannerHistory] = useState([]);
+    const [scanHistoryRowCount, setScanHistoryRowCount] = useState(0);
     const [detailScanner, setDetailScanner] = useState(null);
     const [statusPoll, setStatusPoll] = useState(null);
     const [infoexStatus, setInfoexStatus] = useState(false);
@@ -39,6 +40,7 @@ export const ScannerProvider = ({children}) => {
     const [sessionId, setSessionId] = useState(0);
     const [files, setFiles] = useState([]);
     const [loadingCapture, setLoadingCapture] = useState(false);
+    const [scanHistoryPageIndex, setScanHistoryPageIndex] = useState(1);
 
     const router = useRouter();
     const { scannerId } = router?.query;
@@ -140,20 +142,23 @@ export const ScannerProvider = ({children}) => {
         }
     }
 
-    function loadScannerHistory(page = 1, rowsPerPage = 5/* , setRowCount = (_) => {} */) {
+    function loadScannerHistory(page = 1, rowsPerPage = 5) {
+        if (page !== scanHistoryPageIndex) {
+            setScanHistoryPageIndex(page);
+        }
         fetchData(`${process.env.backendUrl}api/scanners/history`, {
-        headers,
-        params: {
-            scannerId,
-            limit: rowsPerPage,
-            sort: "-createdAt",
-            page,
-        },
+            headers,
+            params: {
+                scannerId,
+                limit: rowsPerPage,
+                sort: "-createdAt",
+                page,
+            },
         })
         .then((res) => {
             // console.log(res)
             setScannerHistory(res?.data ?? []);
-            // setRowCount(res?.dataCount ?? 0);
+            setScanHistoryRowCount(res?.dataCount ?? 0);
         })
         .catch((err) => {
             // console.error(err)
@@ -175,6 +180,7 @@ export const ScannerProvider = ({children}) => {
     return (
         <ScannerContext.Provider
             value={{
+                scanHistoryRowCount,
                 scannerSettings,
                 setScannerSettings,
                 scannerHistory,
@@ -216,7 +222,9 @@ export const ScannerProvider = ({children}) => {
                 setFormSetting,
                 isChange,
                 setIsChange,
-                resetStatusClaimStates
+                resetStatusClaimStates,
+                scanHistoryPageIndex,
+                setScanHistoryPageIndex
             }}
         >
         {children}
@@ -275,6 +283,7 @@ export const ScannerProvider = ({children}) => {
 
 export const useScanner = () => {
     const {
+        scanHistoryRowCount,
         scannerSettings,
         setScannerSettings,
         scannerHistory,
@@ -316,10 +325,13 @@ export const useScanner = () => {
         setFormSetting,
         isChange,
         setIsChange,
-        resetStatusClaimStates
+        resetStatusClaimStates,
+        scanHistoryPageIndex,
+        setScanHistoryPageIndex
     } = useContext(ScannerContext);
 
     return {
+        scanHistoryRowCount,
         scannerSettings,
         setScannerSettings,
         scannerHistory,
@@ -361,6 +373,8 @@ export const useScanner = () => {
         setFormSetting,
         isChange,
         setIsChange,
-        resetStatusClaimStates
+        resetStatusClaimStates,
+        scanHistoryPageIndex,
+        setScanHistoryPageIndex
     };
 }

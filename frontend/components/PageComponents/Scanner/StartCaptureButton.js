@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { parseCookies } from "nookies";
 import { useScanner } from "lib/contexts/scannerContext";
 import { fetchData } from "lib/fetch";
 import { capitalize } from "lib/helpers";
 import Button from "components/Button";
 import { RiLoaderLine, RiPrinterLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 export default function StartCaptureButton() {
     const {
@@ -18,7 +19,6 @@ export default function StartCaptureButton() {
     } = useScanner();
 
     const [loading, setLoading] = useState(false);
-
     const handleCapture = () => {
         setLoading(true);
         const data = {

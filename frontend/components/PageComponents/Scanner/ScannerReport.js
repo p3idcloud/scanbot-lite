@@ -8,19 +8,22 @@ import useSWR from "swr";
 export default function ScannerReport({...props}) {
     const { open } = props;
 
-    const { scannerId } = useScanner();
+    const { scannerId, loadScannerHistory } = useScanner();
     
     //analytic
     const [totalScan, setTotalScan] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const { data: dataReport, error: errorReport } = useSWR(
         `${process.env.backendUrl}api/scanners/${scannerId}/analytic`,
-        fetchData
+        fetchData, {
+            refreshInterval: 1000
+        }
     );
     useEffect(() => {
         if (dataReport) {
-          setTotalScan(dataReport?.totalScan);
-          setTotalPage(dataReport?.totalPageScan);
+            loadScannerHistory();
+            setTotalScan(dataReport?.totalScan);
+            setTotalPage(dataReport?.totalPageScan);
         }
     }, [dataReport]);
 

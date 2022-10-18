@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select as SelectMUI } from '@mui/material';
+import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select as SelectMUI, Tooltip } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
@@ -53,7 +53,13 @@ const Select = ({ value, onChange, lists, label, helperText, control, error, dis
               sx={{ padding: 2, fontSize: 14 }}
               onClick={() => handleChangeValue(item)}
             >
-              {item?.label}
+              {item.description ? (
+                <Tooltip title={item.description} placement="left" sx={{margin: -2, padding: 2}}>
+                  <Box width={1} height={1}>{item?.label}</Box>
+                </Tooltip>
+              ) : (
+                item?.label
+              )}
             </MenuItem>
           );
         })}

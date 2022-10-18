@@ -8,6 +8,8 @@ import { fetchData } from 'lib/fetch';
 import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
 import { RiAddCircleLine } from 'react-icons/ri';
+import { scannerSettings } from 'constants/scannerSettings';
+
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
     
@@ -20,8 +22,25 @@ const AdvancedSettingForm = ({ open, close }) => {
         listScannerSettings,
     } = useScanner();
 
-    const sendConfig = () => {
-        setLoading(true);
+    const sendConfig = (e) => {
+        const data = {
+            commandId: '0192f284-6914-4c12-aa46-9c6554ae3219', // generate uuidv4 ?
+            kind: 'twainlocalscanner',
+            method: 'sendTask',
+            params: {
+                sessionId: '2f948fed-b8c7-4a73-9d26-6f7fd5d57276', // get from ctx / cookie ?
+                task: { actions: [{ action: 'configure', streams: [{ sources: [{ pixelFormats: [
+                    {
+                        pixelFormat: e.pixelFormat, // get value for pixelFormat
+                        attributes: [
+                            { attribute: 'numberOfSheets', values: [{ value: e.numberOfSheets }] }, // get value for numberOfSheets
+                            { attribute: 'resolution', values: [{ value: e.resolution }] }, // get value for resolution
+                        ]
+                    }
+                ] }] }] }] },
+            },
+        };
+        // setLoading(true);
         // fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
         // method: "PATCH",
         // data,
@@ -37,7 +56,7 @@ const AdvancedSettingForm = ({ open, close }) => {
         // });
     };
 
-    const getConfigValues = () => {
+     /* const getConfigValues = () => {
         if (listScannerSettings) {
             let configFields = [...listScannerSettings];
             configFields.forEach((config) => {
@@ -54,7 +73,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             return configFields;
         }
         return [];
-    }
+    } */
     
     return (
         <Modal
@@ -109,7 +128,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                         }}
                     />
                 </FormGroup>
-                {getConfigValues().map((data, i) => (
+                {scannerSettings.map((data, i) => (
                     <Grid container key={i} my={2} width={1}>
                         <Grid item xs={12} mb={2}>
                             <Typography 
@@ -117,35 +136,36 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 fontWeight={400} 
                                 sx={{color: '#747474'}}
                             >
-                                {data.labelName}
+                                {data.name}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
-                            {data?.currentValue ? (
-                                    <FormGroup>
-                                        <Select
-                                            onChange={(e) =>
-                                                handleChangeTag(e.target.value, i)
-                                            }
-                                            lists={data?.possibleValues?.map(possibleValue => ({
-                                                label: possibleValue.value,
-                                                description: possibleValue.description,
-                                                value: possibleValue.value
-                                            }))}
-                                            value={data?.currentValue?.selectValue}
-                                        />
-                                    </FormGroup>
-                            ) : null}
+                            <FormGroup>
+                                <Select
+                                    onChange={(e) =>
+                                        handleChangeTag(e.target.value, i)
+                                    }
+                                    lists={data.values.map(possibleValue => ({
+                                        label: possibleValue.value,
+                                        description: possibleValue.description,
+                                        value: possibleValue.value
+                                    }))}
+                                    value={data.defaultValue}
+                                />
+                            </FormGroup>
                         </Grid>
+                        {data.hasInt && (
                         <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
                             <InputField
                                 fullWidth
-                                value={data?.currentValue?.inputValue}
+                                placeholder={data.placeholder}
+                                value={data.defaultInt}
                                 onChange={(e) =>
                                     setConfigValue(e.target.value, i)
                                 }
                             />
                         </Grid>
+                        )}
                     </Grid>
                 ))}
                 

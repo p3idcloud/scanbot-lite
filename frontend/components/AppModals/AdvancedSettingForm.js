@@ -1,161 +1,156 @@
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
-import * as Yup from "yup";
-import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
-import { Formik, Form } from 'formik';
+import { Box, Typography, FormGroup, Divider, Grid } from '@mui/material';
 import { useState } from 'react';
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
-import { mutate } from 'swr';
 import { useScanner } from 'lib/contexts/scannerContext';
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required("required"),
-  model: Yup.string().required("required")
-});
-
+import Select from 'components/Select';
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
     
-    const { 
-        listProfileScanner,
-        profileSelect,
-        setProfileSelect,
+    const {
         setListScannerSettings,
         formSetting,
         setFormSetting,
-        setSaveProfile,
         isChange,
         setIsChange,
         listScannerSettings,
     } = useScanner();
 
-    const initialValues = {
-        name: "",
-        model: "",
-        description: ""
+    const sendConfig = () => {
+        setLoading(true);
+        // fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
+        // method: "PATCH",
+        // data,
+        // })
+        // .then((res) => {
+        // })
+        // .catch(() => {
+        //     toast.error("Failed to save setting");
+        // })
+        // .finally(() => {
+        //     setLoading(false);
+        //     close();
+        // });
     };
 
-    const handleSubmit = (e) => {
-        setLoading(true);
-        const data = {
-            name: e.name,
-            model: e.model,
-            description: e.description
+    const getConfigValues = () => {
+        if (listScannerSettings) {
+            let configFields = [...listScannerSettings];
+            configFields.forEach((config) => {
+            let tag = "input";
+            console.log(config);
+            const possibleValues = config.possibleValues.map((pv) => pv.value);
+            let tagValue = possibleValues[0];
+            config.currentValue = [
+                {
+                    id: profile.value,
+                    text: profile.value,
+                    tagValue,
+                    tag,
+                },
+            ];
+            });
+          return configFields;
         }
-        fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
-        method: "PATCH",
-        data,
-        })
-        .then((res) => {
-        })
-        .catch(() => {
-            toast.error("Failed to save setting");
-        })
-        .finally(() => {
-            setLoading(false);
-            close();
-        });
-    };
+        return [];
+    }
     
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-        >
-        {({ values, errors, touched, handleChange, handleBlur, submitForm }) => {
-            return (
-            <Modal
-                open={open}
-                customBodyFooter={
-                <>
-                    <Button
-                    onClick={() => {
-                        close();
-                    }}
-                    variant="outlined"
-                    color="primaryBlack"
+        <Modal
+            open={open}
+            customBodyFooter={
+            <>
+                <Button
+                onClick={() => {
+                    close();
+                }}
+                variant="outlined"
+                color="primaryBlack"
+                autoWidth
+                size="medium"
+                >
+                Cancel
+                </Button>
+                <Button
+                onClick={sendConfig}
+                    variant="contained"
                     autoWidth
                     size="medium"
-                    >
-                    Cancel
-                    </Button>
-                    <Button
-                    onClick={submitForm}
-                        variant="contained"
-                        autoWidth
-                        size="medium"
-                        loading={loading}
-                    >
-                    Save
-                    </Button>
-                </>
-                }
-            >
-                <Box
-                    display='flex'
-                    padding={4}
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    width={1}
+                    loading={loading}
                 >
-                <Form style={{width: '100%'}}>
-                    <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
-                        Advanced Settings
-                    </Typography>
-                    <Divider sx={{my: 4}}/>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Name"
-                        fullWidth
-                        id='name'
-                        defaultValue={initialValues.name}
-                        aria-invalid={Boolean(touched.name && errors.name)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Name"
-                    />
-                        <Typography color="red">{errors.name}</Typography>
-                    </FormGroup>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Model"
-                        fullWidth
-                        id='model'
-                        defaultValue={initialValues.model}
-                        aria-invalid={Boolean(touched.model && errors.model)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Model"
-                    />
-                        <Typography color="red">{errors.model}</Typography>
-                    </FormGroup>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Description"
-                        variant="outlined"
-                        id="description"
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        aria-invalid={Boolean(
-                            touched.description && errors.description
-                        )}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.description}
-                        placeholder="Description"
-                    />
-                    </FormGroup>
-                </Form>
-                </Box>
-            </Modal>
-            );
-        }}
-        </Formik>
+                Save
+                </Button>
+            </>
+            }
+        >
+            <Box
+                display='flex'
+                padding={4}
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                width={1}
+            >
+            <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
+                Advanced Settings
+            </Typography>
+            <Divider sx={{my: 4}}/>
+            <FormGroup sx={{my: 2}}>
+                <Select
+                    label="Scan Profile"
+                    value={"Default"}
+                    lists={[{
+                        label: "Default",
+                        value: "Default"
+                    }]}
+                    onChange={e => {
+                        console.log(e?.target?.value)
+                    }}
+                />
+            </FormGroup>
+            {getConfigValues().map((data, i) => (
+                <Grid container key={i} p={0} m={0}>
+                    <Grid item xs={12} sm={6}>
+                        {data?.currentValue ? (
+                            <>
+                                <Typography 
+                                    fontSize='14px' 
+                                    fontWeight={400} 
+                                    sx={{color: '#747474'}}
+                                >
+                                    {data.labelName}
+                                </Typography>
+                                <FormGroup sx={{my: 2}}>
+                                    <Select
+                                        onChange={(e) =>
+                                            handleChangeTag(e.target.value, i)
+                                        }
+                                        value={data.possibleValues[0].value}
+                                    >
+                                        {data.possibleValues.map((pv) => (
+                                        <MenuItem value={pv.value}>
+                                            {pv.value}
+                                        </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormGroup>
+                                <InputField
+                                    fullWidth
+                                    value={data?.currentValue}
+                                    onChange={(e) =>
+                                        setConfigValue(e.target.value, i)
+                                }
+                                />
+                            </>
+                        ) : null}
+                    </Grid>
+                </Grid>
+            ))}
+            </Box>
+        </Modal>
     );
 };
 

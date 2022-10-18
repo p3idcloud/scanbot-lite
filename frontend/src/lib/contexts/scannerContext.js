@@ -25,16 +25,12 @@ export const ScannerProvider = ({children}) => {
     const [loadingInfoex, setLoadingInfoex] = useState(false);
     const [statusScanner, setStatusScanner] = useState(true);
     const [usedBy, setUsedBy] = useState(null);
-    const [profileSelect, setProfileSelect] = useState(null);
-    const [listProfileScanner, setListProfileScanner] = useState([]);
     const [listScannerSettings, setListScannerSettings] = useState([]);
     const [openScanProfile, setOpenScanProfile] = useState(false);
-    const [openSaveProfile, setSaveProfile] = useState(false);
     const [formSetting, setFormSetting] = useState({});
     const [isChange, setIsChange] = useState(false);    
     const [statusClaim, setStatusClaim] = useState(false);
     const [startCapture, setStartCapture] = useState(false);
-    const [successUpload, setSuccessUpload] = useState(false);
     const [closeCloud, setCloseCloud] = useState(() => {});
     const [requestId, setRequestId] = useState(uuid.v4());
     const [sessionId, setSessionId] = useState(0);
@@ -162,7 +158,6 @@ export const ScannerProvider = ({children}) => {
         })
         .catch((err) => {
             // console.error(err)
-            // TypeError: setRowCount is not a function
             toast.error("Api error something")
         });
     }
@@ -208,16 +203,10 @@ export const ScannerProvider = ({children}) => {
                 setStatusClaim,
                 closeCloud,
                 setCloseCloud,
-                profileSelect, 
-                setProfileSelect,
-                listProfileScanner,
-                setListProfileScanner,
                 listScannerSettings,
                 setListScannerSettings,
                 openScanProfile,
                 setOpenScanProfile,
-                openSaveProfile,
-                setSaveProfile,
                 formSetting,
                 setFormSetting,
                 isChange,
@@ -311,16 +300,10 @@ export const useScanner = () => {
         setStatusClaim,
         closeCloud,
         setCloseCloud,
-        profileSelect, 
-        setProfileSelect,
-        listProfileScanner,
-        setListProfileScanner,
         listScannerSettings,
         setListScannerSettings,
         openScanProfile,
         setOpenScanProfile,
-        openSaveProfile,
-        setSaveProfile,
         formSetting,
         setFormSetting,
         isChange,
@@ -359,16 +342,10 @@ export const useScanner = () => {
         setStatusClaim,
         closeCloud,
         setCloseCloud,
-        profileSelect, 
-        setProfileSelect,
-        listProfileScanner,
-        setListProfileScanner,
         listScannerSettings,
         setListScannerSettings,
         openScanProfile,
         setOpenScanProfile,
-        openSaveProfile,
-        setSaveProfile,
         formSetting,
         setFormSetting,
         isChange,

@@ -62,7 +62,7 @@ export default function Scanner() {
                             component={headerComponent}
                             children={(
                                 <Grid container spacing={3} mt={0}>
-                                    {value.statusClaim && (
+                                    {!value.statusClaim && (
                                         <Grid 
                                             item 
                                             xs={12} 

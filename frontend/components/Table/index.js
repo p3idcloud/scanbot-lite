@@ -79,6 +79,8 @@ export default function Table({...props}) {
                         onPageChange={handlePageIndexChange}
                         rowsPerPage={rowsPerPage}
                         rowsPerPageOptions={[]}
+                        showFirstButton
+                        showLastButton
                     />
                     </TableRow>
                 </TableFooter>

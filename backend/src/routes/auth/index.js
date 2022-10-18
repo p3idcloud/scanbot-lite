@@ -56,7 +56,7 @@ router.post('/signin', async (req, res, next) => {
     // pass in post variables
     res.locals.samlBody = samlBody;
     if (registrationToken !== "undefined") {
-        res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}`
+        res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
     } else {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}dashboard`;
     }

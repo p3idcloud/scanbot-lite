@@ -101,6 +101,8 @@ function Dashboard() {
                 onPageChange={handlePageIndexChange}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[]}
+                showFirstButton
+                showLastButton
             />
           </Grid>
         )}

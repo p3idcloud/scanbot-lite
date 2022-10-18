@@ -8,34 +8,32 @@ export default ({...props}) => <RegisterProvider {...props} >
     </RegisterProvider>;
 
 export async function getServerSideProps(ctx) {
-    const { registrationToken } = ctx.query;
-    // destroyCookie(ctx, authConstants.CALLBACK_URL, {
-    //     path: '/'
-    // });
-    // destroyCookie(ctx, authConstants.SESSION_TOKEN,{
-    //     path: '/'
-    // });
-    // destroyCookie(ctx, authConstants.CSRF_TOKEN,{
-    //     path: '/'
-    // });
+    const { registrationToken, callback } = ctx.query;
+
+    var token = parseCookies(ctx)[authConstants.SESSION_TOKEN];
+
+    if (typeof callback === 'undefined') {
+        destroyCookie(ctx, authConstants.SESSION_TOKEN,{
+            path: '/'
+        });
+        token = null;
+    }
     if (registrationToken) {
         setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
             path: '/',
             sameSite: 'lax'
         });
     }
-
-    // Check if user is authorized
-    const token = parseCookies(ctx)[authConstants.SESSION_TOKEN];
-    const { verified } = await fetch(`${process.env.backendUrl}api/auth/verify`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({token: token})
-    }).then(res => res.json());
     
     if (token) {
+        // Check if user is authorized
+        const { verified } = await fetch(`${process.env.backendUrl}api/auth/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({token: token})
+        }).then(res => res.json());
         return {
             props: {
                 user: verified
@@ -44,6 +42,8 @@ export async function getServerSideProps(ctx) {
     }
 
     return {
-        props: {}
+        props: {
+            user: false
+        }
     };
 }

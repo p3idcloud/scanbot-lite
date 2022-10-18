@@ -60,9 +60,14 @@ export default function ScannerListContaner({...props}) {
         )
         .then(res => {
             setPageIndex(1);
-            mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`);
-            setLoadingRemove(false);
-            setRemoveScanner(false);
+            mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
+                .then(() => {
+                    setLoadingRemove(false);
+                    setRemoveScanner(false);
+                }, () => {
+                    setLoadingRemove(false);
+                    setRemoveScanner(false);
+                });
         })
         .catch(err => {
             toast.error('Failed to delete scanner');

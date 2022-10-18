@@ -18,6 +18,7 @@ import { useAccount } from 'lib/contexts/accountContext';
 import TitleLogo from 'components/TitleLogo';
 import SettingsIcon from 'components/SettingsIcon';
 import Logout from 'components/AppModals/Logout';
+import Link from 'next/link';
 
 const HeaderMain = () => {
   const refLeftNav = useRef();
@@ -41,7 +42,9 @@ const HeaderMain = () => {
         <Header container>
           <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
             <Logo>
-              <TitleLogo />
+              <Link href="/dashboard">
+                <TitleLogo component="a" sx={{'&:hover': {cursor: 'pointer'}}}/>
+              </Link>
             </Logo>
           </Grid>
           <Grid item xs={5} display="flex" justifyContent="end">

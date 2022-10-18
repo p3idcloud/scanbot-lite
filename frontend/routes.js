@@ -3,7 +3,6 @@ export const getRouteTitle = (path) => {
     case '/dashboard':
       return 'Scanbot Dashboard';
     case '/api/auth/login/saml':
-    case '/api/auth/bypass/saml':
       return 'Scanbot Login';
     case '/api/auth/logout/saml':
       return 'Scanbot Logout';

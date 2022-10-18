@@ -1,4 +1,4 @@
-import { Stack, Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, Modal } from "@mui/material";
 import { useScanner } from "lib/contexts/scannerContext";
 import { useEffect, useState } from "react";
 
@@ -11,6 +11,12 @@ import { RiDeleteBin4Line, RiFilePdfLine } from "react-icons/ri";
 import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import { toast } from "react-toastify";
 import ScanPdfView from "components/AppModals/ScanPdfView";
+import { parseCookies } from "nookies";
+import { authConstants } from "constants/auth";
+import Card from "components/Card";
+import dynamic from "next/dynamic";
+
+const CustomLoader = dynamic(() => import("components/Loader"))
 
 export default function ScannerHistory({...props}) {
     const { open } = props;
@@ -22,6 +28,8 @@ export default function ScannerHistory({...props}) {
         scanHistoryPageIndex, 
         setScanHistoryPageIndex
     } = useScanner();
+
+    const [loadingPdf, setLoadingPdf] = useState(false);
     
     const rowsPerPage = 5;
     const [loadingPageIndex, setLoadingPageIndex] = useState(true);
@@ -35,10 +43,15 @@ export default function ScannerHistory({...props}) {
             `${process.env.backendUrl}api/scanners/history/${deleteHistory.id}`, 
             { method: "DELETE" }
         ).then(res => {
-            setLoadingDelete(false);
             loadScannerHistory(scanHistoryPageIndex, rowsPerPage);
-            mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`);
-            setDeleteHistory(null);
+            mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`)
+                .then(() =>{
+                    setLoadingDelete(false);
+                    setDeleteHistory(null);
+                }, () =>{
+                    setLoadingDelete(false);
+                    setDeleteHistory(null);
+                });
         }).catch(err => {
             setLoadingDelete(false);
             toast.error('Failed to delete history');
@@ -47,11 +60,28 @@ export default function ScannerHistory({...props}) {
 
     const [historyPdf, setHistoryPdf] = useState(null);
 
+    const fetchPdf = (url) => {
+        return fetch(url, {
+            headers: {
+            'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
+            },
+            method: 'GET'
+        })
+        .then((res) => res.blob())
+        .then((pdfData) => new Blob([pdfData], {type: 'application/pdf'}));
+    }
+
     const getPdf = (id, name) => {
+        setLoadingPdf(true);
         fetchData(`${process.env.backendUrl}api/scanners/history/${id}`)
-        .then(data => {
+        .then(async data => {
+            const pdfBlobs = await Promise.all(data?.url.map(url => 
+                fetchPdf(url)
+            ));
+            const urls = pdfBlobs.map(blob => URL.createObjectURL(blob));
+            setLoadingPdf(false);
             setHistoryPdf({
-                url: data?.url,
+                url: urls,
                 name: name
             });
         })
@@ -140,6 +170,25 @@ export default function ScannerHistory({...props}) {
                 name={historyPdf?.name}
                 files={historyPdf?.url}
             />
+            
+            <Modal open={loadingPdf}>
+                <Box 
+                    display='flex' 
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Card withpadding>
+                        <CustomLoader message="Fetching pdf files" />
+                    </Card>
+                </Box>
+            </Modal>
         </>
     )
 }

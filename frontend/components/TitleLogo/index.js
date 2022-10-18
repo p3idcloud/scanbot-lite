@@ -2,9 +2,9 @@ import { Stack } from "@mui/material";
 import Image from "next/image";
 import { Title } from "./style";
 
-export default function TitleLogo() {
+export default function TitleLogo({...props}) {
     return (
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2} alignItems="center" {...props}>
             <Image 
                 src="/logo.png"
                 width={30}

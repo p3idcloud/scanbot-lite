@@ -9,6 +9,7 @@ import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
 import { RiAddCircleLine } from 'react-icons/ri';
 import { scannerSettings } from 'constants/scannerSettings';
+import { parseCookies } from 'nookies';
 
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
@@ -16,6 +17,9 @@ const AdvancedSettingForm = ({ open, close }) => {
     const {
         setListScannerSettings,
         formSetting,
+        requestId,
+        scannerId,
+        privetToken,
         setFormSetting,
         isChange,
         setIsChange,
@@ -23,40 +27,54 @@ const AdvancedSettingForm = ({ open, close }) => {
     } = useScanner();
 
     const sendConfig = (e) => {
+        setLoading(true);
+        const task = { 
+            actions: [{ 
+                action: 'configure', 
+                streams: [{ 
+                    sources: [{ 
+                        pixelFormats: [{
+                            pixelFormat: e.pixelFormat, // get value for pixelFormat
+                            attributes: [
+                                { attribute: 'numberOfSheets', values: [{ value: e.numberOfSheets }] }, // get value for numberOfSheets
+                                { attribute: 'resolution', values: [{ value: e.resolution }] }, // get value for resolution
+                            ]
+                        }] 
+                    }] 
+                }] 
+            }] 
+        };
         const data = {
-            commandId: '0192f284-6914-4c12-aa46-9c6554ae3219', // generate uuidv4 ?
+            commandId: requestId,
             kind: 'twainlocalscanner',
             method: 'sendTask',
-            params: {
-                sessionId: '2f948fed-b8c7-4a73-9d26-6f7fd5d57276', // get from ctx / cookie ?
-                task: { actions: [{ action: 'configure', streams: [{ sources: [{ pixelFormats: [
-                    {
-                        pixelFormat: e.pixelFormat, // get value for pixelFormat
-                        attributes: [
-                            { attribute: 'numberOfSheets', values: [{ value: e.numberOfSheets }] }, // get value for numberOfSheets
-                            { attribute: 'resolution', values: [{ value: e.resolution }] }, // get value for resolution
-                        ]
-                    }
-                ] }] }] }] },
-            },
-        };
-        // setLoading(true);
-        // fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
-        // method: "PATCH",
-        // data,
-        // })
-        // .then((res) => {
-        // })
-        // .catch(() => {
-        //     toast.error("Failed to save setting");
-        // })
-        // .finally(() => {
-        //     setLoading(false);
-        //     close();
-        // });
+            params : {
+                sessionId: parseCookies({})["sessionId"],
+                task,
+            }
+        }
+        const headers = {
+            "x-twain-cloud-request-id": requestId,
+            "x-privet-token": privetToken,
+        }
+        fetchData(`/api/scanners/${scannerId}/twaindirect/session`, {
+            headers,
+            method: "POST",
+            data,
+        })
+        .then((res) => {
+            toast.success("Successfully saved setting for session")
+        })
+        .catch(() => {
+            toast.error("Failed to save setting for session");
+        })
+        .finally(() => {
+            setLoading(false);
+            close();
+        });
     };
 
-     /* const getConfigValues = () => {
+    const getConfigValues = () => {
         if (listScannerSettings) {
             let configFields = [...listScannerSettings];
             configFields.forEach((config) => {
@@ -73,7 +91,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             return configFields;
         }
         return [];
-    } */
+    }
     
     return (
         <Modal
@@ -168,16 +186,6 @@ const AdvancedSettingForm = ({ open, close }) => {
                         )}
                     </Grid>
                 ))}
-                
-                <Grid container>
-                    <Grid item xs={12}>
-                        <Tooltip title="Add Config">
-                            <IconButton>
-                                <RiAddCircleLine size={20} />
-                            </IconButton>
-                        </Tooltip>
-                    </Grid>
-                </Grid>
             </Box>
         </Modal>
     );

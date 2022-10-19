@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, TablePagination, Typography } from "@mui/material";
+import { Box, Container, Grid, TablePagination, Typography } from "@mui/material";
 import { useAccount } from "lib/contexts/accountContext";
 import useSWR from "swr";
 import { fetchData } from "lib/fetch";
 import ScannerListContainer from "./ScannerListContainer";
 import Card from "components/Card";
 import CustomLoader from "components/Loader";
+import { TbSettings } from "react-icons/tb";
+import Link from "next/link";
 
 function Dashboard() {
   const { scannerList, setScannerList } = useAccount();
@@ -32,16 +34,35 @@ function Dashboard() {
   return (
     <Container>
       <Grid container sx={{ padding: '30px 0' }} spacing={2}>
-        <Grid item xs={12} display="flex" alignItems="center">
-            <Typography sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
+        <Grid item xs={12} sm={6} display="flex" alignItems="center">
+          <Box>
+            <Typography mb={2} sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
               Scanner List
             </Typography>
+            <Typography sx={{ fontWeight: 500, fontSize: '16px', lineHeight: '19px', color: '#190D29' }}>
+              List of connected scanners
+            </Typography>
+          </Box>
         </Grid>
-          
-        <Grid item xs={12} display="flex" alignItems="center">
-          <Typography sx={{ fontWeight: 500, fontSize: '16px', lineHeight: '19px', color: '#190D29' }}>
-            List of connected scanners
-          </Typography>
+
+        <Grid item xs={12} sm={6} display="flex" alignItems="center" justifyContent='end'>
+          <Link href="/setting">
+              <Box 
+                component="a" 
+                display='flex' 
+                alignItems='center'
+                sx={{
+                    '&:hover': {
+                        cursor: 'pointer'
+                    }
+                }}
+              >
+                <TbSettings size={22} style={{marginRight: 10}} />
+                <Typography fontWeight={600} fontSize='16px'>
+                    Global Setting
+                </Typography>
+              </Box>
+          </Link>
         </Grid>
 
         {scannerList?.length === 0 && data && (

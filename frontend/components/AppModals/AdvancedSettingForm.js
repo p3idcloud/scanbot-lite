@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
 import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
-import { RiAddCircleLine } from 'react-icons/ri';
 import { scannerSettings } from 'constants/scannerSettings';
 import { parseCookies } from 'nookies';
 
@@ -37,8 +36,8 @@ const AdvancedSettingForm = ({ open, close }) => {
                         pixelFormats: [{ // TODO possible to iterate over settings and configure this dynamically instead of hardcoded
                             pixelFormat: settings.get('pixelFormat') || `any`,
                             attributes: [
-                                { attribute: 'numberOfSheets', values: [{ value: settings.get('numberOfSheets') }] },
-                                { attribute: 'resolution', values: [{ value: settings.get('resolution') }] },
+                                { attribute: 'numberOfSheets', values: [{ value: parseInt(settings.get('numberOfSheets')) ?? settings.get('numberOfSheets')}] },
+                                { attribute: 'resolution', values: [{ value: parseInt(settings.get('resolution')) ??  settings.get('resolution')}] },
                             ]
                         }] 
                     }] 
@@ -58,7 +57,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             "x-twain-cloud-request-id": requestId,
             "x-privet-token": privetToken,
         }
-        fetchData(`/api/scanners/${scannerId}/twaindirect/session`, {
+        fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
             headers,
             method: "POST",
             data,

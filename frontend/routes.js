@@ -1,5 +1,7 @@
 export const getRouteTitle = (path) => {
   switch(path) {
+    case '/setting':
+      return 'Scanner Settings';
     case '/dashboard':
       return 'Scanbot Dashboard';
     case '/api/auth/login/saml':

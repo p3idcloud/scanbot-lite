@@ -31,6 +31,10 @@ const pixelFormatValues = [
 
 const resolutionValues = [
 	{
+		value: `int`,
+		description: `An integer value. Typical values are 75, 100, 150, 200, 240, 250, 300, 400, 500, 600, 1200, 2400, 4800, 9600 and 19200. Some scanners support continuous ranges`,
+	},
+	{
 		value: `closest`,
 		description: `Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner's minimum or maximum value is used, whichever is closer. `,
 	},
@@ -62,6 +66,10 @@ const resolutionValues = [
 
 const numberOfSheetsValues = [
 	{
+		value: `int`,
+		description: `The number of sheets.`,
+	},
+	{
 		value: `maximum`,
 		description: `Capture the maximum number of sheets supported by the scanner. This is the recommended default.`,
 	},
@@ -70,25 +78,25 @@ const numberOfSheetsValues = [
 export const scannerSettings = [
 	{
 		name: `pixelFormat`,
+		label: `Color`,
 		values: pixelFormatValues,
-		defaultValue:
-		`any`,
+		defaultValue: `any`,
 		hasInt: false
 	},
 	{
 		name: `resolution`,
+		label: `Resolution`,
 		placeholder: `The resolution of the image in dpi`,
 		values: resolutionValues,
-		defaultValue: `closest`,
+		defaultValue: `int`,
 		hasInt: true,
-		defaultInt: 400
 	},
 	{
 		name: `numberOfSheets`,
+		label: `Number of Sheets`,
 		placeholder: `The number of sheets.`,
 		values: numberOfSheetsValues,
-		defaultValue: `maximum`,
+		defaultValue: `int`,
 		hasInt: true,
-		defaultInt: null
 	},
 ];

@@ -13,6 +13,7 @@ import { parseCookies } from 'nookies';
 
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
+    const [settings, setSettings] = useState(new Map());
     
     const {
         setListScannerSettings,
@@ -26,18 +27,18 @@ const AdvancedSettingForm = ({ open, close }) => {
         listScannerSettings,
     } = useScanner();
 
-    const sendConfig = (e) => {
+    const sendConfig = () => {
         setLoading(true);
         const task = { 
             actions: [{ 
                 action: 'configure', 
                 streams: [{ 
                     sources: [{ 
-                        pixelFormats: [{
-                            pixelFormat: e.pixelFormat, // get value for pixelFormat
+                        pixelFormats: [{ // TODO possible to iterate over settings and configure this dynamically instead of hardcoded
+                            pixelFormat: settings.get('pixelFormat') || `any`,
                             attributes: [
-                                { attribute: 'numberOfSheets', values: [{ value: e.numberOfSheets }] }, // get value for numberOfSheets
-                                { attribute: 'resolution', values: [{ value: e.resolution }] }, // get value for resolution
+                                { attribute: 'numberOfSheets', values: [{ value: settings.get('numberOfSheets') }] },
+                                { attribute: 'resolution', values: [{ value: settings.get('resolution') }] },
                             ]
                         }] 
                     }] 
@@ -142,7 +143,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                             value: "Default"
                         }]}
                         onChange={e => {
-                            console.log(e?.target?.value)
+                            console.log(e?.target?.value) // TODO how to handle the profile?
                         }}
                     />
                 </FormGroup>
@@ -154,33 +155,32 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 fontWeight={400} 
                                 sx={{color: '#747474'}}
                             >
-                                {data.name}
+                                {data.label}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
                             <FormGroup>
                                 <Select
-                                    onChange={(e) =>
-                                        handleChangeTag(e.target.value, i)
-                                    }
-                                    lists={data.values.map(possibleValue => ({
-                                        label: possibleValue.value,
-                                        description: possibleValue.description,
-                                        value: possibleValue.value
+                                    onChange={(e) => setSettings(settings.set(data.name, e.target.value))}
+                                    lists={data.values.map(item => ({
+                                        label: item.value,
+                                        description: item.description,
+                                        value: item.value
                                     }))}
-                                    value={data.defaultValue}
+                                    value={() => {
+                                        setSettings(settings.set(data.name, data.defaultValue)) // TODO find a better way to set the initial value
+                                        return data.defaultValue
+                                    }}
                                 />
                             </FormGroup>
                         </Grid>
-                        {data.hasInt && (
+                        {data.hasInt && ( // TODO if the option selected is not int, this should disappear
                         <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
                             <InputField
                                 fullWidth
                                 placeholder={data.placeholder}
-                                value={data.defaultInt}
-                                onChange={(e) =>
-                                    setConfigValue(e.target.value, i)
-                                }
+                                value={null}
+                                onChange={(e) => setSettings(settings.set(data.name, e.target.value))}
                             />
                         </Grid>
                         )}

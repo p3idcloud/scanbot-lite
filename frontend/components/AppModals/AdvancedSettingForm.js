@@ -9,10 +9,20 @@ import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
 import { scannerSettings } from 'constants/scannerSettings';
 import { parseCookies } from 'nookies';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+
+const validationSchema = yup.object({
+    pixelFormatAttr: yup.string(),
+    pixelFormatVal: yup.number().typeError("Enter an integer value").nullable(true),
+    resolutionAttr: yup.string(),
+    resolutionVal: yup.number().typeError("Enter an integer value").required("Required").nullable(true),
+    numberOfSheetsAttr: yup.string(),
+    numberOfSheetsVal: yup.number().typeError("Enter an integer value").nullable(true),
+});
 
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
-    const [settings, setSettings] = useState(new Map());
     
     const {
         setListScannerSettings,
@@ -26,21 +36,13 @@ const AdvancedSettingForm = ({ open, close }) => {
         listScannerSettings,
     } = useScanner();
 
-    const sendConfig = () => {
+    const sendConfig = (configsData) => {
         setLoading(true);
         const task = { 
             actions: [{ 
                 action: 'configure', 
                 streams: [{ 
-                    sources: [{ 
-                        pixelFormats: [{ // TODO possible to iterate over settings and configure this dynamically instead of hardcoded
-                            pixelFormat: settings.get('pixelFormat') || `any`,
-                            attributes: [
-                                { attribute: 'numberOfSheets', values: [{ value: parseInt(settings.get('numberOfSheets')) ?? settings.get('numberOfSheets')}] },
-                                { attribute: 'resolution', values: [{ value: parseInt(settings.get('resolution')) ??  settings.get('resolution')}] },
-                            ]
-                        }] 
-                    }] 
+                    sources: [{ pixelFormats: configsData}] 
                 }] 
             }] 
         };
@@ -92,6 +94,33 @@ const AdvancedSettingForm = ({ open, close }) => {
         }
         return [];
     }
+
+    const formik = useFormik({
+        initialValues: {
+            pixelFormatAttr: `any`,
+            pixelFormatVal: null,
+            resolutionAttr: `int`,
+            resolutionVal: 400,
+            numberOfSheetsAttr: `maximum`,
+            numberOfSheetsVal: null,
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            sendConfig({
+                pixelFormat: values.pixelFormatAttr,
+                attributes: [
+                    {
+                        attribute: 'numberOfSheets',
+                        values: [{ value: values.numberOfSheetsAttr === `maximum` ? values.numberOfSheetsAttr : parseInt(values.numberOfSheetsVal, 10) }]
+                    },
+                    {
+                        attribute: 'resolution',
+                        values: values.resolutionAttr !== `int` ? [{ value: parseInt(values.resolutionVal, 10) }, { value: values.resolutionAttr }] : [{ value: parseInt(values.resolutionVal, 10) }]
+                    }
+                ]
+            });
+        },
+      });
     
     return (
         <Modal
@@ -110,7 +139,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                 Cancel
                 </Button>
                 <Button
-                onClick={sendConfig}
+                onClick={formik.handleSubmit}
                     variant="contained"
                     autoWidth
                     size="medium"
@@ -160,29 +189,32 @@ const AdvancedSettingForm = ({ open, close }) => {
                         <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
                             <FormGroup>
                                 <Select
-                                    onChange={(e) => setSettings(settings.set(data.name, e.target.value))}
+                                    onChange={formik.handleChange}
+                                    id={data.name+"Attr"}
+                                    name={data.name+"Attr"}
+                                    aria-invalid={formik.touched[data.name+"Attr"] && Boolean(formik.errors[data.name+"Attr"])}
                                     lists={data.values.map(item => ({
                                         label: item.value,
                                         description: item.description,
                                         value: item.value
                                     }))}
-                                    value={() => {
-                                        setSettings(settings.set(data.name, data.defaultValue)) // TODO find a better way to set the initial value
-                                        return data.defaultValue
-                                    }}
+                                    value={formik.values[data.name+"Attr"]}
                                 />
+                                <Typography color="red">{formik.errors[data.name+"Attr"]}</Typography>
                             </FormGroup>
                         </Grid>
-                        {data.hasInt && ( // TODO if the option selected is not int, this should disappear
                         <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
                             <InputField
                                 fullWidth
+                                id={data.name+"Val"}
+                                name={data.name+"Val"}
+                                aria-invalid={formik.touched[data.name+"Val"] && Boolean(formik.errors[data.name+"Val"])}
                                 placeholder={data.placeholder}
-                                value={null}
-                                onChange={(e) => setSettings(settings.set(data.name, e.target.value))}
+                                value={formik.values[data.name+"Val"]}
+                                onChange={formik.handleChange}
                             />
+                            <Typography color="red">{formik.errors[data.name+"Val"]}</Typography>
                         </Grid>
-                        )}
                     </Grid>
                 ))}
             </Box>

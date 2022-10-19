@@ -106,7 +106,7 @@ const AdvancedSettingForm = ({ open, close }) => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            sendConfig({
+            sendConfig([{
                 pixelFormat: values.pixelFormatAttr,
                 attributes: [
                     {
@@ -118,7 +118,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                         values: values.resolutionAttr !== `int` ? [{ value: parseInt(values.resolutionVal, 10) }, { value: values.resolutionAttr }] : [{ value: parseInt(values.resolutionVal, 10) }]
                     }
                 ]
-            });
+            }]);
         },
       });
     

@@ -40,7 +40,8 @@ exports.generatePdfDocument = async (req, res) => {
     const merger = new PDFMerger();
 
     const { imageURI } = req.body || {};
-    console.log(imageURI)
+    if (!imageURI?.length) return res.status(400).send('No image URI provided');
+
     const account = await AccountService.getAccountFromId(req.twain.principalId);
 
     for await (const uri of imageURI) {

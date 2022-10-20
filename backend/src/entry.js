@@ -8,7 +8,6 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-// const logger = require('morgan');
 // const applogger = require('../../utils/logger')('express');
 // const jwt = require("jsonwebtoken");
 const authMiddleware = require('./middlewares/auth');
@@ -42,7 +41,11 @@ const localRouter = require('./routes/local');
 
 const app = express();
 
-// app.use(logger('dev'));
+if ( process.env.NODE_ENV !== 'production' ) {
+  const morgan = require('morgan');
+  app.use(morgan('short'));
+}
+
 app.enable('trust proxy');
 
 app.use(express.json({ strict: false }));

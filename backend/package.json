@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "start": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js",
     "install:clean:unix": "rm -rf node_modules/ && rm -rf yarn.lock && yarn install && yarn dev",
     "install:clean:powershell": "rd /s /q \"node_modules\" & rm \"yarn.lock\" & yarn install && yarn dev"
@@ -21,8 +21,11 @@
     "memory-cache": "^0.2.0",
     "minio": "^7.0.32",
     "mongoose": "5.12.15",
+    "morgan": "^1.10.0",
     "mqtt": "^4.3.7",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.8.0",
+    "pdf-merger-js": "^4.1.2",
     "saml2-js": "^3.0.1",
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^4.5.0",

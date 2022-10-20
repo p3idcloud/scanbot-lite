@@ -24,6 +24,7 @@
     "morgan": "^1.10.0",
     "mqtt": "^4.3.7",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.8.0",
     "pdf-merger-js": "^4.1.2",
     "saml2-js": "^3.0.1",
     "swagger-jsdoc": "^6.2.5",

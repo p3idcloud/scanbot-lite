@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "install:clean:unix": "rm -rf node_modules/ && rm -rf yarn.lock && yarn install && yarn dev",
+    "install:clean:powershell": "rd /s /q \"node_modules\" & rm \"yarn.lock\" & yarn install && yarn dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

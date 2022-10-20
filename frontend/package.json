@@ -7,7 +7,8 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "install:clean": "rm -rf node_modules/ && rm -rf yarn.lock && rm -rf .next/ && yarn install && yarn dev"
+    "install:clean:unix": "rm -rf node_modules/ && rm -rf yarn.lock && rm -rf .next/ && yarn install && yarn dev",
+    "install:clean:powershell": "rd /s /q \"node_modules\" & rm \"yarn.lock\" &  rd /s /q \".next\" & yarn install && yarn dev"
   },
   "dependencies": {
     "@emotion/cache": "latest",

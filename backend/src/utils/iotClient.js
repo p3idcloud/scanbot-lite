@@ -18,6 +18,9 @@ function sleep(ms) {
 
 module.exports.startMQTTListener = () => {
   mqttclient = mqtt.connect(process.env.MQTT_ENDPOINT);
+  mqttclient.on('connect', function () {
+    console.log('Successfully Connected to mqtt')
+  });
 };
 
 module.exports.subscribeToTopic = function (topic) {

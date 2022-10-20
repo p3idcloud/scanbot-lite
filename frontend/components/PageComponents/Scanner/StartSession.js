@@ -93,7 +93,7 @@ export default function StartSession() {
         startIcon={<HiOutlineLightningBolt />} 
         color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
         sx={{ width: 'fit-content', fontSize: 13 }}
-        loading={loading || statusPoll?.status === "capturing"}
+        loading={loading || statusPoll?.state === "capturing"}
         onClick={handleOnClick}
       >
         {statusClaim && statusPoll?.state !== "noSession"

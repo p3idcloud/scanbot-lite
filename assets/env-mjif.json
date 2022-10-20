@@ -1,0 +1,18 @@
+{
+    "env_vars": [
+        {
+            "mondodb_url": "mongodb-mjif:23044.myte.beta.lyr.id",
+            "emqx_url": "emqx-mjif.myte.beta.lyr.id",
+            "keycloak_url": "kc-mjif.myte.beta.lyr.id",
+            "keycloak_password": "GyK8Z05h",
+            "emqx_password": "7qJ8XJaj",
+            "app_secret_string": "pLJpcNC4UGAGV9Bl",
+            "jwt_secret": "Bf9vcVcj1vsxNCe9mVnd4SLWXQ5sOBAsZeYqGhtT2HMHndRwdfVLNeZ3vibG5nnJ",
+            "mongo_db_password": "HiGhPUBe",
+            "minio_secret": "mb12yxCXekHtwceI",
+            "minio_key": "e1YydAA72daZijH8Z35vZGzX9xEJg5YB",
+            "minio_name": "minio-mjif.myte.beta.lyr.id",
+            "storage_name": "storage-mjif.myte.beta.lyr.id"
+        }
+    ]
+}

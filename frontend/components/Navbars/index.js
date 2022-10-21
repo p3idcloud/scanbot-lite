@@ -43,7 +43,9 @@ const HeaderMain = () => {
           <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
             <Logo>
               <Link href="/dashboard">
-                <TitleLogo component="a" sx={{'&:hover': {cursor: 'pointer'}}}/>
+                <a style={{textDecoration: 'none'}}>
+                  <TitleLogo />
+                </a>
               </Link>
             </Logo>
           </Grid>

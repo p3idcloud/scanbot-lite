@@ -121,17 +121,18 @@ const StartSessionForm = ({ open, close }) => {
                 </Typography>
                 <Divider sx={{my: 4}}/>
                 <FormGroup sx={{my: 1}}>
-                  <InputField
-                    label="Name"
-                    fullWidth
-                    id='name'
-                    defaultValue={initialValues.name}
-                    aria-invalid={Boolean(touched.name && errors.name)}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Name"
-                  />
-                      <Typography color="red">{errors.name}</Typography>
+                    <InputField
+                      label="Name"
+                      fullWidth
+                      id='name'
+                      defaultValue={initialValues.name}
+                      aria-invalid={Boolean(touched.name && errors.name)}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Name"
+                      error={Boolean(errors.name)}
+                    />
+                    <Typography sx={{color: "red.main"}}>{errors.name}</Typography>
                 </FormGroup>
                 <FormGroup>
                   <InputField

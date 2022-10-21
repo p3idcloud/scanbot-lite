@@ -198,9 +198,10 @@ const AdvancedSettingForm = ({ open, close }) => {
                                         description: item.description,
                                         value: item.value
                                     }))}
+                                    error={Boolean(formik.errors[data.name+"Attr"])}
                                     value={formik.values[data.name+"Attr"]}
                                 />
-                                <Typography color="red">{formik.errors[data.name+"Attr"]}</Typography>
+                                <Typography sx={{color: "red.main"}}>{formik.errors[data.name+"Attr"]}</Typography>
                             </FormGroup>
                         </Grid>
                         <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
@@ -212,8 +213,9 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 placeholder={data.placeholder}
                                 value={formik.values[data.name+"Val"]}
                                 onChange={formik.handleChange}
+                                error={Boolean(formik.errors[data.name+"Val"])}
                             />
-                            <Typography color="red">{formik.errors[data.name+"Val"]}</Typography>
+                            <Typography sx={{color: "red.main"}}>{formik.errors[data.name+"Val"]}</Typography>
                         </Grid>
                     </Grid>
                 ))}

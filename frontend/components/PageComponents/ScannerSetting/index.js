@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
-import ScannerSettingForm from "./Form";
-import { Box, Container, FormControl, Grid, MenuItem, Select, Typography } from '@mui/material';
+import { Box, FormControl, Grid, Typography } from '@mui/material';
 import { fetchData } from 'lib/fetch';
 import Button from 'components/Button';
 import Link from 'next/link';
 import Header from 'components/Header';
+import { AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
+import Select from 'components/Select';
+import { capitalize } from 'lib/helpers';
+import ScannerSettingForm from './Form/';
 
 export default function ScannerSetting() {
     const { data } = useSWR(
@@ -17,6 +20,13 @@ export default function ScannerSetting() {
     const handleTab = (e) => {
         setTab(e.target.value);
     };
+
+    const handleClick = () => {
+        if (tab !== '')
+            setTab('');
+        else 
+            setTab(data[0]?.labelName);
+    }
 
     useEffect(() => {
         if (data.length === 0) {
@@ -39,59 +49,34 @@ export default function ScannerSetting() {
             <Grid item xs={6} container>
                 <Box>
                     <Typography fontWeight={500} sx={{color: '#0D0D0D'}} fontSize='20px'>
-                        {tab === '' ? 'New config' : 'Select config'}
+                        {tab === '' ? 'Create New Configuration' : 'Scanner Configuration'}
                     </Typography>
                     
-                    {tab !== '' ? (
-                        <FormControl sx={{width: 400}}>
+                    {tab !== '' && (
+                        <FormControl sx={{width: 400, mt: 2, mb: 1}}>
                             <Select
-                                variant="standard"
+                                label="Select Config"
                                 value={tab}
+                                lists={data?.map(item => {
+                                    return {
+                                        label: capitalize(item?.labelName),
+                                        value: item?.labelName
+                                    };
+                                })}
                                 onChange={handleTab}
-                            >
-                                {data?.map((item, index) => {
-                                    return (
-                                        <MenuItem
-                                            sx={{
-                                                bgcolor: tab === item?.labelName && "info",
-                                                '&:hover': {
-                                                    cursor: 'pointer',
-                                                    color: 'info'
-                                                },
-                                                width: '100%'
-                                            }}
-                                            value={item?.labelName}
-                                            key={index}
-                                        >
-                                            {item?.labelName}
-                                        </MenuItem>
-                                    );       
-                                    })
-                                }
-                            </Select>
+                            />
                         </FormControl>
-                    ) : (
-                        <Typography fontWeight={500} sx={{color: '#959595'}} fontSize='16px'>
-                            Create a new global config
-                        </Typography>
                     )}
                 </Box>
             </Grid>
             <Grid item xs={6}>
                 <Box display='flex' flexDirection='column' alignItems="end">
-                    <Typography fontWeight={500} sx={{color: '#959595'}} fontSize='16px'>
-                        Toggle
-                    </Typography>
                     <Button
                         autoWidth
-                        onClick={() => {
-                            if (tab !== '')
-                                setTab('');
-                            else
-                                setTab(data[0]?.labelName);
-                        }}
+                        startIcon={tab !== '' ? <AiOutlinePlus /> : <AiOutlineEdit />}
+                        onClick={handleClick}
                     >
-                        {tab !== '' ? 'Add New Config' : 'Update Config'} 
+                        {tab !== '' ? 'Create New Config' : 'Update existing Config'} 
                     </Button>
                 </Box>
             </Grid>
@@ -109,8 +94,8 @@ export default function ScannerSetting() {
             titleHeader={titleHeader}
             component={headerComponent}
         >
-            <Grid container justifyContent='center'>
-                <Grid item>
+            <Grid container justifyContent='center' py={3}>
+                <Grid item xs={12}>
                     {data?.map((item, index) => {
                     if (tab === item?.labelName) {
                         return (

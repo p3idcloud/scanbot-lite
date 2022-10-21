@@ -63,9 +63,11 @@ export default function ScannerListContaner({...props}) {
             mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
                 .then(() => {
                     setLoadingRemove(false);
+                    toast.success('Successfully deleted scanner');
                     setRemoveScanner(false);
                 }, () => {
                     setLoadingRemove(false);
+                    toast.error('Failed to delete scanner');
                     setRemoveScanner(false);
                 });
         })

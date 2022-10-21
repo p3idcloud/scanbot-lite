@@ -8,7 +8,6 @@ import { useMemo } from "react";
 import CardDrawer from "components/CardDrawer";
 import Table from "components/Table";
 import { RiDeleteBin4Line, RiFilePdfLine } from "react-icons/ri";
-import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import { toast } from "react-toastify";
 import ScanPdfView from "components/AppModals/ScanPdfView";
 import { parseCookies } from "nookies";
@@ -17,6 +16,7 @@ import Card from "components/Card";
 import dynamic from "next/dynamic";
 
 const CustomLoader = dynamic(() => import("components/Loader"))
+const DeleteConfirmation = dynamic(() => import("components/AppModals/DeleteConfirmation"))
 
 export default function ScannerHistory({...props}) {
     const { open } = props;
@@ -47,9 +47,11 @@ export default function ScannerHistory({...props}) {
             mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`)
                 .then(() =>{
                     setLoadingDelete(false);
+                    toast.success('Successfully deleted history');
                     setDeleteHistory(null);
                 }, () =>{
                     setLoadingDelete(false);
+                    toast.error('Failed to delete history');
                     setDeleteHistory(null);
                 });
         }).catch(err => {

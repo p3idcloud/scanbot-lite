@@ -2,50 +2,35 @@ import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
 import * as Yup from "yup";
-import { Box, Typography, FormControl, Divider } from '@mui/material';
+import { Box, Typography, Divider, FormControl } from '@mui/material';
 import { Formik, Form } from 'formik';
-import { useState } from 'react';
-import { toast } from "react-toastify";
-import { fetchData } from 'lib/fetch';
-import { mutate } from 'swr';
+import { useMemo } from 'react';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("required"),
-  model: Yup.string().required("required")
+  label: Yup.string().required("required"),
+  value: Yup.string().required("required"),
+  description: Yup.string().required("required")
 });
 
-const EditDetailScannerForm = ({ open, close, ...rest }) => {
-  const [loading, setLoading] = useState(false);
-  const { id, name, model, description, pageIndex, rowsPerPage } = rest;
+const ScannerConfigValueForm = ({ open, close, ...rest }) => {
+  const { index, label, value, description, newValue, push, replace } = rest;
 
-  const initialValues = {
-    name: name ?? "",
-    model: model ?? "",
-    description: description ?? ""
-  };
+  const initialValues = useMemo(() => {
+    return {
+      label: !newValue ? label : "",
+      value: !newValue ? value : "",
+      description: !newValue ? description : ""
+    };
+  }, [label, value, description]);
 
   const handleSubmit = (e) => {
-    setLoading(true);
-    const data = {
-        name: e.name,
-        model: e.model,
-        description: e.description
+    if (newValue) {
+      push(e);
+    } else {
+      replace(index, e);
     }
-    fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
-      method: "PATCH",
-      data,
-    })
-      .then((res) => {
-        mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
-          .then(() => {
-            setLoading(false);
-            toast.success("Successfully updated scanner");
-            close();
-          }, () => {
-            setLoading(false);
-            toast.error("Failed to update scanner");
-          });
-      })
+    close();
+    return true;
   };
   
   return (
@@ -53,8 +38,9 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
-      {({ values, errors, touched, handleChange, handleBlur, submitForm }) => {
+      {({ values, errors, touched, handleChange, handleBlur, submitForm, resetForm }) => {
         return (
           <Modal
             open={open}
@@ -72,13 +58,14 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                   Cancel
                 </Button>
                 <Button
-                  onClick={submitForm}
+                  onClick={() => {
+                    submitForm().then(() => resetForm());
+                  }}
                   variant="contained"
                   autoWidth
                   size="medium"
-                  loading={loading}
                 >
-                  Update
+                  {newValue ? 'Save' : 'Update'}
                 </Button>
               </>
             }
@@ -93,42 +80,42 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
             >
               <Form style={{width: '100%'}}>
                 <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
-                  Edit Scanner Detail
+                  {newValue ? 'Create': 'Update'} Value
                 </Typography>
                 <Divider sx={{my: 4}}/>
                 <FormControl sx={{my: 2}} fullWidth>
-                  <InputField
-                    label="Name"
-                    fullWidth
-                    id='name'
-                    defaultValue={initialValues.name}
-                    aria-invalid={Boolean(touched.name && errors.name)}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={Boolean(errors.name)}
-                    placeholder="Name"
-                  />
-                  <Typography sx={{color: "red.main"}}>{errors.name}</Typography>
+                    <InputField
+                        label="Label"
+                        fullWidth
+                        id='label'
+                        value={values.label}
+                        aria-invalid={Boolean(touched.label && errors.label)}
+                        error={Boolean(errors.label)}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Label"
+                    />
+                    <Typography sx={{color: "red.main"}}>{errors.label}</Typography>
                 </FormControl>
                 <FormControl sx={{my: 2}} fullWidth>
                   <InputField
-                    label="Model"
+                    label="Value"
                     fullWidth
-                    id='model'
-                    defaultValue={initialValues.model}
-                    aria-invalid={Boolean(touched.model && errors.model)}
+                    id='value'
+                    value={values.value}
+                    aria-invalid={Boolean(touched.value && errors.value)}
+                    error={Boolean(errors.value)}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    error={Boolean(errors.model)}
-                    placeholder="Model"
+                    placeholder="Value"
                   />
-                      <Typography sx={{color: "red.main"}}>{errors.model}</Typography>
+                  <Typography sx={{color: "red.main"}}>{errors.value}</Typography>
                 </FormControl>
                 <FormControl sx={{my: 2}} fullWidth>
                   <InputField
                     label="Description"
-                    variant="outlined"
                     id="description"
+                    error={Boolean(errors.description)}
                     fullWidth
                     multiline
                     minRows={3}
@@ -140,6 +127,7 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     value={values.description}
                     placeholder="Description"
                   />
+                  <Typography sx={{color: "red.main"}}>{errors.value}</Typography>
                 </FormControl>
               </Form>
             </Box>
@@ -150,4 +138,4 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
   );
 };
 
-export default EditDetailScannerForm;
+export default ScannerConfigValueForm;

@@ -22,7 +22,7 @@ const Select = ({ value, onChange, lists, label, helperText, control, error, dis
     onChangeValue(item);
   };
   return (
-    <FormControl fullWidth error={error} disabled={disabled}>
+    <FormControl fullWidth error={Boolean(error)} disabled={disabled}>
       {label && <InputLabel id="select-label-input">{label}</InputLabel>}
 
       <SelectMUI

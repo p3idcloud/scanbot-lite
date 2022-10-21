@@ -2,14 +2,39 @@
     {
         "possibleValues": [
             {
-                "label": "default",
-                "description": "Any pixelFormat, at the discretion of the scanner. This includes custom pixelFormats not defined by the TWAIN Directspecification.",
+                "description": "Any pixelFormat, at the discretion of the scanner. This includes custom pixelFormats not defined by the TWAIN Direct specification.",
+                "label": "any",
                 "value": "any"
             },
             {
-                "label": "Color 24-bit",
-                "description": "Color with a bit depth of 24 (8-bits per channel), allowing for 16.7million colors.",
+                "description": "Black-and-white with a bit depth of 1, also called packed bitonal, since an 8-bit byte contains 8 of these pixelFormats.",
+                "label": "Black-and-white 1-bit",
+                "value": "bw1"
+            },
+            {
+                "description": "Grayscale with a bit depth of 8, allowing for 256 shades of grey.",
+                "label": "Grayscale 8-bit",
+                "value": "gray8"
+            },
+            {
+                "description": "Grayscale with a bit depth of 16, allowing for 65536 shades of grey.",
+                "label": "Grayscale 16-bit",
+                "value": "gray16"
+            },
+            {
+                "description": "Intended for use with uncalibratedImage. It tells the scanner to use the pixelFormat that carries the most information that the scanner can provide. Raw cannot be reported in the metadata, the scanner must report one of the other pixelFormats, such as rgb24.",
+                "label": "Raw",
+                "value": "raw"
+            },
+            {
+                "description": "Color with a bit depth of 24 (8-bits per channel), allowing for 16.7 million colors.",
+                "label":"Color 24-bit",
                 "value": "rgb24"
+            },
+            {
+                "description": "Color with a bit depth of 48 (16-bits per channel), allowing for 281 trillion colors.",
+                "label": "Color 48-bit",
+                "value": "rgb48"
             }
         ],
         "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf8",
@@ -18,8 +43,8 @@
         "vendor": "TWAIN",
         "valueType": "String",
         "object": "task.actions[].streams[].sources[].pixelFormats[].pixelFormat",
-        "defaultValue": "default",
-        "currentValue": "default"
+        "defaultValue": "any",
+        "currentValue": "any"
     },
     {
         "possibleValues": [
@@ -36,12 +61,12 @@
         ],
         "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf9",
         "labelName": "numberOfSheets",
-        "description": "The number of sheets that the scanner will capture. If the scanner runs out of sheets before reaching this number scanning will conclude, it won’t wait for more paper.",
+        "description": "The number of sheets that the scanner will capture. If the scanner runs out of sheets before reaching this number scanning will conclude, it won't wait for more paper.",
         "vendor": "TWAIN",
         "valueType": "String",
         "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
-        "defaultValue": "1",
-        "currentValue": "1"
+        "defaultValue": "maximum",
+        "currentValue": "maximum"
     },
     {
         "possibleValues": [
@@ -62,17 +87,17 @@
             },
             {
                 "label": "Closest",
-                "description": "Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner’s minimum or maximum value is used, whichever is closer.",
+                "description": "Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner's minimum or maximum value is used, whichever is closer.",
                 "value": "closest"
             },
             {
                 "label": "Closest greater than",
-                "description": "Selects the closest supported value greater than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no greater value, the scanner’s maximum value is used.",
+                "description": "Selects the closest supported value greater than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no greater value, the scanner's maximum value is used.",
                 "value": "closestGreaterThan"
             },
             {
                 "label": "Closest less than",
-                "description": "Selects the closest supported value less than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no lesser value, the scanner’s minimum value is used.",
+                "description": "Selects the closest supported value less than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no lesser value, the scanner's minimum value is used.",
                 "value": "closestLessThan"
             },
             {

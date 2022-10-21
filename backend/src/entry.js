@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+
 // save base folder location
 global.__baseFolder = __dirname;
 

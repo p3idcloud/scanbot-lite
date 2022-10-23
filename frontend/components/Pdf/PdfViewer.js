@@ -9,12 +9,13 @@ import { AiOutlineCompress } from "react-icons/ai";
 import { GrPowerReset } from "react-icons/gr";
 import { RiFile3Line, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import PDFMerger from 'pdf-merger-js/browser';
 
 const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
 
-export default function PdfViewer({ files }) {
+export default function PdfViewer({ files, pdfBlobs }) {
   const [file, setFile] = useState(files || dummyFile);
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(null);
@@ -55,6 +56,14 @@ export default function PdfViewer({ files }) {
   const handleDownload = () => {
     window.open(file[page], "_blank");
   };
+
+  const handleDownloadAll = async function () {
+    const merger = new PDFMerger();
+    for await (const file of pdfBlobs) { await merger.add(file) }
+    const mergedPdf = await merger.saveAsBlob();
+    const url = URL.createObjectURL(mergedPdf);
+    window.open(url, "_blank");
+  }
 
   return (
     <Card withpadding background='#F8F8FA'>
@@ -182,6 +191,20 @@ export default function PdfViewer({ files }) {
                 >
                   <Typography sx={{fontSize: '14px', fontWeight: 600}}>
                     Download
+                  </Typography>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    borderRadius: 0, 
+                    bgcolor: '#DBDBDB', 
+                    py: 0.5,
+                    px: 1,
+                    color: "#000000"
+                  }}
+                  onClick={handleDownloadAll}
+                >
+                  <Typography sx={{fontSize: '14px', fontWeight: 600}}>
+                    Download All
                   </Typography>
                 </IconButton>
               </Stack>

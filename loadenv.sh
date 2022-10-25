@@ -84,7 +84,12 @@ add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
 add_to_env "MINIO_USE_SSL" "true"
 
-for line in $(<$1);
+file="$1"
+if [[ "$file" -eq "" ]]
+then file='assets/env-mjif.json'
+fi
+
+for line in $(<$file);
 do
     case $CURRENTVAR in
         $MONGODB_URL)

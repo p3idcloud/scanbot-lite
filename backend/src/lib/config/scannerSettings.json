@@ -56,7 +56,7 @@
 {
   "possibleValues": [
     {
-      "label": "1 - n",
+      "label": "Integer",
       "description": "The number of sheets",
       "value": "integer",
       "type": "integer"
@@ -81,7 +81,7 @@
 {
   "possibleValues": [
     {
-      "label": "1 - n",
+      "label": "Integer",
       "description": "An integer value. Typical values are 75, 100, 150, 200, 240, 250, 300, 400, 500, 600, 1200, 2400, 4800, 9600 and 19200. Some scanners support continuous ranges.",
       "value": "integer",
       "type": "integer"

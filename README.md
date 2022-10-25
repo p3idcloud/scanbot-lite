@@ -1,5 +1,15 @@
 # UPGRADE MONGODB VERSION TO ^6.0.1, mongoose library not working for newer versions
 
+# IMPORTING JSON CONFIG
+Run the loadenv script:
+```
+bash loadenv.sh PATH_TO_FILE.json
+```
+Example:
+```
+bash loadenv.sh assets/env-mjif.json
+```
+
 ## Setting up and running
 
 ---

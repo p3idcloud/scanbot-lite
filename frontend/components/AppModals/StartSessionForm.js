@@ -35,7 +35,7 @@ const StartSessionForm = ({ open, close }) => {
     setStatusClaim(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, {resetForm}) => {
     setLoading(true);
     const commandId = uuid.v4();
     const data = {
@@ -68,6 +68,7 @@ const StartSessionForm = ({ open, close }) => {
       })
       .finally(() => {
         setLoading(false);
+        resetForm();
         close();
       });
   };

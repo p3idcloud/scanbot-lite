@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
 import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
-import { scannerSettings } from 'constants/scannerSettings';
+// import { scannerSettings } from 'constants/scannerSettings';
 import { parseCookies } from 'nookies';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -49,7 +49,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             }
         })
         const task = constructTwainPayloadTask(configData);
-        // console.log(JSON.stringify(task1, null, 2));
+        console.log(JSON.stringify(task, null, 2));
         const data = {
             commandId: requestId,
             kind: 'twainlocalscanner',
@@ -196,7 +196,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                                     name={data.attributeName+'-select'}
                                     aria-invalid={formik.touched[data.attributeName+'-select'] && Boolean(formik.errors[data.attributeName+'-select'])}
                                     lists={data?.possibleValues?.map(item => ({
-                                        label: item.value,
+                                        label: item.label,
                                         description: item.description,
                                         value: item.value
                                     }))}

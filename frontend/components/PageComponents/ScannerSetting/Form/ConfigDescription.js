@@ -13,7 +13,7 @@ import { mutate } from "swr";
 const arrForm = [
     { title: 'ID', name: 'id' },
     { title: 'Label name', name: 'labelName' },
-    { title: 'Attribute value', name: 'attributeName'},
+    { title: 'Attribute value', name: 'attributeName', helperText: 'Enter a unique identifier if not an attribute (avoid \`-\`s)'},
     { title: 'Description', name: 'description' },
     { title: 'Default value', name: 'defaultValue' },
     { title: 'Value Type', name: 'valueType' },
@@ -70,6 +70,7 @@ export default function ConfigDescription({ tab, loading }) {
                             <FormGroup>
                                 <InputField
                                     fullWidth
+                                    helperText={item.helperText}
                                     id={item.name}
                                     minRows={2}
                                     multiline={item.name === 'description' || item.name === 'object'}

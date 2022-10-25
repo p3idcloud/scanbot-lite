@@ -17,7 +17,8 @@ export const constructTwainPayloadTask = (configData) => {
                 break;
             case 'array':
                 // Will have a child json
-                if (name === 'values') {
+                if (rest.length === 1 && currentJson[name]?.[0]?.hasOwnProperty(rest[0])) {
+                    value = value.trim();
                     const childJson = recurse({}, value, [...rest], attribute);
                     if (currentJson.hasOwnProperty(name)) {
                         // Add to array
@@ -36,8 +37,12 @@ export const constructTwainPayloadTask = (configData) => {
                     const childJson = recurse(currentJson[name][indexAttr] ?? {}, value, [...rest], attribute);
                     currentJson[name][indexAttr] = childJson;
                 } else {
-                    const childJson = recurse(currentJson[name][0] ?? {}, value, [...rest], attribute);
-                    currentJson[name][0] = childJson;
+                    const childJson = recurse(currentJson[name]?.[0] ?? {}, value, [...rest], attribute);
+                    if (currentJson.hasOwnProperty(name)) {
+                        currentJson[name][0] = childJson;
+                    } else {
+                        currentJson[name] = [ childJson ];
+                    }
                 }
                 break;
         }
@@ -60,12 +65,12 @@ export const constructTwainPayloadTask = (configData) => {
     };
     
     Object.keys(configData).forEach(attribute => {
-        if (configData[attribute].object.includes('attributes')) {
+        if (configData[attribute]?.object?.includes('attributes')) {
             twainPayloadTask.task.actions[0].streams[0].sources[0].pixelFormats[0].attributes.push({
                 attribute: attribute
             })
         }
-        const objectPath = configData[attribute].object.split('.');
+        const objectPath = configData[attribute]?.object?.split('.');
         switch(configData[attribute].type) {
             case 'select':
                 delete configData[attribute].inputValue;

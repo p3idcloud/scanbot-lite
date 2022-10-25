@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import ReactDOMClient from "react-dom/client";
 import App from "next/app";
 import Head from "next/head";
@@ -19,6 +18,8 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from "config/theme/ThemeProvider";
 
+
+
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
   const container = document.getElementById("page-transition");
@@ -26,11 +27,15 @@ Router.events.on("routeChangeStart", (url) => {
   root.render(<PageChange path={url} />);
 });
 Router.events.on("routeChangeComplete", () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.unmount()
   document.body.classList.remove("body-page-transition");
 });
 Router.events.on("routeChangeError", () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.unmount()
   document.body.classList.remove("body-page-transition");
 });
 

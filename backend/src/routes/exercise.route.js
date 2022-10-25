@@ -22,4 +22,7 @@ router.get(
   ExerciseController.savePDFToDrive
 );
 
+/* handler for invalid endpoints */
+router.use((_, res) => res.sendStatus(404));
+
 module.exports = router;

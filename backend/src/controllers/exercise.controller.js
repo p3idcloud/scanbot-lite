@@ -12,10 +12,7 @@ async function getImageURIsFromScannerHistory(req, res, next) {
     const { id } = await getAccountFromId(principalId) || {};
     if (!id?.length) throw new Error(`Account does not exist`, { cause: 404 });
 
-    const { scannerHistoryId } = req.params || {};
-    if (!scannerHistoryId?.length) throw new Error(`No scannerHistoryId provided`, { cause: 400 });
-
-    const { accountId, queueId } = await getScannerHistoryFromId(scannerHistoryId) || {};
+    const { accountId, queueId } = await getScannerHistoryFromId(req.params['scannerHistoryId']) || {};
     if (!accountId?.length || !queueId?.length) throw new Error(`Scanner history does not exist`, { cause: 404 });
     if (accountId !== id) throw new Error(`You have no permission to access this information`, { cause: 401 });
 

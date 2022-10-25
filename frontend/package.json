@@ -36,7 +36,6 @@
     "next-redux-wrapper": "^8.0.0",
     "nookies": "^2.5.2",
     "path": "0.12.7",
-    "pdf-merger-js": "^4.1.2",
     "prop-types": "15.7.2",
     "react": "^18.2.0",
     "react-chartist": "0.14.3",

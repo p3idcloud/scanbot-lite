@@ -1,9 +1,9 @@
-const Minio = require('minio');
+const { Client } = require('minio');
 const PDFMerger = require('pdf-merger-js');
 
-async function mergePDFFromURIs(accountId, imageURIs) {
+async function mergePDFFromImageURIs(accountId, imageURIs) {
   try {
-    const minioClient = new Minio.Client({
+    const minioClient = new Client({
       endPoint: process.env.AWS_ENDPOINT,
       port: parseInt(process.env.MINIO_PORT, 10),
       useSSL: process.env.MINIO_USE_SSL === 'true',
@@ -11,12 +11,12 @@ async function mergePDFFromURIs(accountId, imageURIs) {
       secretKey: process.env.AWS_SECRET_KEY,
     });
 
-    const dataStreamToBuffer = function (stream) {
+    const streamToBuffer = async function (stream) {
       return new Promise((resolve, reject) => {
-        const _buf = [];
+        const data = [];
 
-        stream.on('data', (chunk) => _buf.push(chunk));
-        stream.on('end', () => resolve(Buffer.concat(_buf)));
+        stream.on('data', (chunk) => data.push(chunk));
+        stream.on('end', () => resolve(Buffer.concat(data)));
         stream.on('error', (err) => reject(err));
       });
     }
@@ -25,7 +25,7 @@ async function mergePDFFromURIs(accountId, imageURIs) {
 
     for await (const image of imageURIs) {
       const stream = await minioClient.getObject(accountId, image);
-      const buffer = await dataStreamToBuffer(stream);
+      const buffer = await streamToBuffer(stream);
       merger.add(buffer);
     }
 
@@ -36,4 +36,4 @@ async function mergePDFFromURIs(accountId, imageURIs) {
   }
 }
 
-module.exports = { mergePDFFromURIs };
+module.exports = { mergePDFFromImageURIs };

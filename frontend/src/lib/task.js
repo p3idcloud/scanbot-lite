@@ -1,139 +1,110 @@
-export const constructTwainPayloadTask = (profileDefinitions, scannerSettings) => {
-    const profileDefinitionData = mapProfileDefinitionScannerSetting(profileDefinitions, scannerSettings);
-    let twainPayloadTask = {};
-
-    profileDefinitionData.forEach((definition) => {
-        const objectArr = definition.objectArr;
-        let currentValue = twainPayloadTask;
-        let parentValue = twainPayloadTask;
-
-        for (let i = 0; i < objectArr.length; i++) {
-            if (i >= objectArr.length - 1) {
-                const dataType = mapDataType(objectArr[i - 1]);
-                let value = currentValue;
-                switch (dataType) {
-                    case 'object':
-                        value = {
-                            [objectArr[i]]: definition.value,
-                        };
-                        break;
-
-                    case 'array':
-                        value.push({
-                            [objectArr[i]]: definition.value,
-                        });
-                        break;
+export const constructTwainPayloadTask = (configData) => {
+    function recurse(currentJson, value, currentPath, attribute) {
+        if (currentPath.length === 0) {
+            return;
+        }
+        const [_key, ...rest] = currentPath;
+        const { dataType: keyType, name } = mapDataType(_key);
+        switch(keyType) {
+            case 'primitive':
+                // Leaf json or task
+                if (currentPath.length === 1)
+                    currentJson[name] = value;
+                else {
+                    const childJson = recurse(currentJson[name] ?? {}, value, [...rest], attribute); 
+                    currentJson[name] = childJson;
                 }
-            }
-            else {
-                const key = objectArr[i].replace(/[[]]|[{}]/g, '');
-                const dataType = mapDataType(objectArr[i]);
-                let value = currentValue;
-                if (i > 0) {
-                    const parentKey = objectArr[i - 1].replace(/[[]]|[{}]/g, '');
-                    const parentDataType = mapDataType(objectArr[i - 1]);
-                    console.log(parentKey, parentDataType);
-                    let newCurrentValueIndex = 0;
-                    if (parentDataType === 'array') {
-                        if (parentValue[parentKey].length <= 0 || (parentKey === 'attributes' && parentValue[parentKey].length > 0)) {
-                            switch (parentKey) {
-                                case 'attributes':
-                                    let found = false;
-                                    console.log(definition.name, parentValue[parentKey]);
-                                    parentValue[parentKey].find((item, idx) => {
-                                        console.log(idx, item.attribute, definition.name, item.attribute === definition.name);
-                                        if (item.attribute === definition.name) {
-                                            found = true;
-                                            newCurrentValueIndex = idx;
-                                            return true;
-                                        }
-                                        return false;
-                                    });
-                                    if (!found) {
-                                        parentValue[parentKey].push({attribute: definition.name});
-                                        newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    }
-                                    break;
-
-                                case 'actions':
-                                    parentValue[parentKey].push({action: 'configure'});
-                                    newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    break;
-
-                                default:
-                                    parentValue[parentKey].push({});
-                                    newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    break;
-                            }
-                        }
-
-                        currentValue = parentValue[parentKey][newCurrentValueIndex];
-                        value = currentValue;
+                break;
+            case 'array':
+                // Will have a child json
+                if (name === 'values') {
+                    const childJson = recurse({}, value, [...rest], attribute);
+                    if (currentJson.hasOwnProperty(name)) {
+                        // Add to array
+                        currentJson[name].push(childJson);
+                    } else {
+                        // Create new array
+                        currentJson[name] = [childJson];
                     }
+                } else if (rest?.[0] === 'values[]') {
+                    var indexAttr = -1; 
+                    currentJson[name]?.forEach((attr, index) => {
+                        if (attr.attribute === attribute) {
+                            indexAttr = index;
+                        }
+                    })
+                    const childJson = recurse(currentJson[name][indexAttr] ?? {}, value, [...rest], attribute);
+                    currentJson[name][indexAttr] = childJson;
+                } else {
+                    const childJson = recurse(currentJson[name][0] ?? {}, value, [...rest], attribute);
+                    currentJson[name][0] = childJson;
                 }
-
-                let newValue = currentValue[key] ? currentValue[key] : {};
-                switch (dataType) {
-                    case 'array':
-                        newValue = currentValue[key] ? currentValue[key] : [];
-                        break;
-                }
-
-                value[key] = newValue;
-                parentValue = currentValue;
-                currentValue = value[key];
-            }
+                break;
         }
-    });
-
-    console.log(JSON.stringify(twainPayloadTask, null, 1));
-    return twainPayloadTask;
-};
-
-export const mapProfileDefinitionScannerSetting = (profileDefinitions, scannerSettings) => {
-    let profileDefinitionData = [];
-    let scannerSettingData = {};
-    scannerSettings.forEach((setting) => {
-        if (!scannerSettingData[setting.id]) {
-            scannerSettingData[setting.id] = setting;
+        return currentJson;
+    }
+    
+    const twainPayloadTask = {
+        task: {
+            actions: [{
+                action: 'configure',
+                streams: [{
+                    sources: [{
+                        pixelFormats: [{
+                            attributes: []
+                        }]
+                    }]
+                }]
+            }]
         }
-    });
-
-    profileDefinitions.forEach((definition) => {
-        if (scannerSettingData[definition.id]) {
-            profileDefinitionData.push({
-                value: definition.value,
-                ...mapSettingDataType(scannerSettingData[definition.id]),
-            });
-        }
-    });
-
-    return profileDefinitionData;
-};
-
-export const mapSettingDataType = (setting) => {
-    const objectArr = setting.object.split('.').filter((obj) => obj !== 'task');
-    const level = objectArr.length;
-    const name = setting.labelName;
-    const id = objectArr[level - 1].replace(/[[]]|[{}]/g, '');
-    const dataType = mapDataType(name);
-
-    return {
-        level,
-        name,
-        dataType,
-        id,
-        objectArr,
     };
+    
+    Object.keys(configData).forEach(attribute => {
+        if (configData[attribute].object.includes('attributes')) {
+            twainPayloadTask.task.actions[0].streams[0].sources[0].pixelFormats[0].attributes.push({
+                attribute: attribute
+            })
+        }
+        const objectPath = configData[attribute].object.split('.');
+        switch(configData[attribute].type) {
+            case 'select':
+                delete configData[attribute].inputValue;
+                break;
+            case 'select/integer':
+                configData[attribute].inputValue = parseInt(configData[attribute].inputValue);
+                break;
+            case 'integer':
+                delete configData[attribute].selectValue;
+                configData[attribute].inputValue = parseInt(configData[attribute].inputValue);
+                break;
+        };
+        if (configData[attribute].inputValue)
+            recurse(twainPayloadTask, configData[attribute].inputValue, objectPath, attribute);
+        if (configData[attribute].selectValue)
+            recurse(twainPayloadTask, configData[attribute].selectValue, objectPath, attribute);
+    });
+
+    return twainPayloadTask.task;
 };
 
 export const mapDataType = (name) => {
     let dataType = 'primitive';
     if (name.endsWith('[]')) {
         dataType = 'array';
+        name = name.substring(0, name.length - 2);
     }
-    else if (name.endsWith('{}')) {
-        dataType = 'object';
-    }
-    return dataType;
+    return { dataType, name };
 };
+
+export const findTypeOfValue = (value, list) => {
+    try {
+        for (let i = 0; i < list.length; i++) {
+            if (list?.[i]?.value === value) {
+                return list?.[i]?.type;
+            }
+        }
+    } catch {
+        return 'select';
+    }
+    return 'select';
+}

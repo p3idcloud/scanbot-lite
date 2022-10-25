@@ -2,7 +2,7 @@ import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
 import { Box, Typography, FormGroup, Divider, Grid, Tooltip, IconButton } from '@mui/material';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
 import { useScanner } from 'lib/contexts/scannerContext';
@@ -11,15 +11,7 @@ import { scannerSettings } from 'constants/scannerSettings';
 import { parseCookies } from 'nookies';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-
-const validationSchema = yup.object({
-    pixelFormatAttr: yup.string(),
-    pixelFormatVal: yup.number().typeError("Enter an integer value").nullable(true),
-    resolutionAttr: yup.string(),
-    resolutionVal: yup.number().typeError("Enter an integer value").required("Required").nullable(true),
-    numberOfSheetsAttr: yup.string(),
-    numberOfSheetsVal: yup.number().typeError("Enter an integer value").nullable(true),
-});
+import { constructTwainPayloadTask, findTypeOfValue } from 'lib/task';
 
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
@@ -38,14 +30,26 @@ const AdvancedSettingForm = ({ open, close }) => {
 
     const sendConfig = (configsData) => {
         setLoading(true);
-        const task = { 
-            actions: [{ 
-                action: 'configure', 
-                streams: [{ 
-                    sources: [{ pixelFormats: configsData}] 
-                }] 
-            }] 
-        };
+        var configData = {}
+        Object.keys(configsData).forEach((key, i) => {
+            var [newkey, inputType] = key.split('-')
+            // attribute : { type, inputValue, selectValue, object }
+            if (inputType === 'select') {
+                configData[newkey] = {
+                    ...configData[newkey],
+                    selectValue: configsData[key],
+                    object: configValues[Math.floor(i/2)]?.object,
+                    type: findTypeOfValue(configsData[key], configValues[Math.floor(i/2)]?.possibleValues)
+                };
+            } else {
+                configData[newkey] = {
+                    ...configData[newkey],
+                    inputValue: configsData[key]
+                };
+            }
+        })
+        const task = constructTwainPayloadTask(configData);
+        // console.log(JSON.stringify(task1, null, 2));
         const data = {
             commandId: requestId,
             kind: 'twainlocalscanner',
@@ -76,52 +80,50 @@ const AdvancedSettingForm = ({ open, close }) => {
         });
     };
 
+    const getInitialValues = () => {
+        const initialValues = {};
+        if (listScannerSettings) {
+            listScannerSettings.forEach(setting => {
+                initialValues[setting.attributeName+'-select'] = setting.defaultValue;
+                initialValues[setting.attributeName+'-input'] = 0;
+            })
+        }
+        return initialValues;
+    }
+
+    const getValidationSchema = () => {
+        const values = {};
+        if (listScannerSettings) {
+            listScannerSettings.forEach(setting => {
+                values[setting.attributeName+'-select'] = yup.string().required('Required'),
+                values[setting.attributeName+'-input'] = yup.number().typeError("Enter an integer value").nullable(true)
+            })
+        }
+        return yup.object(values);
+    }
+
     const getConfigValues = () => {
         if (listScannerSettings) {
+            // console.log(listScannerSettings)
             let configFields = [...listScannerSettings];
-            configFields.forEach((config) => {
-                let tag = "input";
-                // const possibleValues = config.possibleValues.map((pv) => pv.value);
-                // let tagValue = possibleValues[0];
-                config.currentValue = {
-                    selectValue: config.possibleValues[0].value,
-                    inputValue: config.defaultValue
-                    // type: config.possibleValues[0].,
-                };
-            });
-            // console.log(configFields)
             return configFields;
         }
         return [];
     }
+    const configValues = useMemo(() => getConfigValues(), [listScannerSettings]);
+    
 
     const formik = useFormik({
-        initialValues: {
-            pixelFormatAttr: `any`,
-            pixelFormatVal: null,
-            resolutionAttr: `int`,
-            resolutionVal: 400,
-            numberOfSheetsAttr: `maximum`,
-            numberOfSheetsVal: null,
-        },
-        validationSchema: validationSchema,
-        onSubmit: (values) => {
-            sendConfig([{
-                pixelFormat: values.pixelFormatAttr,
-                attributes: [
-                    {
-                        attribute: 'numberOfSheets',
-                        values: [{ value: values.numberOfSheetsAttr === `maximum` ? values.numberOfSheetsAttr : parseInt(values.numberOfSheetsVal, 10) }]
-                    },
-                    {
-                        attribute: 'resolution',
-                        values: values.resolutionAttr !== `int` ? [{ value: parseInt(values.resolutionVal, 10) }, { value: values.resolutionAttr }] : [{ value: parseInt(values.resolutionVal, 10) }]
-                    }
-                ]
-            }]);
-        },
-      });
+        initialValues: getInitialValues(),
+        validationSchema: getValidationSchema(),
+        onSubmit: sendConfig,
+        enableReinitialize: true
+    });
+
+    const showInputField = (i) => findTypeOfValue(formik.values[configValues[i].attributeName+'-select'], configValues[i]?.possibleValues) !== 'select';
     
+    // console.log(formik.values);
+
     return (
         <Modal
             open={open}
@@ -171,11 +173,11 @@ const AdvancedSettingForm = ({ open, close }) => {
                             value: "Default"
                         }]}
                         onChange={e => {
-                            console.log(e?.target?.value) // TODO how to handle the profile?
+                            console.log(e?.target?.value)
                         }}
                     />
                 </FormGroup>
-                {scannerSettings.map((data, i) => (
+                {configValues.map((data, i) => (
                     <Grid container key={i} my={2} width={1}>
                         <Grid item xs={12} mb={2}>
                             <Typography 
@@ -183,39 +185,43 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 fontWeight={400} 
                                 sx={{color: '#747474'}}
                             >
-                                {data.label}
+                                {data.labelName}
                             </Typography>
                         </Grid>
                         <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
                             <FormGroup>
                                 <Select
                                     onChange={formik.handleChange}
-                                    id={data.name+"Attr"}
-                                    name={data.name+"Attr"}
-                                    aria-invalid={formik.touched[data.name+"Attr"] && Boolean(formik.errors[data.name+"Attr"])}
-                                    lists={data.values.map(item => ({
+                                    id={data.attributeName+'-select'}
+                                    name={data.attributeName+'-select'}
+                                    aria-invalid={formik.touched[data.attributeName+'-select'] && Boolean(formik.errors[data.attributeName+'-select'])}
+                                    lists={data?.possibleValues?.map(item => ({
                                         label: item.value,
                                         description: item.description,
                                         value: item.value
                                     }))}
-                                    error={Boolean(formik.errors[data.name+"Attr"])}
-                                    value={formik.values[data.name+"Attr"]}
+                                    error={Boolean(formik.errors[data.attributeName+'-select'])}
+                                    value={formik.values[data.attributeName+'-select']}
                                 />
-                                <Typography sx={{color: "red.main"}}>{formik.errors[data.name+"Attr"]}</Typography>
+                                <Typography sx={{color: "red.main"}}>{formik.errors[data.attributeName+'-select']}</Typography>
                             </FormGroup>
                         </Grid>
                         <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
-                            <InputField
-                                fullWidth
-                                id={data.name+"Val"}
-                                name={data.name+"Val"}
-                                aria-invalid={formik.touched[data.name+"Val"] && Boolean(formik.errors[data.name+"Val"])}
-                                placeholder={data.placeholder}
-                                value={formik.values[data.name+"Val"]}
-                                onChange={formik.handleChange}
-                                error={Boolean(formik.errors[data.name+"Val"])}
-                            />
-                            <Typography sx={{color: "red.main"}}>{formik.errors[data.name+"Val"]}</Typography>
+                            {showInputField(i) && (
+                                <FormGroup>
+                                    <InputField
+                                        fullWidth
+                                        onChange={formik.handleChange}
+                                        id={data.attributeName+'-input'}
+                                        name={data.attributeName+'-input'}
+                                        aria-invalid={formik.touched[data.attributeName+'-input'] && Boolean(formik.errors[data.attributeName+'-input'])}
+                                        value={formik.values[data.attributeName+'-input']}
+                                        error={Boolean(formik.errors[data.attributeName+'-input'])}
+                                    />
+                                    <Typography sx={{color: "red.main"}}>{formik.errors[data.attributeName+'-input']}</Typography>
+                                </FormGroup>
+                                
+                            )}
                         </Grid>
                     </Grid>
                 ))}

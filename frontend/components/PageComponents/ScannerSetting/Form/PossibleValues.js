@@ -14,7 +14,7 @@ import ScannerConfigValueForm from "components/AppModals/ScannerConfigValueForm"
 export default function PossibleValues({data})  {
     const { values, getFieldProps } = useFormikContext();
     
-    const tableHeaders = ['Label', 'Value', 'Description', 'Action'];
+    const tableHeaders = ['Label', 'Value', 'Description', 'Input Type', 'Action'];
     const rowsPerPage = 10;
     const [pageIndex, setPageIndex] = useState(1);
     const [deleteValue, setDeleteValue] = useState(null);
@@ -30,7 +30,8 @@ export default function PossibleValues({data})  {
             index: index,
             value: getFieldProps()?.value?.possibleValues?.[index]?.value,
             description: getFieldProps()?.value?.possibleValues?.[index]?.description,
-            label: getFieldProps()?.value?.possibleValues?.[index]?.label
+            label: getFieldProps()?.value?.possibleValues?.[index]?.label,
+            type: getFieldProps()?.value?.possibleValues?.[index]?.type
         });
         setOpenScannerValueForm(true);
     }
@@ -40,6 +41,7 @@ export default function PossibleValues({data})  {
             possibleValue.label,
             possibleValue.value,
             possibleValue.description,
+            possibleValue.type,
             <Stack direction='row' spacing={1}>
                 <Tooltip title="Edit" sx={{p: 0}}>
                     <IconButton color="primary" onClick={() => handleEditClick(index)}>
@@ -66,7 +68,9 @@ export default function PossibleValues({data})  {
                             description: data?.possibleValues?.[index]?.description || 
                                 values.possibleValues[index]?.description,
                             label: data?.possibleValues?.[index]?.label || 
-                                values.possibleValues[index]?.label
+                                values.possibleValues[index]?.label,
+                            type: data?.possibleValues?.[index]?.type || 
+                            values.possibleValues[index]?.type,
                         })}
                     >
                         <RiDeleteBin4Line size={20} />
@@ -128,6 +132,7 @@ export default function PossibleValues({data})  {
                         index={editValue?.index ?? 0}
                         label={editValue?.label ?? ''}
                         value={editValue?.value ?? ''}
+                        type={editValue?.type ?? ''}
                         description={editValue?.description ?? ''}
                         newValue={!Boolean(editValue)}
                         push={push}

@@ -13,6 +13,7 @@ import { mutate } from "swr";
 const arrForm = [
     { title: 'ID', name: 'id' },
     { title: 'Label name', name: 'labelName' },
+    { title: 'Attribute value', name: 'attributeName'},
     { title: 'Description', name: 'description' },
     { title: 'Default value', name: 'defaultValue' },
     { title: 'Value Type', name: 'valueType' },
@@ -65,7 +66,7 @@ export default function ConfigDescription({ tab, loading }) {
                 <Grid container spacing={3}>
                     {arrForm.map((item, index) => {
                         return (
-                        <Grid key={index} item xs={(index !== 3 && index !== 4) ? 12 : 6}>
+                        <Grid key={index} item xs={(index !== 4 && index !== 5) ? 12 : 6}>
                             <FormGroup>
                                 <InputField
                                     fullWidth

@@ -10,8 +10,10 @@ import { useState } from 'react';
 const validationSchema = Yup.object().shape({
     id: Yup.string().required("required"),
     labelName: Yup.string().required("required"),
+    attributeName: Yup.string().required("required"),
     description: Yup.string().required("required"),
     defaultValue: Yup.string().required("required"),
+    currentValue: Yup.string().required("required"),
     valueType: Yup.string().required("required"),
     object: Yup.string().required("required"),
     vendor: Yup.string().required("required")
@@ -26,6 +28,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
   const initialValues = {
     id: data?.id || "",
     labelName: data?.labelName || "",
+    attributeName: data?.attributeName || "",
     description: data?.description || "",
     currentValue: data?.currentValue || "",
     object: data?.object || "",
@@ -39,7 +42,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
   const handleSubmit = (e, { resetForm }) => {
     setLoading(true);
     const dataValue = e;
-    console.log(dataValue);
+    // console.log(dataValue);
     const url =
       tab === -1
         ? `${process.env.backendUrl}api/scannersetting`

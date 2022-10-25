@@ -5,23 +5,44 @@ import * as Yup from "yup";
 import { Box, Typography, Divider, FormControl } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useMemo } from 'react';
+import Select from 'components/Select';
+
+const types = [
+  {
+    label: 'Select Only',
+    value: 'select',
+    description: 'Only selected config value is needed to construct action'
+  },
+  {
+    label: 'Integer Only',
+    value: 'integer',
+    description: 'Only an integer value is needed to construct action'
+  },
+  {
+    label: 'Select & Integer',
+    value: 'select/integer',
+    description: 'Integer value and selected config value is needed to construct action'
+  }
+]
 
 const validationSchema = Yup.object().shape({
-  label: Yup.string().required("required"),
-  value: Yup.string().required("required"),
-  description: Yup.string().required("required")
+  label: Yup.string().required("Required"),
+  value: Yup.string().required("Required"),
+  description: Yup.string().required("Required"),
+  type: Yup.string().required("Required")
 });
 
 const ScannerConfigValueForm = ({ open, close, ...rest }) => {
-  const { index, label, value, description, newValue, push, replace } = rest;
+  const { index, label, value, type, description, newValue, push, replace } = rest;
 
   const initialValues = useMemo(() => {
     return {
       label: !newValue ? label : "",
       value: !newValue ? value : "",
-      description: !newValue ? description : ""
+      description: !newValue ? description : "",
+      type: !newValue ? type: ""
     };
-  }, [label, value, description]);
+  }, [label, value, description, type]);
 
   const handleSubmit = (e) => {
     if (newValue) {
@@ -128,6 +149,23 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
                     placeholder="Description"
                   />
                   <Typography sx={{color: "red.main"}}>{errors.value}</Typography>
+                </FormControl>
+                <FormControl sx={{my: 2}} fullWidth>
+                    <Select
+                      label="Value type"
+                      error={Boolean(
+                        touched.type && errors.type
+                      )}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.type}
+                      lists={types}
+                      name="type"
+                      aria-invalid={Boolean(
+                        touched.type && errors.type
+                      )}
+                    />
+                    <Typography sx={{color: "red.main"}}>{errors.type}</Typography>
                 </FormControl>
               </Form>
             </Box>

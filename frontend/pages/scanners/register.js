@@ -18,11 +18,17 @@ export async function getServerSideProps(ctx) {
         });
         token = null;
     }
-    if (registrationToken) {
+    if (registrationToken && registrationToken !== 'undefined') {
         setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
             path: '/',
             sameSite: 'lax'
         });
+    } else {
+        ctx.res.writeHead(302, {
+            Location: "/dashboard",
+        });
+  
+      return ctx.res.end();
     }
     
     if (token) {

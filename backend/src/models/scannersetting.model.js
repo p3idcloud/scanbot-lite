@@ -20,6 +20,10 @@ const mongoose = require('mongoose');
  *      type: string
  *      description: Labelname of setting
  *      example: Color
+ *     attributeName:
+ *      type: string
+ *      description: The value given to the attribute option
+ *      example: color
  *     description:
  *      type: string
  *      description: Description of setting
@@ -59,6 +63,7 @@ const mongoose = require('mongoose');
 const ScannerSettingSchema = new mongoose.Schema({
     id: String,
     labelName: String,
+    attributeName: String,
     description: String,
     vendor: String,
     valueType: String,

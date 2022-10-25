@@ -37,7 +37,13 @@ router.post('/:scannerId/blocks', express.raw({type:'*/*',inflate:true, limit: '
     
 
     // get Queue From ScannerState
-    const queue = await getQueueFromId(scannerState.currentQueueId);
+    // There was an instance where queue is null, checked mongo and it's there, so
+    // i'm setting a while loop and settimeout until this is found
+    var queue = await getQueueFromId(scannerState.currentQueueId);
+    while (!queue) {
+        timeoutId = setTimeout(async () => queue = await getQueueFromId(scannerState.currentQueueId), 500);
+    }
+    clearTimeout(timeoutId);
 
     // get & update Job from Queue
     let job = await getJobFromId(queue.jobId);

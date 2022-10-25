@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import ReactDOMClient from "react-dom/client";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
@@ -12,8 +13,6 @@ import jwt from 'jsonwebtoken';
 import "assets/css/global.css";
 
 import { authConstants } from "constants/auth";
-import store from "redux/store";
-import { createWrapper } from "next-redux-wrapper";
 import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
@@ -22,10 +21,9 @@ import ThemeProvider from "config/theme/ThemeProvider";
 
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
-  ReactDOM.render(
-    <PageChange path={url} />,
-    document.getElementById("page-transition")
-  );
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.render(<PageChange path={url} />);
 });
 Router.events.on("routeChangeComplete", () => {
   ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
@@ -181,7 +179,4 @@ class MyApp extends App {
   }
 }
 
-const makeStore = () => store;
-const wrapper = createWrapper(makeStore);
-
-export default wrapper.withRedux(MyApp);
+export default MyApp;

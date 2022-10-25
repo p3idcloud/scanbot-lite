@@ -13,7 +13,7 @@ const validationSchema = Yup.object().shape({
     attributeName: Yup.string().required("required"),
     description: Yup.string().required("required"),
     defaultValue: Yup.string().required("required"),
-    currentValue: Yup.string().required("required"),
+    // currentValue: Yup.string().required("required"),
     valueType: Yup.string().required("required"),
     object: Yup.string().required("required"),
     vendor: Yup.string().required("required")

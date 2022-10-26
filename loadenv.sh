@@ -1,4 +1,4 @@
-printf "Parsing filename: $1...\n\n"
+#!/usr/bin/env bash
 
 ###
 ###     CONSTANTS
@@ -203,17 +203,10 @@ add_to_prod_frontend () {
 
 get_descriptor () {
     # $1 is the url
-    if [ -e descriptor ];
-    then rm descriptor
-    else wget $1 # saves in a file 'descriptor'
-    fi;
-    filename=descriptor
-    filecontent=$(cat $filename)
+    filecontent=$(curl -s $1 | cat)
     cert=${filecontent#*<ds:X509Certificate>}
     cert=${cert%%</ds:X509Certificate>*}
     IDP_CERT=$cert
-    # delete the file
-    rm descriptor
 }
 
 # Default envs

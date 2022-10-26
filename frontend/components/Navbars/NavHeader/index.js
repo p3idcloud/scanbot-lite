@@ -40,7 +40,7 @@ const NavHeader = ({ lists, defaultKey }) => {
         const title = item?.title || item?.label;
         if (index < 4) {
           return (
-            <Link key={id + index} to={item?.link || '/'} shallow>
+            <Link legacyBehavior key={id + index} to={item?.link || '/'} shallow>
               <Button onClick={() => setSelected(title)} variant={selectedMemo === title ? 'selected' : 'unSelected'}>
                 {title || '-'}
               </Button>
@@ -74,7 +74,7 @@ const NavHeader = ({ lists, defaultKey }) => {
               const title = item?.title || item?.label;
               if (index > 3) {
                 return (
-                  <Link key={id + index} to={item?.link || '/'} shallow>
+                  <Link legacyBehavior key={id + index} to={item?.link || '/'} shallow>
                     <Button
                       onClick={() => setSelected(title)}
                       variant={[selected, selectedMemo].includes(title) ? 'selected' : 'unSelected'}

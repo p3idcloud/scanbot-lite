@@ -47,7 +47,7 @@ export default function Scanner() {
 
     const titleHeader = (
         <>
-            <Link href='/dashboard'><a style={{color: "#673AB7", textDecoration: 'none'}}>Scanner</a></Link> <span style={{color: '#848484'}}>/ Detail Scanner</span>
+            <Link legacyBehavior href='/dashboard'><a style={{color: "#673AB7", textDecoration: 'none'}}>Scanner</a></Link> <span style={{color: '#848484'}}>/ Detail Scanner</span>
         </>
     )
     

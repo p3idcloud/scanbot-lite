@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { Modal, Box, Typography } from "@mui/material";
 import CustomLoader from "components/Loader";
 import { parseCookies } from "nookies";

@@ -5,6 +5,7 @@ export default function Step3() {
     return (
         <>
             <Image 
+                alt={"Caca"}
                 src="/caca.jpeg" 
                 width={200}
                 height={200}

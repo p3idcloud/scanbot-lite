@@ -188,7 +188,7 @@ add_to_prod_frontend "BASE_URL" "https://$ip:3000/"
 add_to_prod_frontend "BACKEND_URL" "https://$ip/"
 
 file="$1"
-if [[ "$file" -eq "" ]]
+if [[ -z $file ]]
 then file="assets/env-mjif.json"
 fi
 

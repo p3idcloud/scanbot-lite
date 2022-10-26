@@ -64,9 +64,12 @@ KEYCLOAK_SSO_LOGIN_URL = "https://kc-triy.myte.beta.lyr.id/realms/scanbot/protoc
 # IMPORTING JSON CONFIG
 Run the loadenv script:
 ```
-bash loadenv.sh PATH_TO_FILE.json
+bash loadenv.sh
 ```
-Example:
+Then input your data when prompted. Example of prompt and input:
 ```
-bash loadenv.sh assets/env-mjif.json
+Enter the path to your env.json: assets/env-triy.json
+Enter your ip for env: 172.19.45.99
+Enter your keycloak realm: scanbot
+Enter your keycloak client id: scanbot-lite-app
 ```

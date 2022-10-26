@@ -1,5 +1,9 @@
 printf "Parsing filename: $1...\n\n"
 
+###
+###     CONSTANTS
+###
+
 #JSON KEYS:
 MONGODB_URL_JSON="mondodb_url"
 MONGODB_PW_JSON="mongo_db_password"
@@ -44,9 +48,34 @@ PROD_FRONTEND_VALUE=()
 DEV_FRONTEND_ENV=()
 DEV_FRONTEND_VALUE=()
 
+CURRENTVAR=""
+MONGOURL=""
+IDP_CERT=""
+
+###
+###     USER INPUT
+###
 read -p "Enter the path to your env.json: " filepath
 read -p "Enter your ip for env: " ip
+read -p "Enter your keycloak realm: " realm
+read -p "Enter your keycloak client id: " clientid
 
+if [[ -z "$ip" ]]
+then ip=192.168.0.100
+fi
+
+file="$filepath"
+if [[ -z "$file" ]]
+then file=assets/env-mjif.json
+fi
+
+###
+### 
+###
+
+###
+###     FUNCTIONS
+###
 write_to_env () {
     filename_dev='backend/.env.development'
     filename_prod='backend/.env.production'
@@ -172,30 +201,44 @@ add_to_prod_frontend () {
     PROD_FRONTEND_VALUE+=($2)
 }
 
-CURRENTVAR=""
-MONGOURL=""
+get_descriptor () {
+    # $1 is the url
+    if [ -e descriptor ];
+    then rm descriptor
+    else wget $1 # saves in a file 'descriptor'
+    fi;
+    filename=descriptor
+    filecontent=$(cat $filename)
+    cert=${filecontent#*<ds:X509Certificate>}
+    cert=${cert%%</ds:X509Certificate>*}
+    IDP_CERT=$cert
+    # delete the file
+    rm descriptor
+}
 
-if [[ -z "$ip" ]]
-then ip=192.168.0.100
-fi
-
-# Defaults
+# Default envs
+#BACKEND
 add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
 add_to_env "MINIO_USE_SSL" "true"
+add_to_env "KEYCLOAK_CLIENT_ID" $clientid
+
 add_to_dev "BASE_URL" "http://$ip/"
 add_to_dev "FRONTEND_URL" "http://$ip:3000/"
+
 add_to_prod "BASE_URL" "https://$ip/"
 add_to_prod "FRONTEND_URL" "https://$ip:3000/"
+
+#FRONTEND
 add_to_dev_frontend "BASE_URL" "http://$ip:3000/"
 add_to_dev_frontend "BACKEND_URL" "http://$ip/"
+
 add_to_prod_frontend "BASE_URL" "https://$ip:3000/"
 add_to_prod_frontend "BACKEND_URL" "https://$ip/"
 
-file="$filepath"
-if [[ -z "$file" ]]
-then file=assets/env-mjif.json
-fi
+###
+###     PARSE CONFIG
+###
 
 for line in $(<$file);
 do
@@ -236,8 +279,12 @@ do
         $KEYCLOAK_SSO_LOGIN_URL)
             line=${line%??}
             line=${line#*\"}
-            emq="\"https://$line/realms/scanbot/protocol/saml\""
-            add_to_env $KEYCLOAK_SSO_LOGIN_URL $emq
+            kc="\"https://$line/realms/$realm/protocol/saml\""
+            kc_idp_curl="https://$line/realms/$realm/protocol/saml/descriptor"
+            # Get idp cert
+            get_descriptor $kc_idp_curl
+            add_to_env "KEYCLOAK_IDP_CERT" $IDP_CERT
+            add_to_env $KEYCLOAK_SSO_LOGIN_URL $kc
             CURRENTVAR=""
             ;;
         $KEYCLOAK_PW)
@@ -315,6 +362,8 @@ do
     esac;
 done
 
+
+###
+###     WRITE CONFIG
+###
 write_to_env
-add_to_dev
-add_to_prod

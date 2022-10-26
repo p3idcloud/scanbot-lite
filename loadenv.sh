@@ -19,7 +19,7 @@ MONGODB_URL="MONGODB_URL"
 MONGODB_PW="MONGODB_PW"
 APP_SECRET="APP_SECRET"
 AWS_ACCESS_KEY="AWS_ACCESS_KEY"
-AWS_SECRET_KEY='AWS_SECRET_KEY'
+AWS_SECRET_KEY="AWS_SECRET_KEY"
 AWS_ENDPOINT="AWS_ENDPOINT"
 AWS_CONSOLE="AWS_CONSOLE"
 JWT_SECRET="JWT_SECRET"
@@ -47,8 +47,8 @@ DEV_FRONTEND_VALUE=()
 read -p "Enter your ip for env: " ip
 
 write_to_env () {
-    filename_dev='backend/.env.development'
-    filename_prod='backend/.env.production'
+    filename_dev="backend/.env.development"
+    filename_prod="backend/.env.production"
     
     # dev
     while read line
@@ -69,7 +69,7 @@ write_to_env () {
             fi
         done
 
-        echo $line >> 'backend/.env.development.temp'
+        echo $line >> "backend/.env.development.temp"
     done < $filename_dev
 
     # prod
@@ -91,7 +91,7 @@ write_to_env () {
             fi
         done
 
-        echo $line >> 'backend/.env.production.temp'
+        echo $line >> "backend/.env.production.temp"
     done < $filename_prod
     
     cp -fr backend/.env.development.temp backend/.env.development
@@ -100,8 +100,8 @@ write_to_env () {
     rm backend/.env.development.temp
 
     
-    filename_dev='frontend/.env.development'
-    filename_prod='frontend/.env.production'
+    filename_dev="frontend/.env.development"
+    filename_prod="frontend/.env.production"
     
     # dev
     while read line
@@ -113,7 +113,7 @@ write_to_env () {
                 line="${line%%=*}=${DEV_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> 'frontend/.env.development.temp'
+        echo $line >> "frontend/.env.development.temp"
     done < $filename_dev
 
     # prod
@@ -126,7 +126,7 @@ write_to_env () {
                 line="${line%%=*}=${PROD_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> 'frontend/.env.production.temp'
+        echo $line >> "frontend/.env.production.temp"
     done < $filename_prod
     
     cp -fr frontend/.env.development.temp frontend/.env.development
@@ -189,7 +189,7 @@ add_to_prod_frontend "BACKEND_URL" "https://$ip/"
 
 file="$1"
 if [[ "$file" -eq "" ]]
-then file='assets/env-mjif.json'
+then file="assets/env-mjif.json"
 fi
 
 for line in $(<$file);

@@ -44,6 +44,7 @@ PROD_FRONTEND_VALUE=()
 DEV_FRONTEND_ENV=()
 DEV_FRONTEND_VALUE=()
 
+read -p "Enter the path to your env.json: " filepath
 read -p "Enter your ip for env: " ip
 
 write_to_env () {
@@ -53,9 +54,9 @@ write_to_env () {
     # dev
     while read line
     do
-        for i in "${!DEV_FRONTEND_ENV[@]}";
+        for i in "${!ENV_LIST[@]}";
         do
-            if [[ $line =~ ^${DEV_FRONTEND_ENV[$i]}* ]];
+            if [[ $line =~ ^${ENV_LIST[$i]}* ]];
             then
                 line="${line%%=*}=${VALUE_LIST[$i]}"
             fi
@@ -174,6 +175,10 @@ add_to_prod_frontend () {
 CURRENTVAR=""
 MONGOURL=""
 
+if [[ -z "$ip" ]]
+then ip=192.168.0.100
+fi
+
 # Defaults
 add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
@@ -187,9 +192,9 @@ add_to_dev_frontend "BACKEND_URL" "http://$ip/"
 add_to_prod_frontend "BASE_URL" "https://$ip:3000/"
 add_to_prod_frontend "BACKEND_URL" "https://$ip/"
 
-file="$1"
-if [[ "$file" -eq "" ]]
-then file='assets/env-mjif.json'
+file="$filepath"
+if [[ -z "$file" ]]
+then file=assets/env-mjif.json
 fi
 
 for line in $(<$file);

@@ -1,0 +1,25 @@
+name: Deploy project to Lyrid
+
+on:
+  push:
+    branches:
+      - "feat/**"
+    paths-ignore:
+      - "**/README.md"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Lyrid client and deploy projects
+        run: |
+          curl -o lc https://api.lyrid.io/client/dl/linux
+          chmod +x ./lc
+          mkdir -p $HOME/bin && cp ./lc $HOME/bin/lc && export PATH=$HOME/bin:$PATH
+          lc config add --config "default" --key "Q77tID3DTZB44LRg1e9R" --secret "nRbbzHP9kPzm6Ag3TbWi8YLu4MmNOdrdsbGTmE58PaTpa0Q5go"
+          make deployAll

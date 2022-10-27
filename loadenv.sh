@@ -1,5 +1,3 @@
-printf "Parsing filename: $1...\n\n"
-
 ###
 ###     CONSTANTS
 ###
@@ -57,9 +55,9 @@ IDP_CERT=""
 ###
 read -p "Enter the path to your env.json: " filepath
 read -p "Enter your ip for env: " ip
-read -p "Enter your keycloak realm: " realm
-read -p "Enter your keycloak client id: " clientid
 
+realm=scanbot
+clientid="scanbot-lite-app"
 if [[ -z "$ip" ]]
 then ip=192.168.0.100
 fi
@@ -205,8 +203,8 @@ get_descriptor () {
     # $1 is the url
     if [ -e descriptor ];
     then rm descriptor
-    else wget $1 # saves in a file 'descriptor'
     fi;
+    wget $1 # saves in a file 'descriptor'
     filename=descriptor
     filecontent=$(cat $filename)
     cert=${filecontent#*<ds:X509Certificate>}

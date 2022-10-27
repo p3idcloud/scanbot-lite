@@ -37,7 +37,7 @@ router.get('/signin', async (req, res) => {
 
     try {
         const loginUrl = await createLoginRequestUrl(identityProvider, { force_authn: true });
-        if (registrationToken !== "undefined") {
+        if (typeof registrationToken !== "undefined") {
             res.cookie(REGISTRATION_TOKEN, registrationToken, { httpOnly: true, sameSite: false });
         }
         return res.redirect(loginUrl);
@@ -55,7 +55,7 @@ router.post('/signin', async (req, res, next) => {
 
     // pass in post variables
     res.locals.samlBody = samlBody;
-    if (registrationToken !== "undefined") {
+    if (typeof registrationToken !== "undefined") {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
     } else {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}dashboard`;
@@ -99,25 +99,20 @@ router.post('/signin', async (req, res) => {
     var token = await jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: process.env.LOGIN_SESSION_DAY+'d'});
 
     //now set the session cookie
-    if (cookies.get(REGISTRATION_TOKEN)) {
-        cookies.set(REGISTRATION_TOKEN, null, {expires: Date.now(), httpOnly: true, sameSite: false});
-    }
     let expireCookie = new Date();
     expireCookie.setDate(expireCookie.getDate() + process.env.LOGIN_SESSION_DAY);
-    if (redirectUrl.includes('register')){
-        cookies.set(SESSION_TOKEN, token, {
-            sameSite: 'lax',
-            expires: expireCookie,
-            httpOnly: false
-        });
-    } else {
-        cookies.set(SESSION_TOKEN, token, {
-            sameSite: 'lax',
-            expires: expireCookie
-        });
-    }
-    if (redirectUrl){
-        return res.redirect(302, redirectUrl);
+    if (redirectUrl) {
+        return res.send(
+            `<html>
+            <body onload="document.forms['myform'].submit()">
+                <form name="myform" action="${process.env.FRONTEND_URL}api/auth/login/saml" method="POST">
+                    <input type="hidden" name="sessionToken" value="${token}"/>
+                    <input type="hidden" name="expireTime" value="${expireCookie}"/>
+                    <input type="hidden" name="redirectUrl" value="${redirectUrl}"/>
+                </form>
+            </body>
+            </html>`
+        );
     }
     return res.redirect(process.env.BASE_URL);
 });

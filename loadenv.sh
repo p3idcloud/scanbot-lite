@@ -57,8 +57,8 @@ IDP_CERT=""
 ###
 read -p "Enter the path to your env.json: " filepath
 read -p "Enter your ip for env: " ip
-read -p "Enter your keycloak realm: " realm
-read -p "Enter your keycloak client id: " clientid
+realm=scanbot
+clientid="scanbot-lite-app"
 
 if [[ -z "$ip" ]]
 then ip=192.168.0.100
@@ -70,7 +70,7 @@ then file=assets/env-mjif.json
 fi
 
 ###
-###
+### 
 ###
 
 ###

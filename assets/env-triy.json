@@ -1,7 +1,7 @@
 {
     "env_vars": [
         {
-            "mondodb_url": "mongodb-triy.myte.beta.lyr.id:24415",
+            "mondodb_url": "mongodb-triy:24415.myte.beta.lyr.id",
             "emqx_url": "emqx-triy.myte.beta.lyr.id",
             "keycloak_url": "kc-triy.myte.beta.lyr.id",
             "keycloak_password": "nlQZvPNF",

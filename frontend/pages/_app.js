@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import "assets/css/global.css";
 
 import { authConstants } from "constants/auth";
+import { serialize } from "cookie";
 import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
@@ -48,6 +49,7 @@ class MyApp extends App {
     }
 
     const cookies = nookies.get(ctx);
+    console.log(cookies);
 
     if (cookies && cookies[authConstants.SESSION_TOKEN] && pageProps) {
       pageProps[authConstants.SESSION_TOKEN] = cookies[authConstants.SESSION_TOKEN];

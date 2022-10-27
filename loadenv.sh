@@ -66,7 +66,7 @@ fi
 
 file="$filepath"
 if [[ -z "$file" ]]
-then file=assets/env-mjif.json
+then file=env.json
 fi
 
 ###

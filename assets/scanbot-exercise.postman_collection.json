@@ -1,0 +1,144 @@
+{
+	"info": {
+		"_postman_id": "78c9315e-39b6-4e24-8e70-3cfd04956331",
+		"name": "Scanbot Exercise",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Download merged PDF",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im5hbWVfaWQiOiJld2luYXRhIiwic2Vzc2lvbl9pbmRleCI6IjYyZTQ4ZjFmLWY4OTYtNDY4Ni05YjA5LTA0MGE3MTYwOWNmZDo6Y2JiYTdmOTUtNmRjZi00NjNmLTkzNTktZmY5YWM4MGI4N2NmIiwic2Vzc2lvbl9ub3Rfb25fb3JfYWZ0ZXIiOiIyMDIyLTEwLTE4VDEyOjE3OjI3LjE5OFoiLCJhdHRyaWJ1dGVzIjp7InVzZXJuYW1lIjpbImV3aW5hdGEiXSwiZW1haWwiOlsiZXdpbmF0YUBseXJpZC5pbyJdLCJ1c2VyaWQiOlsiMzk2Y2QyMjQtNGQ5OS00ODg4LTlhMTItMjJiMmY4M2U3ZjhkIl0sImZpcnN0bmFtZSI6WyJFcm1hbm8iXSwibGFzdG5hbWUiOlsiV2luYXRhIl0sInJvbGUiOlsiZGVmYXVsdC1yb2xlcy10ZXN0Il19fSwiaWF0IjoxNjY2MDU5NDUzLCJleHAiOjE2NjY2NjQyNTN9.53IHPMWwHq8B7uNi1Yt7CXHLg7RFQMhplc79OYfXZ2g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://172.31.91.37/api/exercise/mergepdf/7558ca6d-839e-4952-9d01-5e90a497e2a4",
+					"protocol": "http",
+					"host": [
+						"172",
+						"31",
+						"91",
+						"37"
+					],
+					"path": [
+						"api",
+						"exercise",
+						"mergepdf",
+						"7558ca6d-839e-4952-9d01-5e90a497e2a4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save PDF to drive",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im5hbWVfaWQiOiJld2luYXRhIiwic2Vzc2lvbl9pbmRleCI6IjYyZTQ4ZjFmLWY4OTYtNDY4Ni05YjA5LTA0MGE3MTYwOWNmZDo6Y2JiYTdmOTUtNmRjZi00NjNmLTkzNTktZmY5YWM4MGI4N2NmIiwic2Vzc2lvbl9ub3Rfb25fb3JfYWZ0ZXIiOiIyMDIyLTEwLTE4VDEyOjE3OjI3LjE5OFoiLCJhdHRyaWJ1dGVzIjp7InVzZXJuYW1lIjpbImV3aW5hdGEiXSwiZW1haWwiOlsiZXdpbmF0YUBseXJpZC5pbyJdLCJ1c2VyaWQiOlsiMzk2Y2QyMjQtNGQ5OS00ODg4LTlhMTItMjJiMmY4M2U3ZjhkIl0sImZpcnN0bmFtZSI6WyJFcm1hbm8iXSwibGFzdG5hbWUiOlsiV2luYXRhIl0sInJvbGUiOlsiZGVmYXVsdC1yb2xlcy10ZXN0Il19fSwiaWF0IjoxNjY2MDU5NDUzLCJleHAiOjE2NjY2NjQyNTN9.53IHPMWwHq8B7uNi1Yt7CXHLg7RFQMhplc79OYfXZ2g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://172.31.91.37/api/exercise/savetodrive/7558ca6d-839e-4952-9d01-5e90a497e2a4",
+					"protocol": "http",
+					"host": [
+						"172",
+						"31",
+						"91",
+						"37"
+					],
+					"path": [
+						"api",
+						"exercise",
+						"savetodrive",
+						"7558ca6d-839e-4952-9d01-5e90a497e2a4"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://172.31.91.37/api/exercise/savetodrive/7558ca6d-839e-4952-9d01-5e90a497e2a4",
+							"protocol": "http",
+							"host": [
+								"172",
+								"31",
+								"91",
+								"37"
+							],
+							"path": [
+								"api",
+								"exercise",
+								"savetodrive",
+								"7558ca6d-839e-4952-9d01-5e90a497e2a4"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "http://172.31.91.37:3000"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "225"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"e1-lY6IxbFlSNpJ74JEKTM5DBvMpQg\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 Oct 2022 10:57:39 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"PDF documents saved to Google Drive\",\n    \"info\": {\n        \"id\": \"1SZDA9hagb3Il45jL1rcSIZWc4HSEHXFt\",\n        \"name\": \"Scanbot-Lite.pdf\",\n        \"webViewLink\": \"https://drive.google.com/file/d/1SZDA9hagb3Il45jL1rcSIZWc4HSEHXFt/view?usp=drivesdk\"\n    }\n}"
+				}
+			]
+		}
+	]
+}

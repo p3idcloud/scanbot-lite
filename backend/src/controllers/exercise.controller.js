@@ -4,7 +4,7 @@ const { getJobFromId } = require('../services/job.js');
 const { getQueueFromId } = require('../services/queue.js');
 const { getScannerHistoryFromId } = require('../services/scannerhistory.js');
 
-async function getImageURIsFromScannerHistory(req, res) {
+async function getImageURIsFromScannerHistory(req, res, next) {
   try {
     const { principalId } = req.twain || {};
     if (!principalId?.length) throw new Error(`Please log in to your account`, { cause: 401 });
@@ -25,13 +25,14 @@ async function getImageURIsFromScannerHistory(req, res) {
     const { imageURI } = await getJobFromId(jobId) || {};
     if (!imageURI?.length) throw new Error(`No data found`, { cause: 404 });
 
-    res.status(200).json({ imageURI });
+    req.imageURI = imageURI;
+    next();
   } catch (error) {
     res.status(error.cause || 500).json({ message: error.message || `Something went wrong` });
   }
 }
 
-async function mergePDFFromImageURIs(req, res) {
+async function mergePDFFromImageURIs(req, res, next) {
   try {
     const { principalId } = req.twain || {};
     if (!principalId?.length) throw new Error(`Please log in to your account`, { cause: 401 });
@@ -39,18 +40,31 @@ async function mergePDFFromImageURIs(req, res) {
     const { id } = await getAccountFromId(principalId) || {};
     if (!id?.length) throw new Error(`Account does not exist`, { cause: 404 });
 
-    const { imageURI } = req.body || {};
-    if (!imageURI?.length) throw new Error(`No imageURI provided`, { cause: 400 });
-
-    const [mergedPDF, error] = await ExerciseService.mergePDFFromImageURIs(id, imageURI);
+    const [mergedPDF, error] = await ExerciseService.mergePDFFromImageURIs(id, req.imageURI);
     if (error) throw new Error(`Unable to merge pdf documents at this moment`, { cause: 408 });
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=ScanBot.pdf');
-    res.end(mergedPDF);
+    req.mergedPDF = mergedPDF;
+    next();
   } catch (error) {
     res.status(error.cause || 500).json({ message: error.message || `Something went wrong` });
   }
 }
 
-module.exports = { getImageURIsFromScannerHistory, mergePDFFromImageURIs };
+async function savePDFToDrive(req, res) {
+  try {
+    const [result, error] = await ExerciseService.savePDFToDrive(req.mergedPDF);
+    if (error) throw new Error(`Unable to save pdf documents at this moment`, { cause: 408 });
+
+    res.status(200).json({ message: `PDF documents saved to Google Drive`, info: result });
+  } catch (error) {
+    res.status(error.cause || 500).json({ message: error.message || `Something went wrong` });
+  }
+}
+
+async function serveMergedPDFResult(req, res) {
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename=ScanBot.pdf');
+  res.status(200).send(req.mergedPDF);
+}
+
+module.exports = { getImageURIsFromScannerHistory, mergePDFFromImageURIs, savePDFToDrive, serveMergedPDFResult };

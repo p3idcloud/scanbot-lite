@@ -1,16 +1,25 @@
-const { Router } = require('express');
 const ExerciseController = require('../controllers/exercise.controller.js');
+const { Router } = require('express');
 
 const router = Router();
 
 /* endpoint for health check */
 router.get('/', (_, res) => res.sendStatus(200));
 
-/* endpoint to get imageuris from scanner history */
-router.get('/imageuris/:scannerHistoryId', ExerciseController.getImageURIsFromScannerHistory);
+/* endpoint to download merged pdf documents from scanner history */
+router.get(
+  '/mergepdf/:scannerHistoryId',
+  ExerciseController.getImageURIsFromScannerHistory,
+  ExerciseController.mergePDFFromImageURIs,
+  ExerciseController.serveMergedPDFResult
+);
 
-/* endpoint to merge pdf documents */
-router.post('/mergepdf', ExerciseController.mergePDFFromImageURIs);
-
+/* endpoint to save pdf documents from scanner history to google drive */
+router.get(
+  '/savetodrive/:scannerHistoryId',
+  ExerciseController.getImageURIsFromScannerHistory,
+  ExerciseController.mergePDFFromImageURIs,
+  ExerciseController.savePDFToDrive
+);
 
 module.exports = router;

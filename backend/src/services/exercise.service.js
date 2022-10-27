@@ -1,7 +1,6 @@
-const { Client } = require('minio');
-const PDFMerger = require('pdf-merger-js');
-
 async function mergePDFFromImageURIs(accountId, imageURIs) {
+  const { Client } = require('minio');
+  const PDFMerger = require('pdf-merger-js');
   try {
     const minioClient = new Client({
       endPoint: process.env.AWS_ENDPOINT,
@@ -36,4 +35,32 @@ async function mergePDFFromImageURIs(accountId, imageURIs) {
   }
 }
 
-module.exports = { mergePDFFromImageURIs };
+async function savePDFToDrive(mergedPdf) {
+  const { google } = require('googleapis');
+  const stream = require('stream');
+  try {
+    /* TODO implement better OAuth flow so user can login with their own account */
+    const auth = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_REDIRECT_URI
+    );
+    auth.setCredentials({ refresh_token: process.env.GOOGLE_TEST_TOKEN });
+
+    const drive = google.drive({ version: 'v3', auth });
+
+    const bufferStream = new stream.PassThrough();
+    bufferStream.end(mergedPdf);
+
+    const { data } = await drive.files.create({
+      requestBody: { name: 'Scanbot-Lite.pdf' },
+      media: { mimeType: 'application/pdf', body: bufferStream },
+      fields: 'id,name,webViewLink',
+    });
+    return [data, null];
+  } catch (error) {
+    return [null, error];
+  }
+}
+
+module.exports = { mergePDFFromImageURIs, savePDFToDrive };

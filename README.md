@@ -35,26 +35,23 @@ For setting up the front end and back end, refer to the README.md at their respe
 
 ---
 # ENVIRONMENT SETUP
-## Implement Keycloak as IdP
 ---
 
 ### 0) Prerequisites : Node.js 18, Yarn
 
-0.1) Installing Node. Download Node and install normally
-
-0.2) Installing Yarn. Run terminal / cmd / powershell as admin then run command
+1. Installing Node. Download Node and install normally
+2. Installing Yarn. Run terminal / cmd / powershell as admin then run command
 
 ```
 npm install -g yarn
 ```
-    
-0.3) In case error (Windows) : yarn.ps1 cannot be loaded because running scripts is disabled on this system, run terminal with admin access
+3. In case error (Windows) : yarn.ps1 cannot be loaded because running scripts is disabled on this system, run terminal with admin access
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 ```
 or if you don't have admin permission
 ```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### 1) Import Scanbot Realm to Keycloak

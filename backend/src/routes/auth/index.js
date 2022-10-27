@@ -55,6 +55,7 @@ router.post('/signin', async (req, res, next) => {
     res.locals.samlBody = samlBody;
     if (typeof registrationToken !== "undefined") {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
+        cookies.set(REGISTRATION_TOKEN, null, { httpOnly: true, sameSite: false, expires: new Date() })
     } else {
         res.locals.callbackUrl = `${process.env.FRONTEND_URL}dashboard`;
     }
@@ -63,7 +64,6 @@ router.post('/signin', async (req, res, next) => {
 });
 
 router.post('/signin', async (req, res) => {
-    const cookies = new Cookies(req, res);
     const redirectUrl = res.locals.callbackUrl;
 
     const samlBody = res.locals.samlBody;

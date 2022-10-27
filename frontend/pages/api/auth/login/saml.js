@@ -1,9 +1,15 @@
 import { authConstants } from "constants/auth";
-import { serialize } from "cookie";
+import { serialize, parse } from "cookie";
 
 export default async (req, res) => {
     if (req.method === 'GET') {
-        return res.redirect(`${process.env.backendUrl}api/auth/signin`);
+        const cookies = parse(req.headers.cookie ?? '');
+        const registrationToken = cookies[authConstants.REGISTRATION_TOKEN];
+        if (registrationToken) {
+            return res.redirect(`${process.env.backendUrl}api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${registrationToken}`);
+        } else {
+            return res.redirect(`${process.env.backendUrl}api/auth/signin`);
+        }
     }
     if (req.method === 'POST') {
         const { sessionToken, expireTime, redirectUrl } = req.body;
@@ -14,9 +20,9 @@ export default async (req, res) => {
                 expires: new Date(expireTime),
                 path: '/'
             });
-            console.log(cookie);
             res.setHeader('Set-Cookie', cookie);
-            return res.redirect(redirectUrl);
+            // console.log(decodeURI(redirectUrl));
+            return res.redirect(decodeURI(redirectUrl));
         }
     }
     

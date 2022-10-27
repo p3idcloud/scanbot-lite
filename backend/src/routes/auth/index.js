@@ -17,9 +17,7 @@ router.post('/signout', async (req, res) => {
 
 router.get('/signin', async (req, res) => {
     const cookies = new Cookies(req, res);
-
-    
-    var registrationToken = cookies.get(REGISTRATION_TOKEN);
+    var registrationToken = req.query[REGISTRATION_TOKEN];
 
     const createLoginRequestUrl = (identityProvider, options = {}) =>
         new Promise((resolve, reject) => {

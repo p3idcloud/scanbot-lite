@@ -49,7 +49,6 @@ class MyApp extends App {
     }
 
     const cookies = nookies.get(ctx);
-    console.log(cookies);
 
     if (cookies && cookies[authConstants.SESSION_TOKEN] && pageProps) {
       pageProps[authConstants.SESSION_TOKEN] = cookies[authConstants.SESSION_TOKEN];

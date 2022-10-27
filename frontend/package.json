@@ -7,8 +7,8 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "install:clean:unix": "rm -rf node_modules/ && rm -rf yarn.lock && rm -rf .next/ && yarn install && yarn dev",
-    "install:clean:powershell": "rd /s /q \"node_modules\" & rm \"yarn.lock\" &  rd /s /q \".next\" & yarn install && yarn dev"
+    "install:clean:unix": "rm -rf node_modules/ && rm -rf .next/ && yarn install --frozen-lockfile && yarn dev",
+    "install:clean:powershell": "rd /s /q \"node_modules\" & rd /s /q \".next\" & yarn install --frozen-lockfile && yarn dev"
   },
   "dependencies": {
     "@emotion/cache": "latest",
@@ -20,31 +20,21 @@
     "@mui/lab": "^5.0.0-alpha.101",
     "@mui/material": "^5.10.6",
     "@mui/styles": "^5.10.8",
-    "axios": "^0.27.2",
-    "chartist": "0.10.1",
-    "classnames": "2.2.6",
-    "cookies": "^0.8.0",
-    "crypto": "^1.0.1",
+    "axios": "^1.1.3",
     "dayjs": "^1.11.5",
     "formik": "^2.2.9",
-    "fs": "^0.0.1-security",
-    "history": "5.0.0",
-    "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "next": "12.2.2",
-    "next-compose-plugins": "2.2.1",
+    "next": "13.0.0",
     "nookies": "^2.5.2",
-    "path": "0.12.7",
-    "prop-types": "15.7.2",
+    "prop-types": "15.8.1",
     "react": "^18.2.0",
-    "react-chartist": "0.14.3",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-pdf": "^5.7.2",
-    "react-swipeable-views": "0.13.9",
     "react-toastify": "^9.0.8",
     "react-zoom-pan-pinch": "^2.1.3",
     "swr": "^1.3.0",
+    "uuid": "^9.0.0",
     "yup": "^0.32.11"
   },
   "eslintConfig": {
@@ -61,9 +51,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "optionalDependencies": {
-    "node-sass": "4.14.1",
-    "typescript": "4.1.3"
   }
 }

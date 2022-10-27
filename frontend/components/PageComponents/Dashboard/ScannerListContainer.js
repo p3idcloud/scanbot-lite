@@ -93,7 +93,7 @@ export default function ScannerListContaner({...props}) {
                 <Grid item xs={12} display='flex' justifyContent="space-between">
                     <Stack direction='row' width={0.8} spacing={1}>
                     <Box display='flex' alignItems='center'>
-                        <Image src="/Vectorscanner.png" layout="fixed" width={43} height={32} />
+                        <Image alt={"Scanner"} src="/Vectorscanner.png" layout="fixed" width={43} height={32} />
                     </Box>
                     <Box maxWidth={1}>
                         <Typography noWrap sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>

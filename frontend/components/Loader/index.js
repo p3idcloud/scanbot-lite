@@ -16,6 +16,7 @@ export default function CustomLoader({...props}) {
         />
         <div style={{position: 'absolute', top: 50}}>
           <Image 
+            alt={"Logo"}
             src={"/logo.png"} 
             width={108} 
             height={152}

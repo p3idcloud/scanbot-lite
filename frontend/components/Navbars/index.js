@@ -42,7 +42,7 @@ const HeaderMain = () => {
         <Header container>
           <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
             <Logo>
-              <Link href="/dashboard">
+              <Link legacyBehavior href="/dashboard">
                 <a style={{textDecoration: 'none'}}>
                   <TitleLogo />
                 </a>

@@ -85,7 +85,7 @@ export default function ScannerSetting() {
 
     const titleHeader = (
         <>
-            <Link href='/dashboard'><a style={{color: "#673AB7", textDecoration: 'none'}}>Scanner</a></Link> <span style={{color: '#848484'}}>/ Scanner Configuration</span>
+            <Link legacyBehavior href='/dashboard'><a style={{color: "#673AB7", textDecoration: 'none'}}>Scanner</a></Link> <span style={{color: '#848484'}}>/ Scanner Configuration</span>
         </>
     )
 

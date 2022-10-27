@@ -1,4 +1,8 @@
-printf "Parsing filename: $1...\n\n"
+#!/usr/bin/env bash
+
+###
+###     CONSTANTS
+###
 
 #JSON KEYS:
 MONGODB_URL_JSON="mondodb_url"
@@ -44,8 +48,34 @@ PROD_FRONTEND_VALUE=()
 DEV_FRONTEND_ENV=()
 DEV_FRONTEND_VALUE=()
 
-read -p "Enter your ip for env: " ip
+CURRENTVAR=""
+MONGOURL=""
+IDP_CERT=""
 
+###
+###     USER INPUT
+###
+read -p "Enter the path to your env.json: " filepath
+read -p "Enter your ip for env: " ip
+read -p "Enter your keycloak realm: " realm
+read -p "Enter your keycloak client id: " clientid
+
+if [[ -z "$ip" ]]
+then ip=192.168.0.100
+fi
+
+file="$filepath"
+if [[ -z "$file" ]]
+then file=assets/env-mjif.json
+fi
+
+###
+###
+###
+
+###
+###     FUNCTIONS
+###
 write_to_env () {
     filename_dev="backend/.env.development"
     filename_prod="backend/.env.production"
@@ -53,9 +83,9 @@ write_to_env () {
     # dev
     while read line
     do
-        for i in "${!DEV_FRONTEND_ENV[@]}";
+        for i in "${!ENV_LIST[@]}";
         do
-            if [[ $line =~ ^${DEV_FRONTEND_ENV[$i]}* ]];
+            if [[ $line =~ ^${ENV_LIST[$i]}* ]];
             then
                 line="${line%%=*}=${VALUE_LIST[$i]}"
             fi
@@ -91,7 +121,7 @@ write_to_env () {
             fi
         done
 
-        echo $line >> "backend/.env.production.temp"
+        echo $line >> 'backend/.env.production.temp'
     done < $filename_prod
     
     cp -fr backend/.env.development.temp backend/.env.development
@@ -100,8 +130,8 @@ write_to_env () {
     rm backend/.env.development.temp
 
     
-    filename_dev="frontend/.env.development"
-    filename_prod="frontend/.env.production"
+    filename_dev='frontend/.env.development'
+    filename_prod='frontend/.env.production'
     
     # dev
     while read line
@@ -113,7 +143,7 @@ write_to_env () {
                 line="${line%%=*}=${DEV_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> "frontend/.env.development.temp"
+        echo $line >> 'frontend/.env.development.temp'
     done < $filename_dev
 
     # prod
@@ -126,7 +156,7 @@ write_to_env () {
                 line="${line%%=*}=${PROD_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> "frontend/.env.production.temp"
+        echo $line >> 'frontend/.env.production.temp'
     done < $filename_prod
     
     cp -fr frontend/.env.development.temp frontend/.env.development
@@ -171,26 +201,37 @@ add_to_prod_frontend () {
     PROD_FRONTEND_VALUE+=($2)
 }
 
-CURRENTVAR=""
-MONGOURL=""
+get_descriptor () {
+    # $1 is the url
+    filecontent=$(curl -s $1 | cat)
+    cert=${filecontent#*<ds:X509Certificate>}
+    cert=${cert%%</ds:X509Certificate>*}
+    IDP_CERT=$cert
+}
 
-# Defaults
+# Default envs
+#BACKEND
 add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
 add_to_env "MINIO_USE_SSL" "true"
+add_to_env "KEYCLOAK_CLIENT_ID" $clientid
+
 add_to_dev "BASE_URL" "http://$ip/"
 add_to_dev "FRONTEND_URL" "http://$ip:3000/"
+
 add_to_prod "BASE_URL" "https://$ip/"
 add_to_prod "FRONTEND_URL" "https://$ip:3000/"
+
+#FRONTEND
 add_to_dev_frontend "BASE_URL" "http://$ip:3000/"
 add_to_dev_frontend "BACKEND_URL" "http://$ip/"
+
 add_to_prod_frontend "BASE_URL" "https://$ip:3000/"
 add_to_prod_frontend "BACKEND_URL" "https://$ip/"
 
-file="$1"
-if [[ -z $file ]]
-then file="assets/env-mjif.json"
-fi
+###
+###     PARSE CONFIG
+###
 
 for line in $(<$file);
 do
@@ -231,8 +272,12 @@ do
         $KEYCLOAK_SSO_LOGIN_URL)
             line=${line%??}
             line=${line#*\"}
-            emq="\"https://$line/realms/scanbot/protocol/saml\""
-            add_to_env $KEYCLOAK_SSO_LOGIN_URL $emq
+            kc="\"https://$line/realms/$realm/protocol/saml\""
+            kc_idp_curl="https://$line/realms/$realm/protocol/saml/descriptor"
+            # Get idp cert
+            get_descriptor $kc_idp_curl
+            add_to_env "KEYCLOAK_IDP_CERT" $IDP_CERT
+            add_to_env $KEYCLOAK_SSO_LOGIN_URL $kc
             CURRENTVAR=""
             ;;
         $KEYCLOAK_PW)
@@ -310,6 +355,8 @@ do
     esac;
 done
 
+
+###
+###     WRITE CONFIG
+###
 write_to_env
-add_to_dev
-add_to_prod

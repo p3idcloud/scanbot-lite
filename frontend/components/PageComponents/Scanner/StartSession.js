@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { fetchData } from "lib/fetch";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { destroyCookie, parseCookies } from "nookies";
 
 import { useScanner } from "lib/contexts/scannerContext";

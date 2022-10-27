@@ -11,6 +11,7 @@ export default function Step1() {
     return (
         <>
             <Image 
+                alt={"Caca"}
                 src="/caca.jpeg" 
                 width={200}
                 height={200}

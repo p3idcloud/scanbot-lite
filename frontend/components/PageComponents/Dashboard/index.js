@@ -46,7 +46,7 @@ function Dashboard() {
         </Grid>
 
         <Grid item xs={12} sm={6} display="flex" alignItems="center" justifyContent='end'>
-          <Link href="/setting">
+          <Link legacyBehavior href="/setting">
               <Box 
                 component="a" 
                 display='flex' 

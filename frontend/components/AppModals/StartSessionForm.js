@@ -4,7 +4,7 @@ import InputField from 'components/InputField';
 import * as Yup from "yup";
 import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
 import { Formik, Form } from 'formik';
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { useState } from 'react';
 import { generateHistoryName } from "lib/helpers";
 import { toast } from "react-toastify";

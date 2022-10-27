@@ -79,7 +79,7 @@ fi
 write_to_env () {
     filename_dev="backend/.env.development"
     filename_prod="backend/.env.production"
-    
+
     # dev
     while read line
     do
@@ -90,7 +90,7 @@ write_to_env () {
                 line="${line%%=*}=${VALUE_LIST[$i]}"
             fi
         done
-        
+
         for i in "${!DEV_ENV[@]}";
         do
             if [[ $line =~ ^${DEV_ENV[$i]}* ]];
@@ -121,7 +121,7 @@ write_to_env () {
             fi
         done
 
-        echo $line >> 'backend/.env.production.temp'
+        echo $line >> "backend/.env.production.temp"
     done < $filename_prod
     
     cp -fr backend/.env.development.temp backend/.env.development
@@ -130,8 +130,8 @@ write_to_env () {
     rm backend/.env.development.temp
 
     
-    filename_dev='frontend/.env.development'
-    filename_prod='frontend/.env.production'
+    filename_dev="frontend/.env.development"
+    filename_prod="frontend/.env.production"
     
     # dev
     while read line
@@ -143,7 +143,7 @@ write_to_env () {
                 line="${line%%=*}=${DEV_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> 'frontend/.env.development.temp'
+        echo $line >> "frontend/.env.development.temp"
     done < $filename_dev
 
     # prod
@@ -156,7 +156,7 @@ write_to_env () {
                 line="${line%%=*}=${PROD_FRONTEND_VALUE[$i]}"
             fi
         done
-        echo $line >> 'frontend/.env.production.temp'
+        echo $line >> "frontend/.env.production.temp"
     done < $filename_prod
     
     cp -fr frontend/.env.development.temp frontend/.env.development

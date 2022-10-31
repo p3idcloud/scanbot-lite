@@ -1,9 +1,12 @@
 {
-  "name": "scanbot-cloud-express",
+  "name": "scanbot-lite-backend",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "nodemon index.js",
+    "install:clean:unix": "rm -rf node_modules/ && yarn install --frozen-lockfile && yarn dev",
+    "install:clean:powershell": "rd /s /q \"node_modules\" & yarn install --frozen-lockfile && yarn dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -11,6 +14,7 @@
     "cookie-parser": "^1.4.6",
     "cookies": "^0.8.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "fs": "^0.0.1-security",
@@ -18,9 +22,12 @@
     "memory-cache": "^0.2.0",
     "minio": "^7.0.32",
     "mongoose": "5.12.15",
+    "morgan": "^1.10.0",
     "mqtt": "^4.3.7",
     "multer": "^1.4.5-lts.1",
     "saml2-js": "^3.0.1",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

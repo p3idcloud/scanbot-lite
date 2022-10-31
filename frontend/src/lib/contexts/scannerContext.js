@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { Modal, Box, Typography } from "@mui/material";
 import CustomLoader from "components/Loader";
 import { parseCookies } from "nookies";
@@ -18,27 +18,25 @@ export const ScannerProvider = ({children}) => {
     const [privetToken, setPrivetToken] = useState(0);
     const [scannerSettings, setScannerSettings] = useState([]);
     const [scannerHistory, setScannerHistory] = useState([]);
+    const [scanHistoryRowCount, setScanHistoryRowCount] = useState(0);
     const [detailScanner, setDetailScanner] = useState(null);
     const [statusPoll, setStatusPoll] = useState(null);
     const [infoexStatus, setInfoexStatus] = useState(false);
     const [loadingInfoex, setLoadingInfoex] = useState(false);
     const [statusScanner, setStatusScanner] = useState(true);
     const [usedBy, setUsedBy] = useState(null);
-    const [profileSelect, setProfileSelect] = useState(null);
-    const [listProfileScanner, setListProfileScanner] = useState([]);
     const [listScannerSettings, setListScannerSettings] = useState([]);
     const [openScanProfile, setOpenScanProfile] = useState(false);
-    const [openSaveProfile, setSaveProfile] = useState(false);
     const [formSetting, setFormSetting] = useState({});
     const [isChange, setIsChange] = useState(false);    
     const [statusClaim, setStatusClaim] = useState(false);
     const [startCapture, setStartCapture] = useState(false);
-    const [successUpload, setSuccessUpload] = useState(false);
     const [closeCloud, setCloseCloud] = useState(() => {});
     const [requestId, setRequestId] = useState(uuid.v4());
     const [sessionId, setSessionId] = useState(0);
     const [files, setFiles] = useState([]);
     const [loadingCapture, setLoadingCapture] = useState(false);
+    const [scanHistoryPageIndex, setScanHistoryPageIndex] = useState(1);
 
     const router = useRouter();
     const { scannerId } = router?.query;
@@ -140,21 +138,28 @@ export const ScannerProvider = ({children}) => {
         }
     }
 
-    function loadScannerHistory(page = 1, rowsPerPage = 5, setRowCount = (_) => {}) {
+    function loadScannerHistory(page = 1, rowsPerPage = 5) {
+        if (page !== scanHistoryPageIndex) {
+            setScanHistoryPageIndex(page);
+        }
         fetchData(`${process.env.backendUrl}api/scanners/history`, {
-        headers,
-        params: {
-            scannerId,
-            limit: rowsPerPage,
-            sort: "-createdAt",
-            page,
-        },
+            headers,
+            params: {
+                scannerId,
+                limit: rowsPerPage,
+                sort: "-createdAt",
+                page,
+            },
         })
         .then((res) => {
+            // console.log(res)
             setScannerHistory(res?.data ?? []);
-            setRowCount(res?.dataCount ?? 0);
+            setScanHistoryRowCount(res?.dataCount ?? 0);
         })
-        .catch((err) => toast.error("Api error something"));
+        .catch((err) => {
+            // console.error(err)
+            toast.error("Api error something")
+        });
     }
     function loadScannerDetail() {
         fetchData(`${process.env.backendUrl}api/scanners/${scannerId}?ui=true`)
@@ -170,6 +175,7 @@ export const ScannerProvider = ({children}) => {
     return (
         <ScannerContext.Provider
             value={{
+                scanHistoryRowCount,
                 scannerSettings,
                 setScannerSettings,
                 scannerHistory,
@@ -197,21 +203,17 @@ export const ScannerProvider = ({children}) => {
                 setStatusClaim,
                 closeCloud,
                 setCloseCloud,
-                profileSelect, 
-                setProfileSelect,
-                listProfileScanner,
-                setListProfileScanner,
                 listScannerSettings,
                 setListScannerSettings,
                 openScanProfile,
                 setOpenScanProfile,
-                openSaveProfile,
-                setSaveProfile,
                 formSetting,
                 setFormSetting,
                 isChange,
                 setIsChange,
-                resetStatusClaimStates
+                resetStatusClaimStates,
+                scanHistoryPageIndex,
+                setScanHistoryPageIndex
             }}
         >
         {children}
@@ -270,6 +272,7 @@ export const ScannerProvider = ({children}) => {
 
 export const useScanner = () => {
     const {
+        scanHistoryRowCount,
         scannerSettings,
         setScannerSettings,
         scannerHistory,
@@ -297,24 +300,21 @@ export const useScanner = () => {
         setStatusClaim,
         closeCloud,
         setCloseCloud,
-        profileSelect, 
-        setProfileSelect,
-        listProfileScanner,
-        setListProfileScanner,
         listScannerSettings,
         setListScannerSettings,
         openScanProfile,
         setOpenScanProfile,
-        openSaveProfile,
-        setSaveProfile,
         formSetting,
         setFormSetting,
         isChange,
         setIsChange,
-        resetStatusClaimStates
+        resetStatusClaimStates,
+        scanHistoryPageIndex,
+        setScanHistoryPageIndex
     } = useContext(ScannerContext);
 
     return {
+        scanHistoryRowCount,
         scannerSettings,
         setScannerSettings,
         scannerHistory,
@@ -342,20 +342,16 @@ export const useScanner = () => {
         setStatusClaim,
         closeCloud,
         setCloseCloud,
-        profileSelect, 
-        setProfileSelect,
-        listProfileScanner,
-        setListProfileScanner,
         listScannerSettings,
         setListScannerSettings,
         openScanProfile,
         setOpenScanProfile,
-        openSaveProfile,
-        setSaveProfile,
         formSetting,
         setFormSetting,
         isChange,
         setIsChange,
-        resetStatusClaimStates
+        resetStatusClaimStates,
+        scanHistoryPageIndex,
+        setScanHistoryPageIndex
     };
 }

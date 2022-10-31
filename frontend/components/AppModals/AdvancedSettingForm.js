@@ -1,165 +1,232 @@
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
-import * as Yup from "yup";
-import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
-import { Formik, Form } from 'formik';
-import { useState } from 'react';
+import { Box, Typography, FormGroup, Divider, Grid, Tooltip, IconButton } from '@mui/material';
+import { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
-import { mutate } from 'swr';
 import { useScanner } from 'lib/contexts/scannerContext';
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required("required"),
-  model: Yup.string().required("required")
-});
+import Select from 'components/Select';
+// import { scannerSettings } from 'constants/scannerSettings';
+import { parseCookies } from 'nookies';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { constructTwainPayloadTask, findTypeOfValue } from 'lib/task';
 
 const AdvancedSettingForm = ({ open, close }) => {
     const [loading, setLoading] = useState(false);
     
-    const { 
-        listProfileScanner,
-        profileSelect,
-        setProfileSelect,
+    const {
         setListScannerSettings,
         formSetting,
+        requestId,
+        scannerId,
+        privetToken,
         setFormSetting,
-        setSaveProfile,
         isChange,
         setIsChange,
         listScannerSettings,
     } = useScanner();
 
-    const initialValues = {
-        name: "",
-        model: "",
-        description: ""
-    };
-
-    const handleSubmit = (e) => {
+    const sendConfig = (configsData) => {
         setLoading(true);
+        var configData = {}
+        Object.keys(configsData).forEach((key, i) => {
+            var [newkey, inputType] = key.split('-')
+            // attribute : { type, inputValue, selectValue, object }
+            if (inputType === 'select') {
+                configData[newkey] = {
+                    ...configData[newkey],
+                    selectValue: configsData[key],
+                    object: configValues[Math.floor(i/2)]?.object,
+                    type: findTypeOfValue(configsData[key], configValues[Math.floor(i/2)]?.possibleValues)
+                };
+            } else {
+                configData[newkey] = {
+                    ...configData[newkey],
+                    inputValue: configsData[key]
+                };
+            }
+        })
+        const task = constructTwainPayloadTask(configData);
+        console.log(JSON.stringify(task, null, 2));
         const data = {
-            name: e.name,
-            model: e.model,
-            description: e.description
+            commandId: requestId,
+            kind: 'twainlocalscanner',
+            method: 'sendTask',
+            params : {
+                sessionId: parseCookies({})["sessionId"],
+                task,
+            }
         }
-        fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
-        method: "PATCH",
-        data,
+        const headers = {
+            "x-twain-cloud-request-id": requestId,
+            "x-privet-token": privetToken,
+        }
+        fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
+            headers,
+            method: "POST",
+            data,
         })
         .then((res) => {
+            toast.success("Successfully saved setting for session")
         })
         .catch(() => {
-            toast.error("Failed to save setting");
+            toast.error("Failed to save setting for session");
         })
         .finally(() => {
             setLoading(false);
             close();
         });
     };
+
+    const getInitialValues = () => {
+        const initialValues = {};
+        if (listScannerSettings) {
+            listScannerSettings.forEach(setting => {
+                initialValues[setting.attributeName+'-select'] = setting.defaultValue;
+                initialValues[setting.attributeName+'-input'] = 0;
+            })
+        }
+        return initialValues;
+    }
+
+    const getValidationSchema = () => {
+        const values = {};
+        if (listScannerSettings) {
+            listScannerSettings.forEach(setting => {
+                values[setting.attributeName+'-select'] = yup.string().required('Required'),
+                values[setting.attributeName+'-input'] = yup.number().typeError("Enter an integer value").nullable(true)
+            })
+        }
+        return yup.object(values);
+    }
+
+    const getConfigValues = () => {
+        if (listScannerSettings) {
+            // console.log(listScannerSettings)
+            let configFields = [...listScannerSettings];
+            return configFields;
+        }
+        return [];
+    }
+    const configValues = useMemo(() => getConfigValues(), [listScannerSettings]);
     
+
+    const formik = useFormik({
+        initialValues: getInitialValues(),
+        validationSchema: getValidationSchema(),
+        onSubmit: sendConfig,
+        enableReinitialize: true
+    });
+
+    const showInputField = (i) => findTypeOfValue(formik.values[configValues[i].attributeName+'-select'], configValues[i]?.possibleValues) !== 'select';
+    
+    // console.log(formik.values);
+
     return (
-        <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-        >
-        {({ values, errors, touched, handleChange, handleBlur, submitForm }) => {
-            return (
-            <Modal
-                open={open}
-                customBodyFooter={
-                <>
-                    <Button
-                    onClick={() => {
-                        close();
-                    }}
-                    variant="outlined"
-                    color="primaryBlack"
+        <Modal
+            open={open}
+            customBodyFooter={
+            <>
+                <Button
+                onClick={() => {
+                    close();
+                }}
+                variant="outlined"
+                color="primaryBlack"
+                autoWidth
+                size="medium"
+                >
+                Cancel
+                </Button>
+                <Button
+                onClick={formik.handleSubmit}
+                    variant="contained"
                     autoWidth
                     size="medium"
-                    >
-                    Cancel
-                    </Button>
-                    <Button
-                    onClick={submitForm}
-                        variant="contained"
-                        autoWidth
-                        size="medium"
-                        loading={loading}
-                    >
-                    Save
-                    </Button>
-                </>
-                }
-            >
-                <Box
-                    display='flex'
-                    padding={4}
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    width={1}
+                    loading={loading}
                 >
-                <Form style={{width: '100%'}}>
-                    <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
-                        Advanced Settings
-                    </Typography>
-                    <Divider sx={{my: 4}}/>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Name"
-                        fullWidth
-                        id='name'
-                        defaultValue={initialValues.name}
-                        aria-invalid={Boolean(touched.name && errors.name)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Name"
+                Save
+                </Button>
+            </>
+            }
+        >
+            <Box
+                display='flex'
+                padding={4}
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                width={1}
+            >
+                <Typography fontWeight={600} fontSize="20px" lineHeight='28px' width={1}>
+                    Advanced Settings
+                </Typography>
+                <Divider sx={{my: 4, width: 1}}/>
+                <FormGroup sx={{my: 2, width: 1}}>
+                    <Select
+                        label="Scan Profile"
+                        value={"Default"}
+                        lists={[{
+                            label: "Default",
+                            value: "Default"
+                        }]}
+                        onChange={e => {
+                            console.log(e?.target?.value)
+                        }}
                     />
-                    <FormHelperText>
-                        <Typography color="red">{errors.name}</Typography>
-                    </FormHelperText>
-                    </FormGroup>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Model"
-                        fullWidth
-                        id='model'
-                        defaultValue={initialValues.model}
-                        aria-invalid={Boolean(touched.model && errors.model)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Model"
-                    />
-                    <FormHelperText>
-                        <Typography color="red">{errors.model}</Typography>
-                    </FormHelperText>
-                    </FormGroup>
-                    <FormGroup sx={{my: 2}}>
-                    <InputField
-                        label="Description"
-                        variant="outlined"
-                        id="description"
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        aria-invalid={Boolean(
-                            touched.description && errors.description
-                        )}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.description}
-                        placeholder="Description"
-                    />
-                    </FormGroup>
-                </Form>
-                </Box>
-            </Modal>
-            );
-        }}
-        </Formik>
+                </FormGroup>
+                {configValues.map((data, i) => (
+                    <Grid container key={i} my={2} width={1}>
+                        <Grid item xs={12} mb={2}>
+                            <Typography 
+                                fontSize='14px' 
+                                fontWeight={400} 
+                                sx={{color: '#747474'}}
+                            >
+                                {data.labelName}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
+                            <FormGroup>
+                                <Select
+                                    onChange={formik.handleChange}
+                                    id={data.attributeName+'-select'}
+                                    name={data.attributeName+'-select'}
+                                    aria-invalid={formik.touched[data.attributeName+'-select'] && Boolean(formik.errors[data.attributeName+'-select'])}
+                                    lists={data?.possibleValues?.map(item => ({
+                                        label: item.label,
+                                        description: item.description,
+                                        value: item.value
+                                    }))}
+                                    error={Boolean(formik.errors[data.attributeName+'-select'])}
+                                    value={formik.values[data.attributeName+'-select']}
+                                />
+                                <Typography sx={{color: "red.main"}}>{formik.errors[data.attributeName+'-select']}</Typography>
+                            </FormGroup>
+                        </Grid>
+                        <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
+                            {showInputField(i) && (
+                                <FormGroup>
+                                    <InputField
+                                        fullWidth
+                                        onChange={formik.handleChange}
+                                        id={data.attributeName+'-input'}
+                                        name={data.attributeName+'-input'}
+                                        aria-invalid={formik.touched[data.attributeName+'-input'] && Boolean(formik.errors[data.attributeName+'-input'])}
+                                        value={formik.values[data.attributeName+'-input']}
+                                        error={Boolean(formik.errors[data.attributeName+'-input'])}
+                                    />
+                                    <Typography sx={{color: "red.main"}}>{formik.errors[data.attributeName+'-input']}</Typography>
+                                </FormGroup>
+                                
+                            )}
+                        </Grid>
+                    </Grid>
+                ))}
+            </Box>
+        </Modal>
     );
 };
 

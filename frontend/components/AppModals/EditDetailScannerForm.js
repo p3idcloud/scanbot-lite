@@ -2,7 +2,7 @@ import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
 import * as Yup from "yup";
-import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
+import { Box, Typography, FormControl, Divider } from '@mui/material';
 import { Formik, Form } from 'formik';
 import { useState } from 'react';
 import { toast } from "react-toastify";
@@ -36,15 +36,16 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
       data,
     })
       .then((res) => {
-        mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`);
+        mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
+          .then(() => {
+            setLoading(false);
+            toast.success("Successfully updated scanner");
+            close();
+          }, () => {
+            setLoading(false);
+            toast.error("Failed to update scanner");
+          });
       })
-      .catch(() => {
-        toast.error("Failed to update scanner");
-      })
-      .finally(() => {
-        setLoading(false);
-        close();
-        });
   };
   
   return (
@@ -95,7 +96,7 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                   Edit Scanner Detail
                 </Typography>
                 <Divider sx={{my: 4}}/>
-                <FormGroup sx={{my: 2}}>
+                <FormControl sx={{my: 2}} fullWidth>
                   <InputField
                     label="Name"
                     fullWidth
@@ -104,13 +105,12 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     aria-invalid={Boolean(touched.name && errors.name)}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={Boolean(errors.name)}
                     placeholder="Name"
                   />
-                  <FormHelperText>
-                      <Typography color="red">{errors.name}</Typography>
-                  </FormHelperText>
-                </FormGroup>
-                <FormGroup sx={{my: 2}}>
+                  <Typography sx={{color: "red.main"}}>{errors.name}</Typography>
+                </FormControl>
+                <FormControl sx={{my: 2}} fullWidth>
                   <InputField
                     label="Model"
                     fullWidth
@@ -119,13 +119,12 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     aria-invalid={Boolean(touched.model && errors.model)}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    error={Boolean(errors.model)}
                     placeholder="Model"
                   />
-                  <FormHelperText>
-                      <Typography color="red">{errors.model}</Typography>
-                  </FormHelperText>
-                </FormGroup>
-                <FormGroup sx={{my: 2}}>
+                      <Typography sx={{color: "red.main"}}>{errors.model}</Typography>
+                </FormControl>
+                <FormControl sx={{my: 2}} fullWidth>
                   <InputField
                     label="Description"
                     variant="outlined"
@@ -141,7 +140,7 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
                     value={values.description}
                     placeholder="Description"
                   />
-                </FormGroup>
+                </FormControl>
               </Form>
             </Box>
           </Modal>

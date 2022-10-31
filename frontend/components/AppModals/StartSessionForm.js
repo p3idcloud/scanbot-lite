@@ -4,7 +4,7 @@ import InputField from 'components/InputField';
 import * as Yup from "yup";
 import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
 import { Formik, Form } from 'formik';
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { useState } from 'react';
 import { generateHistoryName } from "lib/helpers";
 import { toast } from "react-toastify";
@@ -22,8 +22,8 @@ const StartSessionForm = ({ open, close }) => {
     privetToken, 
     scannerId,
     setSessionId,
-    setScannerHistory,
-    setStatusClaim
+    setStatusClaim,
+    loadScannerHistory
   } = useScanner();
 
   const initialValues = {
@@ -33,10 +33,9 @@ const StartSessionForm = ({ open, close }) => {
   
   const handleSaveForm = () => {
     setStatusClaim(true);
-    handleOpenForm();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, {resetForm}) => {
     setLoading(true);
     const commandId = uuid.v4();
     const data = {
@@ -62,22 +61,14 @@ const StartSessionForm = ({ open, close }) => {
         handleSaveForm();
       })
       .then(() => {
-        fetchData(`${process.env.backendUrl}api/scanners/history`, {
-          headers,
-          params: {
-            scannerId,
-            sort: "-createdAt",
-            page: 1,
-          },
-        })
-          .then((res) => setScannerHistory(res?.data ?? []))
-          .catch((err) => {});
+        loadScannerHistory();
       })
       .catch(() => {
         toast.error("Scanner offline, please check your scanner");
       })
       .finally(() => {
         setLoading(false);
+        resetForm();
         close();
       });
   };
@@ -131,19 +122,18 @@ const StartSessionForm = ({ open, close }) => {
                 </Typography>
                 <Divider sx={{my: 4}}/>
                 <FormGroup sx={{my: 1}}>
-                  <InputField
-                    label="Name"
-                    fullWidth
-                    id='name'
-                    defaultValue={initialValues.name}
-                    aria-invalid={Boolean(touched.name && errors.name)}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Name"
-                  />
-                  <FormHelperText>
-                      <Typography color="red">{errors.name}</Typography>
-                  </FormHelperText>
+                    <InputField
+                      label="Name"
+                      fullWidth
+                      id='name'
+                      defaultValue={initialValues.name}
+                      aria-invalid={Boolean(touched.name && errors.name)}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="Name"
+                      error={Boolean(errors.name)}
+                    />
+                    <Typography sx={{color: "red.main"}}>{errors.name}</Typography>
                 </FormGroup>
                 <FormGroup>
                   <InputField

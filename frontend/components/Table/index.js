@@ -6,7 +6,9 @@ import {
     TableBody,
     TableHead,
     TableRow,
-    TableCell
+    TableCell,
+    CircularProgress,
+    Box
 } from "@mui/material";
 
 export default function Table({...props}) {
@@ -17,6 +19,7 @@ export default function Table({...props}) {
         handlePageIndexChange,
         tableHead,
         tableData,
+        loading
     } = props;
 
     return (
@@ -41,7 +44,16 @@ export default function Table({...props}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {tableData?.map((rowData, index) => (
+                    {loading ? (
+                        <TableRow>
+                            <TableCell colSpan={tableHead?.length ?? 1}>
+                                <Box display='flex' alignItems='center' justifyContent='center'>
+                                    <CircularProgress size={50} color='greyCustom' />
+                                </Box>
+                            </TableCell>
+                        </TableRow>
+                    ) : ( 
+                        tableData?.map((rowData, index) => (
                         <TableRow key={index}>
                             {rowData.map((cellData, cellIndex) => (
                                 <TableCell 
@@ -57,16 +69,20 @@ export default function Table({...props}) {
                                 </TableCell>
                             ))}
                         </TableRow>
-                    ))}
+                    )))}
                 </TableBody>
                 <TableFooter>
+                    <TableRow>
                     <TablePagination
                         count={rowCount}
                         page={pageIndex-1}
                         onPageChange={handlePageIndexChange}
                         rowsPerPage={rowsPerPage}
                         rowsPerPageOptions={[]}
+                        showFirstButton
+                        showLastButton
                     />
+                    </TableRow>
                 </TableFooter>
             </MuiTable>
         </TableContainer>

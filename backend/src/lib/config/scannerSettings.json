@@ -1,93 +1,197 @@
-[
+[{
+  "possibleValues": [
     {
-        "possibleValues": [
-            {
-                "label": "default",
-                "description": "Any pixelFormat, at the discretion of the scanner. This includes custom pixelFormats not defined by the TWAIN Directspecification.",
-                "value": "any"
-            },
-            {
-                "label": "Color 24-bit",
-                "description": "Color with a bit depth of 24 (8-bits per channel), allowing for 16.7million colors.",
-                "value": "rgb24"
-            }
-        ],
-        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf8",
-        "labelName": "Color",
-        "description": "A string. The colorspace and the bit depth of a pixel.",
-        "vendor": "TWAIN",
-        "valueType": "String",
-        "object": "task.actions[].streams[].sources[].pixelFormats[].pixelFormat",
-        "defaultValue": "default",
-        "currentValue": "default"
+      "label": "any",
+      "value": "any",
+      "description": "Any pixelFormat, at the discretion of the scanner. This includes custom pixelFormats not defined by the TWAIN Direct specification.",
+      "type": "select"
     },
     {
-        "possibleValues": [
-            {
-                "label": "1 - n",
-                "description": "The number of sheets",
-                "value": "integer"
-            },
-            {
-                "label": "Maximum",
-                "description": "Capture the maximum number of sheets supported by the scanner. This is the recommended default.",
-                "value": "maximum"
-            }
-        ],
-        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf9",
-        "labelName": "numberOfSheets",
-        "description": "The number of sheets that the scanner will capture. If the scanner runs out of sheets before reaching this number scanning will conclude, it won’t wait for more paper.",
-        "vendor": "TWAIN",
-        "valueType": "String",
-        "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
-        "defaultValue": "1",
-        "currentValue": "1"
+      "description": "Black-and-white with a bit depth of 1, also called packed bitonal, since an 8-bit byte contains 8 of these pixelFormats.",
+      "label": "Black-and-white 1-bit",
+      "value": "bw1",
+      "type": "select"
     },
     {
-        "possibleValues": [
-            {
-                "label": "1 - n",
-                "description": "An integer value. Typical values are 75, 100, 150, 200, 240, 250, 300, 400, 500, 600, 1200, 2400, 4800, 9600 and 19200. Some scanners support continuous ranges.",
-                "value": "integer"
-            },
-            {
-                "label": "Maximum",
-                "description": "Use the maximum value supported by this scanner.",
-                "value": "maximum"
-            },
-            {
-                "label": "Minimum",
-                "description": "Use the minimum value supported by this scanner.",
-                "value": "minimum"
-            },
-            {
-                "label": "Closest",
-                "description": "Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner’s minimum or maximum value is used, whichever is closer.",
-                "value": "closest"
-            },
-            {
-                "label": "Closest greater than",
-                "description": "Selects the closest supported value greater than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no greater value, the scanner’s maximum value is used.",
-                "value": "closestGreaterThan"
-            },
-            {
-                "label": "Closest less than",
-                "description": "Selects the closest supported value less than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no lesser value, the scanner’s minimum value is used.",
-                "value": "closestLessThan"
-            },
-            {
-                "label": "Optical",
-                "description": "Use the optical resolution of the scanner. This produces the best image (least artifacts from scaling) that the scanner can produce, but the images can be large if the optical resolution is high, such as 1200dpi, which will result in a 404MB uncompressed color",
-                "value": "optical"
-            }
-        ],
-        "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf7",
-        "labelName": "resolution",
-        "description": "The resolution of the image in dots-per-inch (dpi). Small values capture smaller image sizes with less detail. Large values result in larger image sizes with more detail.",
-        "vendor": "TWAIN",
-        "valueType": "String",
-        "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
-        "defaultValue": "400",
-        "currentValue": "400"
+      "description": "Grayscale with a bit depth of 8, allowing for 256 shades of grey.",
+      "label": "Grayscale 8-bit",
+      "value": "gray8",
+      "type": "select"
+    },
+    {
+      "description": "Grayscale with a bit depth of 16, allowing for 65536 shades of grey.",
+      "label": "Grayscale 16-bit",
+      "value": "gray16",
+      "type": "select"
+    },
+    {
+      "description": "Intended for use with uncalibratedImage. It tells the scanner to use the pixelFormat that carries the most information that the scanner can provide. Raw cannot be reported in the metadata, the scanner must report one of the other pixelFormats, such as rgb24.",
+      "label": "Raw",
+      "value": "raw",
+      "type": "select"
+    },
+    {
+      "description": "Color with a bit depth of 24 (8-bits per channel), allowing for 16.7 million colors.",
+      "label": "Color 24-bit",
+      "value": "rgb24",
+      "type": "select"
+    },
+    {
+      "description": "Color with a bit depth of 48 (16-bits per channel), allowing for 281 trillion colors.",
+      "label": "Color 48-bit",
+      "value": "rgb48",
+      "type": "select"
     }
-]
+  ],
+  "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf8",
+  "labelName": "Color",
+  "description": "A string. The colorspace and the bit depth of a pixel.",
+  "vendor": "TWAIN",
+  "valueType": "String",
+  "object": "task.actions[].streams[].sources[].pixelFormats[].pixelFormat",
+  "defaultValue": "any",
+  "currentValue": "any",
+  "attributeName": "color"
+},
+{
+  "possibleValues": [
+    {
+      "label": "Integer",
+      "description": "The number of sheets",
+      "value": "integer",
+      "type": "integer"
+    },
+    {
+      "label": "Maximum",
+      "description": "Capture the maximum number of sheets supported by the scanner. This is the recommended default.",
+      "value": "maximum",
+      "type": "select"
+    }
+  ],
+  "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf9",
+  "labelName": "Number of Sheets",
+  "description": "The number of sheets that the scanner will capture. If the scanner runs out of sheets before reaching this number scanning will conclude, it won't wait for more paper.",
+  "vendor": "TWAIN",
+  "valueType": "String",
+  "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
+  "defaultValue": "maximum",
+  "currentValue": "maximum",
+  "attributeName": "numberOfSheets"
+},
+{
+  "possibleValues": [
+    {
+      "label": "Integer",
+      "description": "An integer value. Typical values are 75, 100, 150, 200, 240, 250, 300, 400, 500, 600, 1200, 2400, 4800, 9600 and 19200. Some scanners support continuous ranges.",
+      "value": "integer",
+      "type": "integer"
+    },
+    {
+      "label": "Maximum",
+      "description": "Use the maximum value supported by this scanner.",
+      "value": "maximum",
+      "type": "select"
+    },
+    {
+      "label": "Minimum",
+      "description": "Use the minimum value supported by this scanner.",
+      "value": "minimum",
+      "type": "select"
+    },
+    {
+      "label": "Closest",
+      "description": "Selects the supported value closest to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If the previous value requested is exactly between two choices, then the higher value is selected (ex: 100 and 200 are valid, and 150 is requested, then 200 is used). If the previous value is entirely out of range, the scanner's minimum or maximum value is used, whichever is closer.",
+      "value": "closest",
+      "type": "select"
+    },
+    {
+      "label": "Closest greater than",
+      "description": "Selects the closest supported value greater than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no greater value, the scanner's maximum value is used.",
+      "value": "closestGreaterThan",
+      "type": "select/integer"
+    },
+    {
+      "label": "Closest less than",
+      "description": "Selects the closest supported value less than or equal to the previously requested value. If used alone, or if the previous value is not an integer, the scanner uses its power-on default. If there is no lesser value, the scanner's minimum value is used.",
+      "value": "closestLessThan",
+      "type": "select/integer"
+    },
+    {
+      "label": "Optical",
+      "description": "Use the optical resolution of the scanner. This produces the best image (least artifacts from scaling) that the scanner can produce, but the images can be large if the optical resolution is high, such as 1200dpi, which will result in a 404MB uncompressed color",
+      "value": "optical",
+      "type": "select"
+    }
+  ],
+  "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf7",
+  "labelName": "Resolution",
+  "description": "The resolution of the image in dots-per-inch (dpi). Small values capture smaller image sizes with less detail. Large values result in larger image sizes with more detail.",
+  "vendor": "TWAIN",
+  "valueType": "String",
+  "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
+  "defaultValue": "integer",
+  "currentValue": "400",
+  "attributeName": "resolution"
+},
+{
+  "possibleValues": [
+    {
+      "label": "Off",
+      "value": "off",
+      "description": "Do not discard blank images. This is the recommended default.",
+      "type": "select"
+    },
+    {
+      "label": "On",
+      "value": "on",
+      "description": "Discard images that the scanner considers blank.",
+      "type": "select"
+    }
+  ],
+  "currentValue": "",
+  "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf0",
+  "labelName": "Discard Blank Images",
+  "attributeName": "discardBlankImages",
+  "description": "When turned on the scanner discards images that are considered\nto be blank. Use this to improve scanning performance, since it’s\nnot necessary to transfer blank images from the scanner. The\nimage metadata can be used to detect when an image or even an\nentire sheet has been discarded.",
+  "object": "task.actions[].streams[].sources[].pixelFormats[].attributes[].values[].value",
+  "defaultValue": "off",
+  "valueType": "String",
+  "vendor": "TWAIN"
+},
+{
+  "possibleValues": [
+    {
+      "label": "Any",
+      "value": "any",
+      "description": "Any source at the scanner’s discretion, this includes custom\nsources not defined by the TWAIN Direct specification.",
+      "type": "select"
+    },
+    {
+      "label": "Simplex Front",
+      "value": "feederFront",
+      "description": "The part of an automatic document feeder that scans the front of each sheet of paper. If a scanner does not support independent control of feederFront and feederRear sources, then it uses the feederFront source, and the feederRear source is ignored.",
+      "type": "select"
+    },
+    {
+      "label": "Simplex Rear",
+      "value": "feederRear",
+      "description": "The part of an automatic document feeder that scans the rear of each sheet of paper. If a scanner does not support independent control of feederFront and feederRear sources, then it uses feederRear if and only if it’s the only source specified in the\nstream.",
+      "type": "select"
+    },
+    {
+      "label": "Duplex",
+      "value": "feeder",
+      "description": "An automatic document feeder. This can be used with scanners that scan just one side or both sides of a sheet of paper.",
+      "type": "select"
+    }
+  ],
+  "currentValue": "",
+  "id": "2f120091-1f4c-436a-bd34-fae51fa6fcf1",
+  "labelName": "Simplex / Duplex",
+  "attributeName": "simplexDuplex",
+  "description": "Whether to scan both sheets of paper or only one side.",
+  "object": "task.actions[].streams[].sources[].source",
+  "defaultValue": "any",
+  "valueType": "String",
+  "vendor": "TWAIN"
+}]

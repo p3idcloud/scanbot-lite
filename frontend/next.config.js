@@ -1,7 +1,4 @@
-const withPlugins = require("next-compose-plugins");
-const path = require("path");
-
-module.exports = withPlugins([], {
+const nextConfig = {
   basePath: '',
   env: {
     LOGIN_SESSION_DAY: parseInt(process.env.LOGIN_SESSION_DAY),
@@ -10,8 +7,8 @@ module.exports = withPlugins([], {
     backendUrl: process.env.BACKEND_URL,
     APP_SECRET_STRING: process.env.APP_SECRET_STRING,
   },
-  webpack(config, options) {
-    config.resolve.modules.push(path.resolve("./"));
+  webpack: (config) => {
+    config.resolve.modules.push(require('path').resolve('./'));
     return config;
   },
   async redirects() {
@@ -25,7 +22,9 @@ module.exports = withPlugins([], {
         source: '/signout',
         destination: `${process.env.BACKEND_URL}api/auth/signout`,
         permanent: true,
-      }
-    ]
+      },
+    ];
   },
-});
+};
+
+module.exports = nextConfig;

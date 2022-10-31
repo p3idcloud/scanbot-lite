@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import Button from "components/Button";
 import Modal from "components/Modal";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
 import { RiCloseFill } from "react-icons/ri";
 
 const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
@@ -37,10 +36,7 @@ export default function ScanPdfView({open, onClose, name, files}) {
                 <Typography fontWeight={600} fontSize={18} mt={1} mb={3}>
                     Pdf result for {name}
                 </Typography>
-                <PdfViewer 
-                    files={files} 
-                    newScan={false}
-                />
+                <PdfViewer files={files} />
             </Box>
         </Modal>
     );

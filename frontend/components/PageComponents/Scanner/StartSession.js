@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { fetchData } from "lib/fetch";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { destroyCookie, parseCookies } from "nookies";
 
 import { useScanner } from "lib/contexts/scannerContext";
@@ -28,7 +28,8 @@ export default function StartSession() {
     handleRefresh,
     statusPoll,
     resetStatusClaimStates,
-    setCloseCloud
+    setCloseCloud,
+    setStartCapture
   } = useScanner();
 
   const getStopSession = (callback) => {
@@ -51,6 +52,7 @@ export default function StartSession() {
   };
 
   const stopSession = (id) => {
+    setLoading(true);
     const session_id = parseCookies()["sessionId"];
 
     const commandId = uuid.v4();
@@ -71,15 +73,16 @@ export default function StartSession() {
       method: "POST",
       data,
     })
-      .catch((err) => setStatusClaim(false))
       .finally(() => {
         destroyCookie({}, "sessionId");
         setLoadingCapture(false);
+        setStartCapture(false);
         setStatusClaim(false);
         resetStatusClaimStates();
         setTimeout(() => {
           loadScannerHistory();
           mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`);
+          setLoading(false);
         }, 1000)
       });
   };
@@ -89,7 +92,8 @@ export default function StartSession() {
       <Button 
         startIcon={<HiOutlineLightningBolt />} 
         color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
-        sx={{ width: 'fit-content', fontSize: 13 }} 
+        sx={{ width: 'fit-content', fontSize: 13 }}
+        loading={loading || statusPoll?.state === "capturing"}
         onClick={handleOnClick}
       >
         {statusClaim && statusPoll?.state !== "noSession"

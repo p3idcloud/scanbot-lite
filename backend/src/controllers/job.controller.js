@@ -2,8 +2,7 @@
 const db = require('../models');
 
 const jobService = require('../services/job');
-const accountService = require("../services/account")
-const ROLE_CONST = require("../constants/role")
+const accountService = require("../services/account");
 
 exports.getJobsFromQuery = async (req, res) => { //SWR standard
     const account = await accountService.getAccountFromId(req.twain.principalId)

@@ -3,9 +3,6 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import PropTypes from "prop-types";
 import { Box, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import Image from "next/image";
-import { parseCookies } from "nookies";
-import { authConstants } from "constants/auth";
 import Card from "components/Card";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { AiOutlineCompress } from "react-icons/ai";
@@ -17,7 +14,7 @@ const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
 
-export default function PdfViewer({ files, newScan }) {
+export default function PdfViewer({ files }) {
   const [file, setFile] = useState(files || dummyFile);
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(null);
@@ -27,14 +24,14 @@ export default function PdfViewer({ files, newScan }) {
 
   useEffect(() => {
     setFile(files || []);
-  }, [files?.length]);
+    if (!files) {
+      setPage(0);
+    }
+  }, [files]);
 
   // ref
   useEffect(() => {
-    if (
-      pdfDocRef?.current?.clientHeight &&
-      pdfDocRef?.current?.clientHeight > 200
-    ) {
+    if (pdfDocRef?.current?.clientHeight) {
       setMinHeight(pdfDocRef?.current?.clientHeight);
     }
     if (pdfDocRef?.current?.clientWidth) {
@@ -56,22 +53,7 @@ export default function PdfViewer({ files, newScan }) {
 
   const handlePage = (index) => setPage(index);
   const handleDownload = () => {
-    if (newScan) {
-      window.open(file[page], "_blank");
-    } else {
-      fetch(file[page], {
-        headers: {
-          'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
-        },
-        method: 'GET'
-      })
-      .then((res) => res.blob())
-      .then((pdfData) => {
-        const blobPdf = new Blob([pdfData], {type: 'application/pdf'});
-        const blobUrl = URL.createObjectURL(blobPdf);
-        window.open(blobUrl, "_blank");
-      });
-    }
+    window.open(file[page], "_blank");
   };
 
   return (
@@ -203,16 +185,12 @@ export default function PdfViewer({ files, newScan }) {
                   </Typography>
                 </IconButton>
               </Stack>
-              <div style={{ minHeight: minHeight }}>
+              {file.length !== 0 && (
+                <div style={{ minHeight: minHeight }}>
                 <TransformComponent>
                   <Document
                     className="pdf-doc"
-                    file={!newScan ? ({
-                      url: file[page],
-                      httpHeaders: {
-                        Authorization: `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`
-                      }
-                    }) : (file[page])}
+                    file={file?.[page]}
                     onLoadSuccess={onDocumentLoadSuccess}
                     loading={() => (
                       <Box
@@ -237,6 +215,7 @@ export default function PdfViewer({ files, newScan }) {
                   </Document>
                 </TransformComponent>
               </div>
+              )}
             </>
           )}
         </TransformWrapper>

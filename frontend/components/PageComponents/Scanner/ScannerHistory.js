@@ -1,22 +1,39 @@
-import { Stack, Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, Modal } from "@mui/material";
 import { useScanner } from "lib/contexts/scannerContext";
 import { useEffect, useState } from "react";
 
 import { mutate } from "swr";
 import { fetchData } from "lib/fetch";
-import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { useAccount } from "lib/contexts/accountContext";
 import CardDrawer from "components/CardDrawer";
 import Table from "components/Table";
 import { RiDeleteBin4Line, RiFilePdfLine } from "react-icons/ri";
-import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import { toast } from "react-toastify";
 import ScanPdfView from "components/AppModals/ScanPdfView";
+import { parseCookies } from "nookies";
+import { authConstants } from "constants/auth";
+import Card from "components/Card";
+import dynamic from "next/dynamic";
+
+const CustomLoader = dynamic(() => import("components/Loader"))
+const DeleteConfirmation = dynamic(() => import("components/AppModals/DeleteConfirmation"))
 
 export default function ScannerHistory({...props}) {
     const { open } = props;
+    const {
+        scannerId, 
+        scannerHistory, 
+        scanHistoryRowCount, 
+        loadScannerHistory, 
+        scanHistoryPageIndex, 
+        setScanHistoryPageIndex
+    } = useScanner();
+
+    const [loadingPdf, setLoadingPdf] = useState(false);
     
+    const rowsPerPage = 5;
+    const [loadingPageIndex, setLoadingPageIndex] = useState(true);
+
     const [deleteHistory, setDeleteHistory] = useState(null);
     const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -26,35 +43,52 @@ export default function ScannerHistory({...props}) {
             `${process.env.backendUrl}api/scanners/history/${deleteHistory.id}`, 
             { method: "DELETE" }
         ).then(res => {
-            setLoadingDelete(false);
-            loadScannerHistory();
-            mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`);
-            setDeleteHistory(null);
+            loadScannerHistory(scanHistoryPageIndex, rowsPerPage);
+            mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`)
+                .then(() =>{
+                    setLoadingDelete(false);
+                    toast.success('Successfully deleted history');
+                    setDeleteHistory(null);
+                }, () =>{
+                    setLoadingDelete(false);
+                    toast.error('Failed to delete history');
+                    setDeleteHistory(null);
+                });
         }).catch(err => {
             setLoadingDelete(false);
-            toast.error('Failed to delete history')
+            toast.error('Failed to delete history');
         })
-        
     }
 
     const [historyPdf, setHistoryPdf] = useState(null);
 
+    const fetchPdf = (url) => {
+        return fetch(url, {
+            headers: {
+            'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
+            },
+            method: 'GET'
+        })
+        .then((res) => res.blob())
+        .then((pdfData) => new Blob([pdfData], {type: 'application/pdf'}));
+    }
+
     const getPdf = (id, name) => {
+        setLoadingPdf(true);
         fetchData(`${process.env.backendUrl}api/scanners/history/${id}`)
-        .then(data => {
+        .then(async data => {
+            const pdfBlobs = await Promise.all(data?.url.map(url => 
+                fetchPdf(url)
+            ));
+            const urls = pdfBlobs.map(blob => URL.createObjectURL(blob));
+            setLoadingPdf(false);
             setHistoryPdf({
-                url: data?.url,
+                url: urls,
                 name: name
             });
         })
         .catch(err => toast.error('Failed to fetch pdf'));
     }
-
-    const rowsPerPage = 5;
-    const [pageIndex, setPageIndex] = useState(1);
-    const [rowCount, setRowCount] = useState(0);
-
-    const {scannerId, scannerHistory, loadScannerHistory} = useScanner();
 
     const tableData = useMemo(() =>
         scannerHistory?.map((history) => [
@@ -65,7 +99,11 @@ export default function ScannerHistory({...props}) {
             history.pageCount,
             <Box display='flex'>
                 <Tooltip title="View Pdf">
-                    <IconButton color="primary" onClick={()=>getPdf(history.id, history.name)}>
+                    <IconButton 
+                        disabled={history.status !== "Completed"}
+                        color="primary" 
+                        onClick={()=>getPdf(history.id, history.name)}
+                    >
                         <RiFilePdfLine size={20} />
                     </IconButton>
                 </Tooltip>
@@ -90,24 +128,30 @@ export default function ScannerHistory({...props}) {
         [scannerHistory]
     );
 
-    const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex);
-    
-    useEffect(() => {
-        loadScannerHistory(pageIndex, rowsPerPage, rowCount);
-    }, [pageIndex]);
+    const handlePageIndexChange = (e, newIndex) => {
+        setScanHistoryPageIndex(newIndex + 1);
+        setLoadingPageIndex(true);
+    }
 
     useEffect(() => {
-        setRowCount(scannerHistory?.length ?? 0);
+        if (loadingPageIndex) {
+            setLoadingPageIndex(false);
+        }
     }, [scannerHistory])
+    
+    useEffect(() => {
+        loadScannerHistory(scanHistoryPageIndex, rowsPerPage);
+    }, [scanHistoryPageIndex])
 
     return (
         <>
             <CardDrawer cardTitle="Scan History" open={open}>
                 <Box>
                     <Table 
-                        rowCount={rowCount}
+                        rowCount={scanHistoryRowCount}
                         rowsPerPage={rowsPerPage}
-                        pageIndex={pageIndex}
+                        pageIndex={scanHistoryPageIndex}
+                        loading={loadingPageIndex}
                         handlePageIndexChange={handlePageIndexChange}
                         tableHead={["Name", "Description", "Start Date", "Status", "Pages", "Action"]}
                         tableData={tableData}
@@ -128,27 +172,25 @@ export default function ScannerHistory({...props}) {
                 name={historyPdf?.name}
                 files={historyPdf?.url}
             />
+            
+            <Modal open={loadingPdf}>
+                <Box 
+                    display='flex' 
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Card withpadding>
+                        <CustomLoader message="Fetching pdf files" />
+                    </Card>
+                </Box>
+            </Modal>
         </>
-    )
-
-    return (
-        <Card>
-            <CardHeader stats >
-                <CardIcon color="primary">
-                    <Stack direction="row" alignItems="center">
-                        <Icon>history</Icon>
-                    </Stack>
-                </CardIcon>
-                <h2>Scan History</h2>
-            </CardHeader>
-            <CardBody>
-                <CustomTable
-                    tableHead={generateScanHistoryTableHead()}
-                    tableData={tableData}
-                />
-            </CardBody>
-            <CardFooter>
-            </CardFooter>
-        </Card>
     )
 }

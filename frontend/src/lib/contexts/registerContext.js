@@ -1,6 +1,4 @@
-import { authConstants } from "constants/auth";
-import { destroyCookie } from "nookies/dist";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const RegisterContext = createContext({});
 
@@ -10,18 +8,9 @@ export const RegisterProvider = ({...props}) => {
     //  Step 1: Authorize user to log in if not yet
     //  Step 2: User is authorized, now claiming scanner (processing)
     //  Step 3: Scanner is claimed and registered to account
-    const [step, setStep] = useState(props?.user ? 2 : 1);
+    const [step, setStep] = useState(props.user ? 2 : 1);
     const [scannerData, setScannerData] = useState(null);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-       if (step === 3) {
-        destroyCookie({}, authConstants.SESSION_TOKEN);
-        destroyCookie({}, authConstants.CSRF_TOKEN);
-        destroyCookie({}, authConstants.CALLBACK_URL);
-        destroyCookie({}, authConstants.REGISTRATION_TOKEN);
-       }
-    },[step])
     
     return (
         <RegisterContext.Provider

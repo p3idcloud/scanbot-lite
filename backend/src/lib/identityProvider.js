@@ -1,11 +1,9 @@
-// var IdentityProvider = require('saml2-js').IdentityProvider;
+var { IdentityProvider } = require('saml2-js');
 
-// const identityProvider = new IdentityProvider({
-//     sso_login_url: process.env.SSO_LOGIN_URL,
-//     sso_logout_url: process.env.SSO_LOGIN_URL + '?slo=true',
-//     certificates: [
-//         Buffer.from(process.env.IDP_CERT_B64, 'base64').toString('utf8')
-//     ]
-// });
+const identityProvider = new IdentityProvider({
+    sso_login_url: process.env.KEYCLOAK_SSO_LOGIN_URL,
+    sso_logout_url: process.env.KEYCLOAK_SSO_LOGIN_URL,
+    certificates: process.env.KEYCLOAK_IDP_CERT,
+});
 
-// module.exports = identityProvider;
+module.exports = { identityProvider };

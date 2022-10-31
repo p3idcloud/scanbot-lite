@@ -60,8 +60,8 @@ const palette = {
     contrastText: '#190D29'
   },
   orange: {
-    dark: '#F7AC03',
-    main: '#F7D103',
+    dark: '#F7D103',
+    main: '#F7AC03',
     light: '#FFF0A0',
     contrastText: '#FFFCE2'
   },

@@ -1,38 +1,42 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOMClient from "react-dom/client";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 
 import PageChange from "components/PageChange/PageChange.js";
 import Page from "components/Page";
-import nookies from "nookies";
+import nookies, { setCookie } from "nookies";
 import jwt from 'jsonwebtoken';
 
 import "assets/css/global.css";
 
 import { authConstants } from "constants/auth";
-import store from "redux/store";
-import { createWrapper } from "next-redux-wrapper";
+import { serialize } from "cookie";
 import { fetchApp } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from "config/theme/ThemeProvider";
 
+
+
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
-  ReactDOM.render(
-    <PageChange path={url} />,
-    document.getElementById("page-transition")
-  );
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.render(<PageChange path={url} />);
 });
 Router.events.on("routeChangeComplete", () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.unmount()
   document.body.classList.remove("body-page-transition");
 });
 Router.events.on("routeChangeError", () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById("page-transition"));
+  const container = document.getElementById("page-transition");
+  const root = ReactDOMClient.createRoot(container)
+  root.unmount()
   document.body.classList.remove("body-page-transition");
 });
 
@@ -48,6 +52,23 @@ class MyApp extends App {
 
     if (cookies && cookies[authConstants.SESSION_TOKEN] && pageProps) {
       pageProps[authConstants.SESSION_TOKEN] = cookies[authConstants.SESSION_TOKEN];
+      
+      //verify the jwt
+      const { verified } = await fetch(`${process.env.backendUrl}api/auth/verify`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: cookies[authConstants.SESSION_TOKEN]})
+      }).then(res => res.json());
+
+      if (!verified) {
+        ctx.res.writeHead(302, {
+          Location: '/signin',
+        });
+        return ctx.res.end();
+      }
+      
       const decoded = jwt.decode(pageProps[authConstants.SESSION_TOKEN]);
       if (decoded) {
         const expiredinMS = decoded.exp * 1000;
@@ -69,6 +90,8 @@ class MyApp extends App {
             firstName: decoded.user?.attributes?.firstname?.[0],
             lastName: decoded.user?.attributes?.lastname?.[0]
           };
+
+          setCookie(ctx, authConstants.SESSION_TOKEN, pageProps[authConstants.SESSION_TOKEN]);
 
           try {
             const accountResult = await fetchApp({
@@ -134,7 +157,6 @@ class MyApp extends App {
           <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png"/>
           <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png"/>
           <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png"/>
-          <link rel="manifest" href="/favicons/manifest.json"/>
           <meta name="msapplication-TileColor" content="#ffffff"/>
           <meta name="msapplication-TileImage" content="/favicons/ms-icon-144x144.png"/>
           <meta name="theme-color" content="#ffffff"/>
@@ -163,7 +185,4 @@ class MyApp extends App {
   }
 }
 
-const makeStore = () => store;
-const wrapper = createWrapper(makeStore);
-
-export default wrapper.withRedux(MyApp);
+export default MyApp;

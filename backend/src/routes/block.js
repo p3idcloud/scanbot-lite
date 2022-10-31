@@ -37,7 +37,19 @@ router.post('/:scannerId/blocks', express.raw({type:'*/*',inflate:true, limit: '
     
 
     // get Queue From ScannerState
-    const queue = await getQueueFromId(scannerState.currentQueueId);
+    // There was an instance where queue is null, checked mongo and it's there, so
+    // i'm setting a while loop and settimeout until this is found
+    var queue = await getQueueFromId(scannerState.currentQueueId);
+    var timeoutId;
+    var i = 0; 
+    while (!queue &&  i < process.env.GET_QUEUE_MAX_RETRIES) {
+        i+=1
+        timeoutId = setTimeout(async () => queue = await getQueueFromId(scannerState.currentQueueId), 500);
+    }
+    clearTimeout(timeoutId);
+    if (!queue) {
+        res.status(500).send({message: 'Unable to get queue'})
+    }
 
     // get & update Job from Queue
     let job = await getJobFromId(queue.jobId);
@@ -61,23 +73,10 @@ router.post('/:scannerId/blocks', express.raw({type:'*/*',inflate:true, limit: '
     const url = await presignedGetObject(user.id, uri);
 
     //append url to scannerState
-    // scannerState.imageUrl.push(url);
-    // await updateScannerState(scannerState.scannerId, scannerState);
-    // the code above are unsafe
     const newScannerState = await pushInsertImageURI(scannerState.scannerId, url);
 
 
     return res.json(url)
-
-    //in case cannot pipe, this is technically bad
-    // const blockId = uuid.v4();
-    // const fileId = getFileId(req, blockId);
-    // const fileContent = req.body;
-
-    // logger.info(`saving file: ${fileId}`);  
-    // ensureDirectoryExistence(fileId)
-    // .then(() => writeFile(fileId, fileContent))
-    // .catch(next);
 });
 
 router.get('/:scannerId/blocks', block.blockGet);

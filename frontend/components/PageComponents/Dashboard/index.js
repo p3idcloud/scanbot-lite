@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, TablePagination, Typography } from "@mui/material";
+import { Box, Container, Grid, TablePagination, Typography } from "@mui/material";
 import { useAccount } from "lib/contexts/accountContext";
 import useSWR from "swr";
 import { fetchData } from "lib/fetch";
 import ScannerListContainer from "./ScannerListContainer";
 import Card from "components/Card";
+import CustomLoader from "components/Loader";
+import { TbSettings } from "react-icons/tb";
+import Link from "next/link";
 
 function Dashboard() {
   const { scannerList, setScannerList } = useAccount();
@@ -21,7 +24,6 @@ function Dashboard() {
       refreshInterval: 5000
     }
   );
-
   useEffect(() => {
     if (data) {
       setScannerList(data?.data ?? []);
@@ -32,21 +34,40 @@ function Dashboard() {
   return (
     <Container>
       <Grid container sx={{ padding: '30px 0' }} spacing={2}>
-        <Grid item xs={12} display="flex" alignItems="center">
-            <Typography sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
+        <Grid item xs={12} sm={6} display="flex" alignItems="center">
+          <Box>
+            <Typography mb={2} sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
               Scanner List
             </Typography>
-        </Grid>
-          
-        <Grid item xs={12} display="flex" alignItems="center">
-          <Typography sx={{ fontWeight: 500, fontSize: '16px', lineHeight: '19px', color: '#190D29' }}>
-            List of connected scanners
-          </Typography>
+            <Typography sx={{ fontWeight: 500, fontSize: '16px', lineHeight: '19px', color: '#190D29' }}>
+              List of connected scanners
+            </Typography>
+          </Box>
         </Grid>
 
-        {scannerList?.length === 0 && (
+        <Grid item xs={12} sm={6} display="flex" alignItems="center" justifyContent='end'>
+          <Link legacyBehavior href="/setting">
+              <Box 
+                component="a" 
+                display='flex' 
+                alignItems='center'
+                sx={{
+                    '&:hover': {
+                        cursor: 'pointer'
+                    }
+                }}
+              >
+                <TbSettings size={22} style={{marginRight: 10}} />
+                <Typography fontWeight={600} fontSize='16px'>
+                    Global Setting
+                </Typography>
+              </Box>
+          </Link>
+        </Grid>
+
+        {scannerList?.length === 0 && data && (
           <Grid item xs={12} container display="flex" alignItems="center" justifyContent="center">
-            <Card withpadding={5}>
+            <Card withpadding>
               <Typography 
                 textAlign='center'
                 mb={2}
@@ -75,8 +96,9 @@ function Dashboard() {
           </Grid>
         )}
 
-        {scannerList?.map((scanner) => (
-          <Grid item xs={12} md={6}>
+        {data ? (
+          scannerList?.map((scanner, index) => (
+          <Grid item xs={12} md={6} key={index}>
             <ScannerListContainer 
               {...scanner} 
               setPageIndex={setPageIndex} 
@@ -84,7 +106,11 @@ function Dashboard() {
               rowsPerPage={rowsPerPage} 
             />
           </Grid>
-        ))}
+        ))) : (
+          <Grid item xs={12}>
+            <CustomLoader message="Loading scanners" />
+          </Grid>
+        )}
 
         {scannerList.length > 0 && (
           <Grid item xs={12}>
@@ -96,6 +122,8 @@ function Dashboard() {
                 onPageChange={handlePageIndexChange}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[]}
+                showFirstButton
+                showLastButton
             />
           </Grid>
         )}

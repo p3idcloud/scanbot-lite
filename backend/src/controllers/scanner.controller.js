@@ -6,12 +6,7 @@ const Scanner = db.scanner
 const scanserv = require("../services/scanner")
 const accountService = require("../services/account")
 const scannerHistoryService = require("../services/scannerhistory")
-const ROLE_CONST = require("../constants/role")
 const {getScannerStateFromScannerId, updateScannerState, resetScannerState} = require("../services/scannerstate");
-const {SYSTEMADMIN} = require("../constants/role");
-const { getScannerDefaultFromUserAccountID,
-    updateScannerDefaultFromUserAccountId
-} = require('../services/scannerdefault');
 
 exports.check = () => {
     Scanner.find().then(result => {
@@ -96,7 +91,6 @@ exports.getScannersFromQuery = async (req, res) => { //SWR standard
 exports.getScannerDeviceSessionFromId = async (req, res) => {
     const scannerId = req.params.scannerId
     //get user from token
-    //const user = await userserv.getUserFromToken(req.twain.principalId)
     const account = await accountService.getAccountFromId(req.twain.principalId)
     if (!account) {
         return res.status(400).send("Couldn't find account")
@@ -131,7 +125,6 @@ exports.deleteScannerFromId = async (req, res) => {
             const scannerId = req.params.scannerId;
 
             //get user from token
-            //const user = await userserv.getUserFromToken(req.twain.principalId)
             const account = await accountService.getAccountFromId(req.twain.principalId)
             if (!account) {
                 return res.status(400).send("Couldn't find account")
@@ -181,27 +174,4 @@ exports.getScannerAnalytic = async (req, res) => {
         totalScan: totalScanHistory ?? 0,
         totalPageScan: totalPageScan[0]?.total ?? 0
     })
-}
-
-exports.getScannerDefault = async (req, res) => {
-    const user = await userserv.getUserFromUserID(req.twain.principalId);
-    if (!user) {
-        return res.status(400).send("Couldn't find user")
-    }
-
-    const defaultScanner = await getScannerDefaultFromUserAccountID(user.id, user.accountId)
-
-    return res.send(defaultScanner)
-}
-
-exports.setScannerDefault = async (req,res) => {
-    const user = await userserv.getUserFromUserID(req.twain.principalId);
-    if (!user) {
-        return res.status(400).send("Couldn't find user")
-    }
-    const scannerId = req.params.scannerId;
-
-    const scannerDefault = await updateScannerDefaultFromUserAccountId(user.id, user.accountId, scannerId)
-
-    return res.send(scannerDefault)
 }

@@ -6,6 +6,7 @@ export default function TitleLogo() {
     return (
         <Stack direction="row" spacing={2} alignItems="center">
             <Image 
+                alt={"Logo"}
                 src="/logo.png"
                 width={30}
                 height={40}

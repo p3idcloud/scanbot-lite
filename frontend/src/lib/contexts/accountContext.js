@@ -16,7 +16,8 @@ export const AccountProvider = ({ children, user }) => {
     const [account, setAccount] = useState(user);
 
     const handleLogout = () => {
-        destroyCookie({}, authConstants.SESSION_TOKEN);
+        destroyCookie({}, authConstants.SESSION_TOKEN, {path: '/'});
+        destroyCookie({}, authConstants.SESSION_TOKEN, {path: '/scanners'});
         destroyCookie({}, authConstants.CSRF_TOKEN);
         destroyCookie({}, authConstants.CALLBACK_URL);
         destroyCookie({}, authConstants.REGISTRATION_TOKEN);

@@ -215,6 +215,7 @@ add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
 add_to_env "MINIO_USE_SSL" "true"
 add_to_env "KEYCLOAK_CLIENT_ID" $clientid
+add_to_env "EMQ_USERNAME" "admin"
 
 add_to_dev "BASE_URL" "http://$ip/"
 add_to_dev "FRONTEND_URL" "http://$ip:3000/"
@@ -238,12 +239,8 @@ do
     case $CURRENTVAR in
         $MONGODB_URL)
             line=${line%?}
-            host=${line%%:*}
-            rest=${line#*:}
-            port=${rest%%.*}
-            rest=${rest#*.}
-            rest=${rest%?}
-            MONGOURL+="$host.$rest:$port/twainNew?authSource=admin&readPreference=primary&ssl=false\""
+            line=${line%?}
+            MONGOURL+="$line/twainNew?authSource=admin&readPreference=primary&ssl=false\""
             CURRENTVAR=""
             ;;
         $MONGODB_PW)

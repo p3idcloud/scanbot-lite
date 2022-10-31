@@ -344,10 +344,10 @@ do
             CURRENTVAR=$JWT_SECRET
             ;;
         *"$MINIO_SECRET_JSON"*)
-            CURRENTVAR=$AWS_ACCESS_KEY
+            CURRENTVAR=$AWS_SECRET_KEY
             ;;
         *"$MINIO_KEY_JSON"*)
-            CURRENTVAR=$AWS_SECRET_KEY
+            CURRENTVAR=$AWS_ACCESS_KEY
             ;;
         *"$MINIO_CONSOLE_URL_JSON"*)
             CURRENTVAR=$AWS_CONSOLE

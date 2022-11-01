@@ -414,6 +414,7 @@ exports.allLocal = async (req, res, next) => {
             await scannerStateService.resetScannerState(scannerId);
             await scannerStateService.updateScannerState(scannerId,
                 {
+                    "sessionId": null,
                     "status": "unknown error",
                     "latestEvent": body.method
                 }
@@ -421,6 +422,7 @@ exports.allLocal = async (req, res, next) => {
             return res.status(400).send("Scanner Offline / Undetected");
         }else{
             if(result.results.success == false){
+                await scannerStateService.resetScannerState(scannerId);
                 await scannerStateService.updateScannerState(scannerId,
                     {
                     "status": result.results.code,

@@ -38,6 +38,8 @@ const AccountSchema = new mongoose.Schema({
         fullname: String,
         profPicURI: String,
         lastActive: Date,
+        mobileNumber: String,
+        enabled2FA: Boolean,
 }, { timestamps: true })
 
 const Account = mongoose.model(

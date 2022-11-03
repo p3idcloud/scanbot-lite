@@ -18,15 +18,15 @@ import { useAccount } from 'lib/contexts/accountContext';
 import TitleLogo from 'components/TitleLogo';
 import SettingsIcon from 'components/SettingsIcon';
 import Logout from 'components/AppModals/Logout';
+import TwoFASettings from 'components/AppModals/TwoFASettings';
 import Link from 'next/link';
 
 const HeaderMain = () => {
   const refLeftNav = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [twoFASettingsOpen, setTwoFASettingsOpen] = useState(false);
   const { account } = useAccount();
-
-  
 
   const open = Boolean(anchorEl);
   const handleClick = event => {
@@ -43,7 +43,7 @@ const HeaderMain = () => {
           <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
             <Logo>
               <Link legacyBehavior href="/dashboard">
-                <a style={{textDecoration: 'none'}}>
+                <a style={{ textDecoration: 'none' }}>
                   <TitleLogo />
                 </a>
               </Link>
@@ -79,7 +79,13 @@ const HeaderMain = () => {
                 'aria-labelledby': 'basic-button'
               }}
             >
-              <LogoutButton onClick={()=>{
+              <LogoutButton onClick={() => {
+                setTwoFASettingsOpen(true)
+              }}
+              >
+                Settings
+              </LogoutButton>
+              <LogoutButton onClick={() => {
                 setAnchorEl(null);
                 setLogoutOpen(true);
               }}
@@ -92,7 +98,12 @@ const HeaderMain = () => {
       </Box>
       <Logout
         open={logoutOpen}
-        close={()=>setLogoutOpen(false)}
+        close={() => setLogoutOpen(false)}
+      />
+      <TwoFASettings
+        open={Boolean(twoFASettingsOpen)}
+        close={()=>setTwoFASettingsOpen(false)}
+        {...account}
       />
     </>
   );

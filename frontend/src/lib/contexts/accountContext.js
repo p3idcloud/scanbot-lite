@@ -21,6 +21,7 @@ export const AccountProvider = ({ children, user }) => {
         destroyCookie({}, authConstants.CSRF_TOKEN);
         destroyCookie({}, authConstants.CALLBACK_URL);
         destroyCookie({}, authConstants.REGISTRATION_TOKEN);
+        destroyCookie({}, "ivalt-cookies");
         Router.push("/api/auth/logout/saml");
       }
 

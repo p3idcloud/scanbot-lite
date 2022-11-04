@@ -167,7 +167,7 @@ class MyApp extends App {
           <AccountProvider {...pageProps} >
             <Layout>
                 <Page {...pageProps}>
-                  {pageProps.user.enabled2FA && (<TwoFactorAuth mobileNumber={pageProps.mobileNumber} />)}
+                  {pageProps.user.enabled2FA && (<TwoFactorAuth mobileNumber={pageProps.user.mobileNumber} />)}
                   <Component {...pageProps} />
                   <ToastContainer
                     position="top-right"

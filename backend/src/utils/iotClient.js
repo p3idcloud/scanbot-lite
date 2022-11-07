@@ -23,6 +23,10 @@ module.exports.startMQTTListener = () => {
   });
 };
 
+module.exports.stopMQTTListener = () => {
+  mqttclient.end();
+};
+
 module.exports.subscribeToTopic = function (topic) {
   mqttclient.subscribe(topic);
   if (!messageContainer[topic]) {
@@ -284,8 +288,7 @@ module.exports.findPollCommandIdFromWaitForEventsThenSaveImagesToService = async
               //do a timeout check
               //this happens when an event is timed out (Twain pdf03 page 14)
               //this will happen if theres no further command after 30 second. session is not stopped at this point.
-              /*
-              if ( waitContainerFound.results.code && waitContainerFound.results.code === 'timeout' ){
+              if ( waitContainerFound?.results.code && waitContainerFound.results.code === 'timeout' ){
                 //mostly this happen when we have error such as paper jam or something
                 await updateScannerSessionFromId(scannerSession.id,{
                   'state': waitContainerFound.results.session.state,
@@ -305,7 +308,7 @@ module.exports.findPollCommandIdFromWaitForEventsThenSaveImagesToService = async
                     }
                 );
               }
-              */
+
               if (waitContainerFound == null) { //if after 100 seconds we got nothing
                 if (oneMoreTry==false) {
                   exports.notifyScanner(scannerId, {
@@ -485,6 +488,52 @@ module.exports.findPollCommandIdFromWaitForEventsThenSaveImagesToService = async
                   uploadedImageBlock = [];
 
                 }
+              }
+              //CASES PER CASES HERE
+              //If we detected paper is in (from no media)
+              //then we must stopCapturing first before available-ing the startcapturing button again.
+              if(waitContainerFound?.results?.events?.[0]?.event == 'paperIn' && waitContainerFound?.results?.events?.[0]?.session?.paperIn == true){
+                console.log('Paper in = ')
+                console.log(waitContainerFound?.results?.events?.[0]?.session?.paperIn)
+
+                //ask scanner to stop capturing
+                const commandIdStopCapturing = uuid.v4();
+                let headers = aheaders;
+                headers['x-twain-cloud-request-id'] = commandIdStopCapturing;
+                let bodyReadImageBlock = {
+                  "kind": "twainlocalscanner",
+                  "commandId": commandIdStopCapturing,
+                  "method": "stopCapturing",
+                  "params": {
+                    "sessionId": sessionId,
+                  }
+                };
+                console.log('stopped capturing')
+
+                //ask scanner to upload imageBlock to service
+                exports.notifyScanner(scannerId, {
+                  headers, //headers
+                  method,
+                  url,
+                  body: JSON.stringify(bodyReadImageBlock)
+                });
+
+
+                await scannerStateService.updateScannerState(scannerId, {
+                  "state": 'ready',
+                  "status": 'paper loaded',
+                  "latestEvent": waitContainerFound.method
+                })
+                await updateScannerSessionFromId(scannerSession.id,{
+                  'state': 'Ready',
+                  'revision': waitContainerFound.results.events[0].session.revision,
+                  'doneCapturing': waitContainerFound.results.events[0].session.doneCapturing,
+                  'imageBlocksDrained': waitContainerFound.results.events[0].session.imageBlocksDrained,
+                  'status': 'Paper Loaded',
+                  'paperIn': waitContainerFound.results.events[0].session.paperIn,
+                  'imageBlocks': waitContainerFound.results.events[0].session.imageBlocks
+                })
+
               }
           } catch (error) {
             console.log(error);

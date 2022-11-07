@@ -5,7 +5,7 @@
 ###
 
 #JSON KEYS:
-MONGODB_URL_JSON="mondodb_url"
+MONGODB_URL_JSON="mongodb_url"
 MONGODB_PW_JSON="mongo_db_password"
 EMQX_URL_JSON="emqx_url"
 EMQX_PW_JSON="emqx_password"
@@ -59,6 +59,7 @@ read -p "Enter the path to your env.json: " filepath
 read -p "Enter your ip for env: " ip
 realm=scanbot
 clientid="scanbot-lite-app"
+keycloakError=""
 
 if [[ -z "$ip" ]]
 then ip=192.168.0.100
@@ -203,6 +204,11 @@ add_to_prod_frontend () {
 
 get_descriptor () {
     # $1 is the url
+    status=$(curl -IL -w %{http_code} -so /dev/null $1)
+    [[ $status != 200 ]] &&
+    IDP_CERT="Error!" &&
+    keycloakError="Failed to import IDP Certificate, please import Scanbot Realm to Keycloak and try again!" &&
+    return
     filecontent=$(curl -s $1 | cat)
     cert=${filecontent#*<ds:X509Certificate>}
     cert=${cert%%</ds:X509Certificate>*}
@@ -215,6 +221,7 @@ add_to_env "AWS_REGION" "us-east-1"
 add_to_env "MINIO_PORT" "443"
 add_to_env "MINIO_USE_SSL" "true"
 add_to_env "KEYCLOAK_CLIENT_ID" $clientid
+add_to_env "EMQ_USERNAME" "admin"
 
 add_to_dev "BASE_URL" "http://$ip/"
 add_to_dev "FRONTEND_URL" "http://$ip:3000/"
@@ -238,12 +245,8 @@ do
     case $CURRENTVAR in
         $MONGODB_URL)
             line=${line%?}
-            host=${line%%:*}
-            rest=${line#*:}
-            port=${rest%%.*}
-            rest=${rest#*.}
-            rest=${rest%?}
-            MONGOURL+="$host.$rest:$port/twainNew?authSource=admin&readPreference=primary&ssl=false\""
+            line=${line%?}
+            MONGOURL+="$line/twainNew?authSource=admin&readPreference=primary&ssl=false\""
             CURRENTVAR=""
             ;;
         $MONGODB_PW)
@@ -341,10 +344,10 @@ do
             CURRENTVAR=$JWT_SECRET
             ;;
         *"$MINIO_SECRET_JSON"*)
-            CURRENTVAR=$AWS_ACCESS_KEY
+            CURRENTVAR=$AWS_SECRET_KEY
             ;;
         *"$MINIO_KEY_JSON"*)
-            CURRENTVAR=$AWS_SECRET_KEY
+            CURRENTVAR=$AWS_ACCESS_KEY
             ;;
         *"$MINIO_CONSOLE_URL_JSON"*)
             CURRENTVAR=$AWS_CONSOLE
@@ -360,3 +363,6 @@ done
 ###     WRITE CONFIG
 ###
 write_to_env
+[[ ! -z "${keycloakError}" ]] &&
+printf "\033[1;31m%s\033[0m\n" "${keycloakError}" ||
+printf "\033[1;32m%s\033[0m\n" "Success!"

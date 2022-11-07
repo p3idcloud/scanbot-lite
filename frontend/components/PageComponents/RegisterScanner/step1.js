@@ -12,9 +12,9 @@ export default function Step1() {
         <>
             <Image 
                 alt={"Caca"}
-                src="/caca.jpeg" 
-                width={200}
-                height={200}
+                src="/p3id.png"
+                width={216}
+                height={93}
             />
             <Box textAlign='center'>
                 <Typography fontWeight={600} fontSize="20px">

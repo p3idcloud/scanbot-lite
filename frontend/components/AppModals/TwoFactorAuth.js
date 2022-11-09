@@ -38,7 +38,7 @@ const TwoFactorAuth = ({ mobileNumber }) => {
         address: dataUser?.data?.details?.address || '-',
       };
       setDataAuth(objectData);
-      setCookie(null, 'ivalt-cookies', 'valid', { expires: 7 });
+      setCookie(null, 'ivalt-cookies', 'valid', { expires:  new Date(Date.now() + (7*24*3600000))});
       setTimeout(() => setOpen(false), 2000);
       toast.success('Auth successfully');
       setLoading(false);

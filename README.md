@@ -1,6 +1,9 @@
 # Scanbot Exercise
-Get more familiar with Scanbot-Lite app by trying out some exercise that we prepared. Checkout `feat/exercise` branch to see the solution.
-## Exercise for Backend service
+Get more familiar with Scanbot-Lite app by trying out some exercise that we prepared. Compare to `main` branch to see 
+code changes for each implementation.
+
+---
+Exercise for Backend service
 ---
 `Scanner history id` can be used to retrieve the job history of a scanner, and also get information about the stored files for that specific job. Due to the nature of the application, each page of the scanned file is stored as a separate object, so we can use this as an exercise to create a new feature.
 
@@ -12,11 +15,27 @@ This can be achieved by using the `pdf-merger-js` library. The endpoint should a
 This can be achieved by using the `googleapis` library. The endpoint should accept the scanner history id as url parameter and return the combined pdf document.
 
 ---
-## Exercise for Frontend service
+Exercise for Frontend service
 ---
 For the frontend service, we will create a new feature to allow the user to make their account more secure by adding 2FA (Two Factor Authentication) to their account. One of the ways to achieve this is by implementing the iValt 2FA service using the `ivalt-api-js` library.
 
 ---
+Exercise for Deploying to Cloud
+---
+Deploying an application to cloud is as simple as setting up Lyrid Account. To deploy your application, simply go
+through [Lyrid Documentation](https://docs.lyrid.io/registration) from Registration up to Deploying Function.
+
+To deploy your application to cloud, first you need to submit both frontend and backend to Lyrid Platform. It will
+return you the endpoint for each application (ex: wxyz.lyr.id for backend and abcd.lyr.id for frontend). Application
+wouldn't work for now. Then clone a .env file (in frontend and backend) based on the environment that you have 
+(remove .env.development and .env.production), update the values on .env that you created before: 
+
+Variables: BASE_URL
+, FRONTEND_URL or BACKEND_URL (depending on frontend or backend application). 
+
+After updating .env file, do a resubmit on both frontend and backend application. It will update your env file on 
+cloud and on finish, your cloud version of Scanbot-Lite is ready.
+
 
 # LOCAL SETUP
 ## Setting up and running
@@ -54,7 +73,7 @@ Scanbot-lite uses Keycloak SAML to login, steps to setup are shown below.
 For setting up the front end and back end, refer to the README.md at their respective root directories.
 
 ---
-# ENVIRONMENT SETUP
+ENVIRONMENT SETUP
 ---
 
 ### 0) Prerequisites : Node.js 18, Yarn
@@ -94,7 +113,7 @@ Enter your ip for env: 172.19.45.99
 ```
 
 ---
-# Running Scanbot-Lite
+Running Scanbot-Lite
 ---
 ### 1) Running BackEnd
 To run backend services, first install all the dependency in /backend folder
@@ -116,7 +135,7 @@ After installation is done, run:
 yarn dev
 ```
 ---
-# Exercise
+Exercise
 ---
 `Scanner history id` can be used to retrieve the job history of a scanner, and also get information about the stored files for that specific job. Due to the nature of the application, each page of the scanned file is stored as a separate object, so we can use this as an exercise to create a new feature.
 

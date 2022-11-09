@@ -8,7 +8,7 @@ const PdfViewer = dynamic(() => import("components/Pdf/PdfViewer"), {
     ssr: false,
 });
 
-export default function ScanPdfView({open, onClose, name, files}) {
+export default function ScanPdfView({open, onClose, name, files, pdfBlobs}) {
 
     return (
         <Modal
@@ -36,7 +36,7 @@ export default function ScanPdfView({open, onClose, name, files}) {
                 <Typography fontWeight={600} fontSize={18} mt={1} mb={3}>
                     Pdf result for {name}
                 </Typography>
-                <PdfViewer files={files} />
+                <PdfViewer files={files} pdfBlobs={pdfBlobs} />
             </Box>
         </Modal>
     );

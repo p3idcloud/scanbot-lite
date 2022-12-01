@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import PDFMerger from 'pdf-merger-js';
 
 export const getInitialName = name => {
     if (name <= 2) {
@@ -29,7 +30,15 @@ export const generateHistoryName = () => {
   return dayjs().format("YYYY-MM-DD HH:mm") + " SCAN";
 }
 
-export const convertDocumentTypeToLabel = (type) => {
-  const words = type.split('_').map(word => capitalize(word));
-  return words.join(' ');
+export const mergePdf = async (blobs) => {
+  try {
+    const merger = new PDFMerger();
+    for await (const blob of blobs) {
+      await merger.add(blob);
+    }
+    const mergedPdf = await merger.saveAsBlob();
+    return [mergedPdf, null];
+  } catch (error) {
+    return [null, error];
+  }
 }

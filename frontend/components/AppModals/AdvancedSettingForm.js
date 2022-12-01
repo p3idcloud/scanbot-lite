@@ -1,7 +1,7 @@
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
-import { Box, Typography, FormGroup, Divider, Grid, Tooltip, IconButton } from '@mui/material';
+import { Box, Typography, FormGroup, Divider, Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
@@ -49,7 +49,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             }
         })
         const task = constructTwainPayloadTask(configData);
-        console.log(JSON.stringify(task, null, 2));
+        // console.log(JSON.stringify(task, null, 2));
         const data = {
             commandId: requestId,
             kind: 'twainlocalscanner',

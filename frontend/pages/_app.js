@@ -18,7 +18,7 @@ import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from "config/theme/ThemeProvider";
-
+import TwoFactorAuth from "components/AppModals/TwoFactorAuth";
 
 
 Router.events.on("routeChangeStart", (url) => {
@@ -98,6 +98,9 @@ class MyApp extends App {
               url: `${process.env.backendUrl}api/accounts/${decoded.user?.attributes?.userid[0]}`,
               ctx: ctx,
             })
+            pageProps.user['enabled2FA'] = accountResult.enabled2FA;
+            pageProps.user['mobileNumber'] = accountResult.mobileNumber;
+            pageProps.user['docsumoApiKey'] = accountResult.docsumoApiKey;
           } catch (err) {
             if (err.message === 'Couldn\'t find account') {
               // Create new user/account
@@ -165,6 +168,7 @@ class MyApp extends App {
           <AccountProvider {...pageProps} >
             <Layout>
                 <Page {...pageProps}>
+                  {pageProps.user.enabled2FA && (<TwoFactorAuth mobileNumber={pageProps.user.mobileNumber} />)}
                   <Component {...pageProps} />
                   <ToastContainer
                     position="top-right"

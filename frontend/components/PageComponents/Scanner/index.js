@@ -104,7 +104,7 @@ export default function Scanner() {
                                                 <Typography mb={3} fontWeight={600} fontSize='16px'>
                                                     Preview Result
                                                 </Typography>
-                                                <PdfViewer files={value.files} newScan />
+                                                <PdfViewer files={value.files} />
                                             </Card>
                                         </Grid>
                                     )}

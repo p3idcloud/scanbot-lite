@@ -104,6 +104,9 @@ app.use('/api/jobs', jobRouter);
 app.use('/api/scannersetting', scannerSettingRouter);
 app.use('/api/dashboard', dashboardRouter);
 
+// Endpoints for exercise
+app.use('/api/exercise', require('./routes/exercise.route'));
+
 //to use scanner:
 scannersRouter.use('', blocksRouter);
 scannersRouter.use('', localRouter);

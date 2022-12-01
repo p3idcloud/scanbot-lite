@@ -84,7 +84,8 @@ export default function ScannerHistory({...props}) {
             setLoadingPdf(false);
             setHistoryPdf({
                 url: urls,
-                name: name
+                name: name,
+                pdfBlobs: pdfBlobs
             });
         })
         .catch(err => toast.error('Failed to fetch pdf'));
@@ -171,6 +172,7 @@ export default function ScannerHistory({...props}) {
                 onClose={()=>setHistoryPdf(null)}
                 name={historyPdf?.name}
                 files={historyPdf?.url}
+                pdfBlobs={historyPdf?.pdfBlobs}
             />
             
             <Modal open={loadingPdf}>

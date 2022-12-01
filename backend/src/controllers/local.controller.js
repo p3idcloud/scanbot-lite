@@ -309,7 +309,7 @@ exports.allLocal = async (req, res, next) => {
     }else if (method === 'POST' && body.method === 'startCapturing') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
-        if (scannerSession.state !== 'ready') {
+        if (scannerSession?.state !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
 
@@ -404,7 +404,7 @@ exports.allLocal = async (req, res, next) => {
     }else if (method === 'POST' && body.method === 'closeSession') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
-        if (scannerSession.state !== 'ready') {
+        if (scannerSession?.state !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
 

@@ -42,12 +42,14 @@ router.post('/:scannerId/blocks', express.raw({type:'*/*',inflate:true, limit: '
     var queue = await getQueueFromId(scannerState.currentQueueId);
     var timeoutId;
     var i = 0; 
-    while (!queue &&  i < process.env.GET_QUEUE_MAX_RETRIES) {
+    while (typeof queue === 'undefined' &&  i < process.env.GET_QUEUE_MAX_RETRIES) {
         i+=1
-        timeoutId = setTimeout(async () => queue = await getQueueFromId(scannerState.currentQueueId), 500);
+        timeoutId = setTimeout(async () => {
+            queue = await getQueueFromId(scannerState.currentQueueId);
+            clearTimeout(timeoutId);
+        }, 500);
     }
-    clearTimeout(timeoutId);
-    if (!queue) {
+    if (typeof queue === 'undefined') {
         res.status(500).send({message: 'Unable to get queue'})
     }
 

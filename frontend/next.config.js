@@ -7,8 +7,25 @@ const nextConfig = {
     backendUrl: process.env.BACKEND_URL,
     APP_SECRET_STRING: process.env.APP_SECRET_STRING,
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.modules.push(require('path').resolve('./'));
+
+    if (!isServer) {
+      const originalEntry = config.entry;
+      config.entry = async () => {
+        const entries = await originalEntry();
+
+        if (
+          entries['main.js'] &&
+          !entries['main.js'].includes('./src/lib/ivalt.js')
+        ) {
+          entries['main.js'].unshift('./src/lib/ivalt.js');
+        }
+
+        return entries;
+      };
+    }
+
     return config;
   },
   async redirects() {

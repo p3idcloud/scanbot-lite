@@ -28,3 +28,8 @@ export function lowercase(string) {
 export const generateHistoryName = () => {
   return dayjs().format("YYYY-MM-DD HH:mm") + " SCAN";
 }
+
+export const convertDocumentTypeToLabel = (type) => {
+  const words = type.split('_').map(word => capitalize(word));
+  return words.join(' ');
+}

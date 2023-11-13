@@ -32,7 +32,7 @@
   "registrationAllowed": true,
   "registrationEmailAsUsername": false,
   "rememberMe": true,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "loginWithEmailAllowed": false,
   "duplicateEmailsAllowed": false,
   "resetPasswordAllowed": true,

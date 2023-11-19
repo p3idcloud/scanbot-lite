@@ -14,7 +14,7 @@ export const ScannerContext = createContext(null);
 
 const headers = { "x-twain-cloud-request-id": uuid.v4() };
 
-export const ScannerProvider = ({children}) => {
+export const ScannerProvider = ({ children }) => {
     const [privetToken, setPrivetToken] = useState(0);
     const [scannerSettings, setScannerSettings] = useState([]);
     const [scannerHistory, setScannerHistory] = useState([]);
@@ -28,10 +28,10 @@ export const ScannerProvider = ({children}) => {
     const [listScannerSettings, setListScannerSettings] = useState([]);
     const [openScanProfile, setOpenScanProfile] = useState(false);
     const [formSetting, setFormSetting] = useState({});
-    const [isChange, setIsChange] = useState(false);    
+    const [isChange, setIsChange] = useState(false);
     const [statusClaim, setStatusClaim] = useState(false);
     const [startCapture, setStartCapture] = useState(false);
-    const [closeCloud, setCloseCloud] = useState(() => {});
+    const [closeCloud, setCloseCloud] = useState(() => { });
     const [requestId, setRequestId] = useState(uuid.v4());
     const [sessionId, setSessionId] = useState(0);
     const [files, setFiles] = useState([]);
@@ -41,7 +41,6 @@ export const ScannerProvider = ({children}) => {
     const router = useRouter();
     const { scannerId } = router?.query;
 
-    
     const { data, error, isValidating } = useSWR(
         `${process.env.backendUrl}api/scanners/${scannerId}?ui=true`,
         fetchData
@@ -50,7 +49,7 @@ export const ScannerProvider = ({children}) => {
         `${process.env.backendUrl}api/scanners/state/${scannerId}`,
         fetchData,
         {
-            refreshInterval: 1000
+            refreshInterval: 5000
         }
     ).data;
     const scannerSettingsData = useSWR(
@@ -68,7 +67,7 @@ export const ScannerProvider = ({children}) => {
             setScannerSettings(scannerSettingsData.data ?? []);
             setListScannerSettings(scannerSettingsData.data ?? []);
         }
-    },[scannerSettingsData])
+    }, [scannerSettingsData])
     useEffect(() => {
         if (scannerStateData) {
             setStatusPoll(scannerStateData);
@@ -88,23 +87,23 @@ export const ScannerProvider = ({children}) => {
     function handleInfoex() {
         setLoadingInfoex(true);
         fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/infoex`, {
-        headers,
+            headers,
         })
-        .then((res) => {
-            setPrivetToken(res["x-privet-token"]);
-            setStatusScanner(true);
-        })
-        .catch((err) => {
-            if (err?.response?.status === 404) {
-            toast.error("Api infoex not found");
-            }
-            toast.error("Error Infoex");
-            setInfoexStatus(true);
-            setStatusScanner(false);
-        })
-        .finally(() => {
-            setLoadingInfoex(false);
-        });
+            .then((res) => {
+                setPrivetToken(res["x-privet-token"]);
+                setStatusScanner(true);
+            })
+            .catch((err) => {
+                if (err?.response?.status === 404) {
+                    toast.error("Api infoex not found");
+                }
+                toast.error("Error Infoex");
+                setInfoexStatus(true);
+                setStatusScanner(false);
+            })
+            .finally(() => {
+                setLoadingInfoex(false);
+            });
     }
 
     const handleRefresh = () => {
@@ -118,7 +117,7 @@ export const ScannerProvider = ({children}) => {
 
     useEffect(() => {
         if (data?.sessionId?.length === 0 || !data) {
-        handleInfoex();
+            handleInfoex();
         }
     }, []);
 
@@ -128,9 +127,9 @@ export const ScannerProvider = ({children}) => {
 
     async function loadScanner(item = null, type = null) {
         try {
-        if (type === "delete") {
-            return loadScannerHistory();
-        }
+            if (type === "delete") {
+                return loadScannerHistory();
+            }
             loadScannerHistory();
             loadScannerDetail();
         } catch {
@@ -151,22 +150,22 @@ export const ScannerProvider = ({children}) => {
                 page,
             },
         })
-        .then((res) => {
-            // console.log(res)
-            setScannerHistory(res?.data ?? []);
-            setScanHistoryRowCount(res?.dataCount ?? 0);
-        })
-        .catch((err) => {
-            // console.error(err)
-            toast.error("Api error something")
-        });
+            .then((res) => {
+                // console.log(res)
+                setScannerHistory(res?.data ?? []);
+                setScanHistoryRowCount(res?.dataCount ?? 0);
+            })
+            .catch((err) => {
+                // console.error(err)
+                toast.error("Api error something")
+            });
     }
     function loadScannerDetail() {
         fetchData(`${process.env.backendUrl}api/scanners/${scannerId}?ui=true`)
-        .then((res) => {
-            setDetailScanner(res.scanner ?? null);
-        })
-        .catch((err) => toast.error("Api error something"));
+            .then((res) => {
+                setDetailScanner(res.scanner ?? null);
+            })
+            .catch((err) => toast.error("Api error something"));
     }
     function resetStatusClaimStates() {
         setFiles([]);
@@ -216,56 +215,59 @@ export const ScannerProvider = ({children}) => {
                 setScanHistoryPageIndex
             }}
         >
-        {children}
-        <Modal open={loadingInfoex}>
-            <Box 
-                display='flex' 
-                sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                }}
-                flexDirection="row"
-                justifyContent="center"
-                alignItems="center"
+            {children}
+            <Modal
+                open={loadingInfoex}
+                toggle={handleLoadingInfoex}
             >
-                <Card withpadding>
-                    <CustomLoader message="Checking Scanner" />
-                </Card>
-            </Box>
-        </Modal>
-        <Modal open={infoexStatus}>
-            <Box 
-                display='flex' 
-                sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                }}
-                flexDirection="row"
-                justifyContent="center"
-                alignItems="center"
-            >
-                <Card withpadding>
-                    <Box mt={4} px={1}>
-                        <Typography textAlign='center' fontWeight={600} fontSize="20px">
-                            Scanner Error, Please check the service
-                        </Typography>
-                    </Box>
-                    <Box my={4} display='flex' justifyContent='center' alignItems='center'>
-                        <Button size="small" autoWidth onClick={handleRefresh}>
-                            Retry
-                        </Button>
-                        <div style={{padding: 5}}/>
-                        <Button size="small" autoWidth onClick={()=>setInfoexStatus(false)}>
-                            Ok
-                        </Button>
-                    </Box>
-                </Card>
-            </Box>
-        </Modal>
+                <Box
+                    display='flex'
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Card withpadding>
+                        <CustomLoader message="Checking Scanner" />
+                    </Card>
+                </Box>
+            </Modal>
+            <Modal open={infoexStatus}>
+                <Box
+                    display='flex'
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Card withpadding>
+                        <Box mt={4} px={1}>
+                            <Typography textAlign='center' fontWeight={600} fontSize="20px">
+                                Scanner Error, Please check the service
+                            </Typography>
+                        </Box>
+                        <Box my={4} display='flex' justifyContent='center' alignItems='center'>
+                            <Button size="small" autoWidth onClick={handleRefresh}>
+                                Retry
+                            </Button>
+                            <div style={{ padding: 5 }} />
+                            <Button size="small" autoWidth onClick={() => setInfoexStatus(false)}>
+                                Ok
+                            </Button>
+                        </Box>
+                    </Card>
+                </Box>
+            </Modal>
         </ScannerContext.Provider>
     );
 };

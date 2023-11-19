@@ -5,8 +5,8 @@ const accountService = require("../services/account")
 const queueService = require("../services/queue");
 const scannerStateService = require("../services/scannerstate");
 const { createScannerHistory, updateScannerHistory } = require("../services/scannerhistory");
-const {updateScannerFromId} = require("../services/scanner");
-const {createScannerSession, getScannerSessionFromId, updateScannerSessionFromId} = require("../services/scannersession");
+const { updateScannerFromId } = require("../services/scanner");
+const { createScannerSession, getScannerSessionFromId, updateScannerSessionFromId } = require("../services/scannersession");
 
 const logger = require('../utils/logger')('local.controller');
 
@@ -32,11 +32,11 @@ exports.allLocal = async (req, res, next) => {
         iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), body.params.sessionId);
 
         return res.status(200)
-    }else{
+    } else {
         iot.startMQTTListener();
         iot.subscribeToTopic(iot.getClientTopic(authorizationstring));
         iot.listenToTopicAndSave(iot.getClientTopic(authorizationstring), commandId);
-    
+
         // iot.subscribeToTopic(iot.getDeviceRequestTopic(scannerId));
         // iot.listenToTopicAndSave(iot.getDeviceRequestTopic(scannerId), commandId);
 
@@ -47,37 +47,37 @@ exports.allLocal = async (req, res, next) => {
             url,
             body: JSON.stringify(body)
         })
-            .then(() => {})
+            .then(() => { })
             .catch(next);
     }
 
-    if (method === 'GET' && req.originalUrl.substring(req.originalUrl.lastIndexOf('/')+1) === 'infoex'){
+    if (method === 'GET' && req.originalUrl.substring(req.originalUrl.lastIndexOf('/') + 1) === 'infoex') {
         const result = await iot.findCommandIdFromMessageContainer(iot.getClientTopic(authorizationstring), commandId);
         if (!result) {
             await scannerStateService.updateScannerState(scannerId,
                 {
-                "currentQueueId": "",
-                "status": "offline",
-                "sessionId": "",
-                "latestEvent": "infoEx"
+                    "currentQueueId": "",
+                    "status": "offline",
+                    "sessionId": "",
+                    "latestEvent": "infoEx"
                 }
             );
             return res.status(400).send("Scanner Offline / Undetected");
-        }else {
+        } else {
             await updateScannerFromId(scannerId,
                 {
                     "lastActive": new Date()
                 });
             await scannerStateService.updateScannerState(scannerId,
                 {
-                "xPrivetToken": result['x-privet-token'],
-                "status": result.device_state,
-                "latestEvent": "infoEx"
+                    "xPrivetToken": result['x-privet-token'],
+                    "status": result.device_state,
+                    "latestEvent": "infoEx"
                 }
             );
             return res.status(200).json(result);
         }
-    }else if (method === 'POST' && body.method === 'createSession') { // check if it send a startSession
+    } else if (method === 'POST' && body.method === 'createSession') { // check if it send a startSession
         /*
         get the sessionId from the mqtt response.
         100% there must be a way to get the response without connecting to mqtt but idk
@@ -96,13 +96,13 @@ exports.allLocal = async (req, res, next) => {
                 }
             );
             return res.status(400).json(body);
-        }else{
-            if(result.results.success == false){
+        } else {
+            if (result.results.success == false) {
                 //this one is if the scanner stuck / busy (havent found out how to check the actual problem/scanner error)
                 //i think from the spec, we can hit waitforstatus or something to check the error if stuck here, but idk
                 await scannerStateService.updateScannerState(scannerId,
                     {
-                    "status": result.results.code,
+                        "status": result.results.code,
                     }
                 );
                 return res.status(400).json(result);
@@ -143,13 +143,13 @@ exports.allLocal = async (req, res, next) => {
             })
 
             let createdJob = await jobService.createJob({
-                'id' : uuid.v4(),
+                'id': uuid.v4(),
                 'accountId': account.id,
                 'sessionId': result.results.session.sessionId,
                 'name': body.name,
                 'description': body.description
             });
-    
+
             let queue = await queueService.createQueue({
                 'id': uuid.v4(),
                 'jobId': createdJob.id,
@@ -176,7 +176,7 @@ exports.allLocal = async (req, res, next) => {
             await scannerStateService.updateScannerState(scannerId,
                 {
                     "currentQueueId": queue.id,
-                    "currentlyUsedByUserId":account.id,
+                    "currentlyUsedByUserId": account.id,
                     "state": result.results.session.state,
                     "status": result.results.session.status.detected,
                     "sessionId": result.results.session.sessionId,
@@ -187,10 +187,10 @@ exports.allLocal = async (req, res, next) => {
             iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), result.results.session.sessionId);
             return res.status(200).json(result);
         }
-    }else if (method === 'POST' && body.method === 'sendTask') {
+    } else if (method === 'POST' && body.method === 'sendTask') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
-        if (scannerSession.state !== 'ready') {
+        if (scannerSession.state.toLowerCase() !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
 
@@ -203,14 +203,14 @@ exports.allLocal = async (req, res, next) => {
                 }
             );
             return res.status(400).send("Scanner Offline / Undetected");
-        }else{
-            if(result.results.success == false){
+        } else {
+            if (result.results.success == false) {
                 await scannerStateService.updateScannerState(scannerId,
                     {
-                    "status": result.results.code,
+                        "status": result.results.code,
                     }
                 );
-                return res.status(400).send("Scanner Error: "+ result.results.code +" . Please restart the service.");
+                return res.status(400).send("Scanner Error: " + result.results.code + " . Please restart the service.");
             }
 
 
@@ -273,7 +273,7 @@ exports.allLocal = async (req, res, next) => {
             //     "success": true
             //   }
             // }
-            await updateScannerSessionFromId(scannerSession.id,{
+            await updateScannerSessionFromId(scannerSession.id, {
                 'state': result.results.session.state,
                 'revision': result.results.session.revision,
                 'doneCapturing': result.results.session.doneCapturing,
@@ -292,7 +292,7 @@ exports.allLocal = async (req, res, next) => {
                     "lastCommandAt": Date.now()
                 }
             );
-            
+
             //update queue
             let currQueue = await queueService.updateQueue(scannerState.currentQueueId, {
                 'lastModifiedDate': new Date(),
@@ -306,10 +306,10 @@ exports.allLocal = async (req, res, next) => {
 
             return res.status(200).json(result);
         }
-    }else if (method === 'POST' && body.method === 'startCapturing') {
+    } else if (method === 'POST' && body.method === 'startCapturing') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
-        if (scannerSession?.state !== 'ready') {
+        if (scannerSession?.state.toLowerCase() !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
 
@@ -322,7 +322,7 @@ exports.allLocal = async (req, res, next) => {
                 }
             );
             return res.status(400).send("Scanner Offline / Undetected");
-        }else{
+        } else {
             //on success heres response:
             //{
             //   "commandId": "448DE3DF-C654-4424-A749-E5C33A3399DF",
@@ -358,17 +358,17 @@ exports.allLocal = async (req, res, next) => {
             // }
 
 
-            if(result.results.success == false){
+            if (result.results.success == false) {
                 await scannerStateService.updateScannerState(scannerId,
                     {
-                    "status": result.results.code,
+                        "status": result.results.code,
                     }
                 );
-                return res.status(400).send("Scanner Error: "+ result.results.code +" . Please restart the service.");
+                return res.status(400).send("Scanner Error: " + result.results.code + " . Please restart the service.");
             }
 
             //update scanner session
-            await updateScannerSessionFromId(scannerSession.id,{
+            await updateScannerSessionFromId(scannerSession.id, {
                 'state': result.results.session.state,
                 'revision': result.results.session.revision,
                 'doneCapturing': result.results.session.doneCapturing,
@@ -387,7 +387,7 @@ exports.allLocal = async (req, res, next) => {
                     "lastCommandAt": Date.now()
                 }
             );
-            
+
             //update queue
             let currQueue = await queueService.updateQueue(scannerState.currentQueueId, {
                 'lastModifiedDate': new Date(),
@@ -401,10 +401,10 @@ exports.allLocal = async (req, res, next) => {
 
             return res.status(200).send(result);
         }
-    }else if (method === 'POST' && body.method === 'closeSession') {
+    } else if (method === 'POST' && body.method === 'closeSession') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
-        if (scannerSession?.state !== 'ready') {
+        if (scannerSession?.state.toLowerCase() !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
 
@@ -420,15 +420,15 @@ exports.allLocal = async (req, res, next) => {
                 }
             );
             return res.status(400).send("Scanner Offline / Undetected");
-        }else{
-            if(result.results.success == false){
+        } else {
+            if (result.results.success == false) {
                 await scannerStateService.resetScannerState(scannerId);
                 await scannerStateService.updateScannerState(scannerId,
                     {
-                    "status": result.results.code,
+                        "status": result.results.code,
                     }
                 );
-                return res.status(400).send("Scanner Error: "+ result.results.code +" . Please restart the service.");
+                return res.status(400).send("Scanner Error: " + result.results.code + " . Please restart the service.");
             }
 
             //update queue
@@ -441,7 +441,7 @@ exports.allLocal = async (req, res, next) => {
                 "status": "Completed"
             });
 
-            await updateScannerSessionFromId(scannerSession.id,{
+            await updateScannerSessionFromId(scannerSession.id, {
                 'state': result.results.session.state,
                 'revision': result.results.session.revision,
                 'doneCapturing': result.results.session.doneCapturing,
@@ -456,5 +456,5 @@ exports.allLocal = async (req, res, next) => {
             return res.status(200).json(result);
         }
     }
-        res.sendStatus(200);
+    res.sendStatus(200);
 };

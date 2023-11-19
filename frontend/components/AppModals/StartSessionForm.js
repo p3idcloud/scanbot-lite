@@ -2,7 +2,7 @@ import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
 import * as Yup from "yup";
-import { Box, Typography, FormGroup, FormHelperText, Divider } from '@mui/material';
+import { Box, Typography, FormGroup, Divider } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as uuid from "uuid";
 import { useState } from 'react';
@@ -18,8 +18,8 @@ const validationSchema = Yup.object().shape({
 
 const StartSessionForm = ({ open, close }) => {
   const [loading, setLoading] = useState(false);
-  const { 
-    privetToken, 
+  const {
+    privetToken,
     scannerId,
     setSessionId,
     setStatusClaim,
@@ -30,12 +30,12 @@ const StartSessionForm = ({ open, close }) => {
     name: generateHistoryName(),
     description: "",
   };
-  
+
   const handleSaveForm = () => {
     setStatusClaim(true);
   };
 
-  const handleSubmit = (e, {resetForm}) => {
+  const handleSubmit = (e, { resetForm }) => {
     setLoading(true);
     const commandId = uuid.v4();
     const data = {
@@ -56,7 +56,7 @@ const StartSessionForm = ({ open, close }) => {
     })
       .then((res) => {
         setSessionId(res?.results?.session?.sessionId);
-        setCookie({},"sessionId", res?.results?.session?.sessionId);
+        setCookie({}, "sessionId", res?.results?.session?.sessionId);
         toast.success("Session Ready, Start capturing to scan document");
         handleSaveForm();
       })
@@ -72,7 +72,7 @@ const StartSessionForm = ({ open, close }) => {
         close();
       });
   };
-  
+
   return (
     <Formik
       initialValues={initialValues}
@@ -116,24 +116,24 @@ const StartSessionForm = ({ open, close }) => {
               alignItems="center"
               width={1}
             >
-              <Form style={{width: '100%'}}>
+              <Form style={{ width: '100%' }}>
                 <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
                   Start Session
                 </Typography>
-                <Divider sx={{my: 4}}/>
-                <FormGroup sx={{my: 1}}>
-                    <InputField
-                      label="Name"
-                      fullWidth
-                      id='name'
-                      defaultValue={initialValues.name}
-                      aria-invalid={Boolean(touched.name && errors.name)}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder="Name"
-                      error={Boolean(errors.name)}
-                    />
-                    <Typography sx={{color: "red.main"}}>{errors.name}</Typography>
+                <Divider sx={{ my: 4 }} />
+                <FormGroup sx={{ my: 1 }}>
+                  <InputField
+                    label="Name"
+                    fullWidth
+                    id='name'
+                    defaultValue={initialValues.name}
+                    aria-invalid={Boolean(touched.name && errors.name)}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Name"
+                    error={Boolean(errors.name)}
+                  />
+                  <Typography sx={{ color: "red.main" }}>{errors.name}</Typography>
                 </FormGroup>
                 <FormGroup>
                   <InputField
@@ -144,8 +144,8 @@ const StartSessionForm = ({ open, close }) => {
                     multiline
                     minRows={3}
                     aria-invalid={Boolean(
-                        touched.description && errors.description
-                      )}
+                      touched.description && errors.description
+                    )}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.description}

@@ -66,6 +66,8 @@ export const ScannerProvider = ({ children }) => {
         if (scannerSettingsData) {
             setScannerSettings(scannerSettingsData.data ?? []);
             setListScannerSettings(scannerSettingsData.data ?? []);
+            console.log(scannerSettings)
+            console.log(listScannerSettings)
         }
     }, [scannerSettingsData])
     useEffect(() => {

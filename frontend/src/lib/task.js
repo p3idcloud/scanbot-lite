@@ -1,137 +1,104 @@
-'use strict';
-
-exports.constructTwainPayloadTask = (profileDefinitions, scannerSettings) => {
-    const profileDefinitionData = this.mapProfileDefinitionScannerSetting(profileDefinitions, scannerSettings);
-    let twainPayloadTask = {};
-
-    profileDefinitionData.forEach((definition) => {
-        const objectArr = definition.objectArr;
-        let currentValue = twainPayloadTask;
-        let parentValue = twainPayloadTask;
-
-        for (let i = 0; i < objectArr.length; i++) {
-            if (i >= objectArr.length - 1) {
-                const dataType = this.mapDataType(objectArr[i - 1]);
-                let value = currentValue;
-                switch (dataType) {
-                    case 'object':
-                        value = {
-                            [objectArr[i]]: definition.value,
-                        };
-                        break;
-
-                    case 'array':
-                        value.push({
-                            [objectArr[i]]: definition.value,
-                        });
-                        break;
+export const constructTwainPayloadTask = (configData) => {
+    function recurse(currentJson, value, currentPath, attribute) {
+        if (currentPath.length === 0) {
+            return;
+        }
+        const [_key, ...rest] = currentPath;
+        const { dataType: keyType, name } = mapDataType(_key);
+        switch (keyType) {
+            case 'primitive':
+                // Leaf json or task
+                if (currentPath.length === 1) {
+                    currentJson[name] = value;
                 }
-            }
-            else {
-                const key = objectArr[i].replace(/[[]]|[{}]/g, '');
-                const dataType = this.mapDataType(objectArr[i]);
-                let value = currentValue;
-                if (i > 0) {
-                    const parentKey = objectArr[i - 1].replace(/[[]]|[{}]/g, '');
-                    const parentDataType = this.mapDataType(objectArr[i - 1]);
-                    let newCurrentValueIndex = 0;
-                    if (parentDataType === 'array') {
-                        if (parentValue[parentKey].length <= 0 || (parentKey === 'attributes' && parentValue[parentKey].length > 0)) {
-                            switch (parentKey) {
-                                case 'attributes':
-                                    let found = false;
-                                    parentValue[parentKey].find((item, idx) => {
-                                        if (item.attribute === definition.name) {
-                                            found = true;
-                                            newCurrentValueIndex = idx;
-                                            return true;
-                                        }
-                                        return false;
-                                    });
-                                    if (!found) {
-                                        parentValue[parentKey].push({ attribute: definition.name });
-                                        newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    }
-                                    break;
-
-                                case 'actions':
-                                    parentValue[parentKey].push({ action: 'configure' });
-                                    newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    break;
-
-                                default:
-                                    parentValue[parentKey].push({});
-                                    newCurrentValueIndex = parentValue[parentKey].length - 1;
-                                    break;
-                            }
+                else {
+                    const childJson = recurse(currentJson[name] ?? {}, value, [...rest], attribute);
+                    currentJson[name] = childJson;
+                }
+                break;
+            case 'array':
+                // Will have a child json
+                if (rest.length === 1 && currentJson[name]?.[0]?.hasOwnProperty(rest[0])) {
+                    value = value.trim();
+                    const childJson = recurse({}, value, [...rest], attribute);
+                    if (currentJson.hasOwnProperty(name)) {
+                        // Add to array
+                        currentJson[name].push(childJson);
+                    } else {
+                        // Create new array
+                        currentJson[name] = [childJson];
+                    }
+                } else if (rest?.[0] === 'values[]') {
+                    var indexAttr = -1;
+                    currentJson[name]?.forEach((attr, index) => {
+                        if (attr.attribute === attribute) {
+                            indexAttr = index;
                         }
-
-                        currentValue = parentValue[parentKey][newCurrentValueIndex];
-                        value = currentValue;
+                    })
+                    const childJson = recurse(currentJson[name][indexAttr] ?? {}, value, [...rest], attribute);
+                    currentJson[name][indexAttr] = childJson;
+                } else {
+                    const childJson = recurse(currentJson[name]?.[0] ?? {}, value, [...rest], attribute);
+                    if (currentJson.hasOwnProperty(name)) {
+                        currentJson[name][0] = childJson;
+                    } else {
+                        currentJson[name] = [childJson];
                     }
                 }
-
-                let newValue = currentValue[key] ? currentValue[key] : {};
-                switch (dataType) {
-                    case 'array':
-                        newValue = currentValue[key] ? currentValue[key] : [];
-                        break;
-                }
-
-                value[key] = newValue;
-                parentValue = currentValue;
-                currentValue = value[key];
-            }
+                break;
         }
-    });
+        return currentJson;
+    }
 
-    return twainPayloadTask;
-};
-
-exports.mapProfileDefinitionScannerSetting = (profileDefinitions, scannerSettings) => {
-    let profileDefinitionData = [];
-    let scannerSettingData = {};
-    scannerSettings.forEach((setting) => {
-        if (!scannerSettingData[setting.id]) {
-            scannerSettingData[setting.id] = setting;
+    const twainPayloadTask = {
+        task: {
+            actions: [{
+                action: 'configure',
+                streams: [{
+                    sources: [{
+                        pixelFormats: [{
+                            attributes: []
+                        }]
+                    }]
+                }]
+            }]
         }
-    });
-
-    profileDefinitions.forEach((definition) => {
-        if (scannerSettingData[definition.id]) {
-            profileDefinitionData.push({
-                value: isNaN(definition.value) ? definition.value : parseInt(definition.value),
-                ...mapSettingDataType(scannerSettingData[definition.id]),
-            });
-        }
-    });
-
-    return profileDefinitionData;
-};
-
-exports.mapSettingDataType = (setting) => {
-    const objectArr = setting.object.split('.').filter((obj) => obj !== 'task');
-    const level = objectArr.length;
-    const name = setting.attributeName;
-    const id = objectArr[level - 1].replace(/[[]]|[{}]/g, '');
-    const dataType = this.mapDataType(name);
-
-    return {
-        level,
-        name,
-        dataType,
-        id,
-        objectArr,
     };
+
+    Object.keys(configData).forEach(attribute => {
+        if (configData[attribute]?.object?.includes('attributes')) {
+            twainPayloadTask.task.actions[0].streams[0].sources[0].pixelFormats[0].attributes.push({
+                attribute
+            })
+        }
+        const objectPath = configData[attribute]?.object?.split('.');
+        recurse(twainPayloadTask, configData[attribute].selectValue, objectPath, attribute);
+    });
+
+    return twainPayloadTask.task;
 };
 
-exports.mapDataType = (name) => {
+export const mapDataType = (name) => {
     let dataType = 'primitive';
     if (name.endsWith('[]')) {
         dataType = 'array';
+        name = name.substring(0, name.length - 2);
     }
-    else if (name.endsWith('{}')) {
-        dataType = 'object';
-    }
-    return dataType;
+    return { dataType, name };
 };
+
+export const findTypeOfValue = (value, list) => {
+    try {
+        for (let i = 0; i < list.length; i++) {
+            if (list?.[i]?.value === value) {
+                if (list?.[i]?.type === 'integer') {
+                    return parseInt(value);
+                }
+                return value
+            }
+        }
+    } catch {
+        return value;
+    }
+    return value;
+}

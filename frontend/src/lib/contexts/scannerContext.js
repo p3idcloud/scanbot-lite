@@ -49,7 +49,7 @@ export const ScannerProvider = ({ children }) => {
         `${process.env.backendUrl}api/scanners/state/${scannerId}`,
         fetchData,
         {
-            refreshInterval: 5000
+            refreshInterval: 1000
         }
     ).data;
     const scannerSettingsData = useSWR(

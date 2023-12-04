@@ -65,10 +65,8 @@ const ScannerSettingSchema = new mongoose.Schema({
     labelName: String,
     description: String,
     vendor: String,
-    valueType: String,
     object: String,
     defaultValue: String,
-    currentValue: String,
     attributeName: String,
     configurationType: String,
     possibleValues: Array

@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
 import { useScanner } from 'lib/contexts/scannerContext';
 import Select from 'components/Select';
-// import { scannerSettings } from 'constants/scannerSettings';
 import { parseCookies } from 'nookies';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -27,21 +26,11 @@ const AdvancedSettingForm = ({ open, close }) => {
         setLoading(true);
         var configData = {}
         Object.keys(configsData).forEach((key, i) => {
-            var [newkey, inputType] = key.split('-')
-            // attribute : { type, inputValue, selectValue, object }
-            if (inputType === 'select') {
-                configData[newkey] = {
-                    ...configData[newkey],
-                    selectValue: configsData[key],
-                    object: configValues[Math.floor(i / 2)]?.object,
-                    type: findTypeOfValue(configsData[key], configValues[Math.floor(i / 2)]?.possibleValues)
-                };
-            } else {
-                configData[newkey] = {
-                    ...configData[newkey],
-                    inputValue: configsData[key]
-                };
-            }
+            configData[key] = {
+                ...configData[key],
+                selectValue: findTypeOfValue(configsData[key], configValues[i]?.possibleValues),
+                object: configValues[i]?.object
+            };
         })
         const task = constructTwainPayloadTask(configData);
         console.log(JSON.stringify(task, null, 2));
@@ -79,8 +68,7 @@ const AdvancedSettingForm = ({ open, close }) => {
         const initialValues = {};
         if (listScannerSettings) {
             listScannerSettings.forEach(setting => {
-                initialValues[setting.attributeName + '-select'] = setting.defaultValue;
-                initialValues[setting.attributeName + '-input'] = 0;
+                initialValues[setting.attributeName] = setting.defaultValue;
             })
         }
         return initialValues;
@@ -90,8 +78,7 @@ const AdvancedSettingForm = ({ open, close }) => {
         const values = {};
         if (listScannerSettings) {
             listScannerSettings.forEach(setting => {
-                values[setting.attributeName + '-select'] = yup.string().required('Required'),
-                    values[setting.attributeName + '-input'] = yup.number().typeError("Enter an integer value").nullable(true)
+                values[setting.attributeName] = yup.string().required('Required')
             })
         }
         return yup.object(values);
@@ -99,7 +86,6 @@ const AdvancedSettingForm = ({ open, close }) => {
 
     const getConfigValues = () => {
         if (listScannerSettings) {
-            // console.log(listScannerSettings)
             let configFields = [...listScannerSettings];
             return configFields;
         }
@@ -114,10 +100,6 @@ const AdvancedSettingForm = ({ open, close }) => {
         onSubmit: sendConfig,
         enableReinitialize: true
     });
-
-    const showInputField = (i) => findTypeOfValue(formik.values[configValues[i].attributeName + '-select'], configValues[i]?.possibleValues) !== 'select';
-
-    // console.log(formik.values);
 
     return (
         <Modal
@@ -187,36 +169,19 @@ const AdvancedSettingForm = ({ open, close }) => {
                             <FormGroup>
                                 <Select
                                     onChange={formik.handleChange}
-                                    id={data.attributeName + '-select'}
-                                    name={data.attributeName + '-select'}
-                                    aria-invalid={formik.touched[data.attributeName + '-select'] && Boolean(formik.errors[data.attributeName + '-select'])}
+                                    id={data.attributeName}
+                                    name={data.attributeName}
+                                    aria-invalid={formik.touched[data.attributeName] && Boolean(formik.errors[data.attributeName])}
                                     lists={data?.possibleValues?.map(item => ({
                                         label: item.label,
                                         description: item.description,
                                         value: item.value
                                     }))}
-                                    error={Boolean(formik.errors[data.attributeName + '-select'])}
-                                    value={formik.values[data.attributeName + '-select']}
+                                    error={Boolean(formik.errors[data.attributeName])}
+                                    value={formik.values[data.attributeName]}
                                 />
-                                <Typography sx={{ color: "red.main" }}>{formik.errors[data.attributeName + '-select']}</Typography>
+                                <Typography sx={{ color: "red.main" }}>{formik.errors[data.attributeName]}</Typography>
                             </FormGroup>
-                        </Grid>
-                        <Grid item xs={12} sm={6} pl={{ sm: 1.5 }}>
-                            {showInputField(i) && (
-                                <FormGroup>
-                                    <InputField
-                                        fullWidth
-                                        onChange={formik.handleChange}
-                                        id={data.attributeName + '-input'}
-                                        name={data.attributeName + '-input'}
-                                        aria-invalid={formik.touched[data.attributeName + '-input'] && Boolean(formik.errors[data.attributeName + '-input'])}
-                                        value={formik.values[data.attributeName + '-input']}
-                                        error={Boolean(formik.errors[data.attributeName + '-input'])}
-                                    />
-                                    <Typography sx={{ color: "red.main" }}>{formik.errors[data.attributeName + '-input']}</Typography>
-                                </FormGroup>
-
-                            )}
                         </Grid>
                     </Grid>
                 ))}

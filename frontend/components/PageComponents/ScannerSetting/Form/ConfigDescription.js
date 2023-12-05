@@ -3,6 +3,7 @@ import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import Button from "components/Button";
 import Card from "components/Card";
 import InputField from "components/InputField";
+import Select from 'components/Select';
 import { useFormikContext } from "formik";
 import { fetchData } from "lib/fetch";
 import { useState } from "react";
@@ -13,13 +14,26 @@ import { mutate } from "swr";
 const arrForm = [
     { title: 'ID', name: 'id' },
     { title: 'Label name', name: 'labelName' },
-    { title: 'Attribute value', name: 'attributeName', helperText: 'Enter a unique identifier if not an attribute (avoid \`-\`s)'},
+    { title: 'Attribute value', name: 'attributeName', helperText: 'Enter a unique identifier if not an attribute (avoid \`-\`s)' },
     { title: 'Description', name: 'description' },
     { title: 'Default value', name: 'defaultValue' },
-    { title: 'Value Type', name: 'valueType' },
+    { title: 'Configuration type', name: 'configurationType' },
     { title: 'Object', name: 'object' },
     { title: 'Vendor', name: 'vendor' }
 ];
+
+const configurationTypes = [
+    {
+        label: 'Basic',
+        value: 'Basic',
+        description: 'Basic configuration to be shown in the scanner setting list.'
+    },
+    {
+        label: 'Advanced',
+        value: 'Advanced',
+        description: 'Advanced configuration that hidden from the scanner setting list and only can be used in Scanbot'
+    }
+]
 
 export default function ConfigDescription({ tab, loading }) {
     const { touched, values, errors, handleBlur, handleChange, handleSubmit } = useFormikContext();
@@ -29,18 +43,18 @@ export default function ConfigDescription({ tab, loading }) {
     const handleRemove = (id) => {
         setLoadingDelete(true);
         fetchData(`${process.env.backendUrl}api/scannersetting/${id}`, {
-          method: "DELETE",
+            method: "DELETE",
         })
-          .then((res) => {
-            mutate(`${process.env.backendUrl}api/scannersetting`)
-                .then(() => {
-                    toast.success("Successfully Deleted!");
-                    setLoadingDelete(false);
-                }, () => {
-                    toast.error("Failed to delete");
-                    setLoadingDelete(false);
-                });
-          });
+            .then((res) => {
+                mutate(`${process.env.backendUrl}api/scannersetting`)
+                    .then(() => {
+                        toast.success("Successfully Deleted!");
+                        setLoadingDelete(false);
+                    }, () => {
+                        toast.error("Failed to delete");
+                        setLoadingDelete(false);
+                    });
+            });
     };
 
     return (
@@ -59,39 +73,54 @@ export default function ConfigDescription({ tab, loading }) {
                 loading={loadingDelete}
             />
             <Card withpadding>
-                <Typography sx={{mb: 4, fontWeight:600, fontSize: '16px', fontColor: '#0D0D0D'}}>
+                <Typography sx={{ mb: 4, fontWeight: 600, fontSize: '16px', fontColor: '#0D0D0D' }}>
                     Config Description
                 </Typography>
 
                 <Grid container spacing={3}>
                     {arrForm.map((item, index) => {
                         return (
-                        <Grid key={index} item xs={(index !== 4 && index !== 5) ? 12 : 6}>
-                            <FormGroup>
-                                <InputField
-                                    fullWidth
-                                    helperText={item.helperText}
-                                    id={item.name}
-                                    minRows={2}
-                                    multiline={item.name === 'description' || item.name === 'object'}
-                                    label={item.title}
-                                    aria-invalid={Boolean(touched[item.name] && errors[item.name])}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    value={values[item.name]}
-                                    error={Boolean(errors[item.name])}
-                                />
-                            </FormGroup>
-                        </Grid>
+                            <Grid key={index} item xs={12} >
+                                <FormGroup>
+                                    {(item.name === 'configurationType') ?
+                                        <Select
+                                            label="Configuration type"
+                                            error={Boolean(
+                                                touched.configurationType && errors.configurationType
+                                            )}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.configurationType}
+                                            lists={configurationTypes}
+                                            disabled={true}
+                                            name="configurationType"
+                                            aria-invalid={Boolean(
+                                                touched.configurationType && errors.configurationType
+                                            )} />
+                                        :
+                                        <InputField
+                                            fullWidth
+                                            helperText={item.helperText}
+                                            id={item.name}
+                                            minRows={2}
+                                            multiline={item.name === 'description' || item.name === 'object'}
+                                            label={item.title}
+                                            aria-invalid={Boolean(touched[item.name] && errors[item.name])}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values[item.name]}
+                                            error={Boolean(errors[item.name])}
+                                        />
+                                    }
+                                </FormGroup>
+                            </Grid>
                         );
-                    })}    
+                    })}
                 </Grid>
 
-                
-
-                <Box 
-                    display='flex' 
-                    justifyContent={tab !== -1 ? 'space-between' : 'end'} 
+                <Box
+                    display='flex'
+                    justifyContent={tab !== -1 ? 'space-between' : 'end'}
                     mt={3}
                 >
                     {tab !== -1 && (
@@ -100,10 +129,10 @@ export default function ConfigDescription({ tab, loading }) {
                             autoWidth
                             loading={loadingDelete}
                             startIcon={<RiDeleteBin4Line />}
-                            onClick={()=>setDeleteConfigOpen(true)}
+                            onClick={() => setDeleteConfigOpen(true)}
                         >
                             Delete
-                        </Button>   
+                        </Button>
                     )}
                     <Button
                         autoWidth
@@ -111,10 +140,10 @@ export default function ConfigDescription({ tab, loading }) {
                         startIcon={<RiSaveLine />}
                         onClick={handleSubmit}
                     >
-                        {tab === -1 ? 'Create': 'Save'}
+                        {tab === -1 ? 'Create' : 'Save'}
                     </Button>
                 </Box>
-            </Card>
+            </Card >
         </>
     )
 }

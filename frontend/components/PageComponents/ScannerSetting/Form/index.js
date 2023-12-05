@@ -8,15 +8,13 @@ import PossibleValues from './PossibleValues';
 import { useState } from 'react';
 
 const validationSchema = Yup.object().shape({
-    id: Yup.string().required("required"),
-    labelName: Yup.string().required("required"),
-    attributeName: Yup.string().required("required"),
-    description: Yup.string().required("required"),
-    defaultValue: Yup.string().required("required"),
-    // currentValue: Yup.string().required("required"),
-    valueType: Yup.string().required("required"),
-    object: Yup.string().required("required"),
-    vendor: Yup.string().required("required")
+  id: Yup.string().required("required"),
+  labelName: Yup.string().required("required"),
+  attributeName: Yup.string().required("required"),
+  description: Yup.string().required("required"),
+  defaultValue: Yup.string().required("required"),
+  object: Yup.string().required("required"),
+  vendor: Yup.string().required("required")
 });
 
 
@@ -30,11 +28,9 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
     labelName: data?.labelName || "",
     attributeName: data?.attributeName || "",
     description: data?.description || "",
-    currentValue: data?.currentValue || "",
     object: data?.object || "",
     defaultValue: data?.defaultValue || "",
-    valueType: data?.valueType || "",
-    policyType: data?.policyType || "",
+    configurationType: data?.configurationType || "",
     vendor: data?.vendor || "",
     possibleValues: data?.possibleValues || initialPossibleValues,
   };
@@ -75,22 +71,22 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
 
   return (
     <>
-        <Formik 
-            initialValues={initialValues} 
-            onSubmit={handleSubmit}
-            validationSchema={validationSchema}
-        >
-            <Form style={{width: '100%'}}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={5}>
-                        <ConfigDescription loading={loading} tab={tab} />
-                    </Grid>
-                    <Grid item xs={12} md={7}>
-                        <PossibleValues data={data} tab={tab} />
-                    </Grid>
-                </Grid>
-            </Form>
-        </Formik>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        <Form style={{ width: '100%' }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={5}>
+              <ConfigDescription loading={loading} tab={tab} />
+            </Grid>
+            <Grid item xs={12} md={7}>
+              <PossibleValues data={data} tab={tab} />
+            </Grid>
+          </Grid>
+        </Form>
+      </Formik>
     </>
   );
 }

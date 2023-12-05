@@ -9,19 +9,14 @@ import Select from 'components/Select';
 
 const types = [
   {
-    label: 'Select Only',
-    value: 'select',
-    description: 'Only selected config value is needed to construct action'
+    label: 'String',
+    value: 'string',
+    description: 'Only selected string value is needed to construct action'
   },
   {
-    label: 'Integer Only',
+    label: 'Integer',
     value: 'integer',
     description: 'Only an integer value is needed to construct action'
-  },
-  {
-    label: 'Select & Integer',
-    value: 'select/integer',
-    description: 'Integer value and selected config value is needed to construct action'
   }
 ]
 
@@ -40,7 +35,7 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
       label: !newValue ? label : "",
       value: !newValue ? value : "",
       description: !newValue ? description : "",
-      type: !newValue ? type: ""
+      type: !newValue ? type : ""
     };
   }, [label, value, description, type]);
 
@@ -53,7 +48,7 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
     close();
     return true;
   };
-  
+
   return (
     <Formik
       initialValues={initialValues}
@@ -99,26 +94,26 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
               alignItems="center"
               width={1}
             >
-              <Form style={{width: '100%'}}>
+              <Form style={{ width: '100%' }}>
                 <Typography fontWeight={600} fontSize="20px" lineHeight='28px'>
-                  {newValue ? 'Create': 'Update'} Value
+                  {newValue ? 'Create' : 'Update'} Value
                 </Typography>
-                <Divider sx={{my: 4}}/>
-                <FormControl sx={{my: 2}} fullWidth>
-                    <InputField
-                        label="Label"
-                        fullWidth
-                        id='label'
-                        value={values.label}
-                        aria-invalid={Boolean(touched.label && errors.label)}
-                        error={Boolean(errors.label)}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Label"
-                    />
-                    <Typography sx={{color: "red.main"}}>{errors.label}</Typography>
+                <Divider sx={{ my: 4 }} />
+                <FormControl sx={{ my: 2 }} fullWidth>
+                  <InputField
+                    label="Label"
+                    fullWidth
+                    id='label'
+                    value={values.label}
+                    aria-invalid={Boolean(touched.label && errors.label)}
+                    error={Boolean(errors.label)}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Label"
+                  />
+                  <Typography sx={{ color: "red.main" }}>{errors.label}</Typography>
                 </FormControl>
-                <FormControl sx={{my: 2}} fullWidth>
+                <FormControl sx={{ my: 2 }} fullWidth>
                   <InputField
                     label="Value"
                     fullWidth
@@ -130,9 +125,9 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
                     onBlur={handleBlur}
                     placeholder="Value"
                   />
-                  <Typography sx={{color: "red.main"}}>{errors.value}</Typography>
+                  <Typography sx={{ color: "red.main" }}>{errors.value}</Typography>
                 </FormControl>
-                <FormControl sx={{my: 2}} fullWidth>
+                <FormControl sx={{ my: 2 }} fullWidth>
                   <InputField
                     label="Description"
                     id="description"
@@ -141,31 +136,31 @@ const ScannerConfigValueForm = ({ open, close, ...rest }) => {
                     multiline
                     minRows={3}
                     aria-invalid={Boolean(
-                        touched.description && errors.description
-                      )}
+                      touched.description && errors.description
+                    )}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.description}
                     placeholder="Description"
                   />
-                  <Typography sx={{color: "red.main"}}>{errors.value}</Typography>
+                  <Typography sx={{ color: "red.main" }}>{errors.value}</Typography>
                 </FormControl>
-                <FormControl sx={{my: 2}} fullWidth>
-                    <Select
-                      label="Value type"
-                      error={Boolean(
-                        touched.type && errors.type
-                      )}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.type}
-                      lists={types}
-                      name="type"
-                      aria-invalid={Boolean(
-                        touched.type && errors.type
-                      )}
-                    />
-                    <Typography sx={{color: "red.main"}}>{errors.type}</Typography>
+                <FormControl sx={{ my: 2 }} fullWidth>
+                  <Select
+                    label="Input type"
+                    error={Boolean(
+                      touched.type && errors.type
+                    )}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.type}
+                    lists={types}
+                    name="type"
+                    aria-invalid={Boolean(
+                      touched.type && errors.type
+                    )}
+                  />
+                  <Typography sx={{ color: "red.main" }}>{errors.type}</Typography>
                 </FormControl>
               </Form>
             </Box>

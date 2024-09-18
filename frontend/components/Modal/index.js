@@ -11,7 +11,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const TitleModal = ({ iconTitle, title, titleType }) => {
+const TitleModal = ({ iconTitle, title, titleType = 'primary' }) => {
   return (
     <>
       <Box
@@ -40,7 +40,6 @@ const TitleModal = ({ iconTitle, title, titleType }) => {
 export default function Modal({
   children,
   open,
-  onOpen,
   onClose,
   maxWidth,
   onCancel,
@@ -63,8 +62,6 @@ export default function Modal({
     if (disableOutsideClick && isClose) {
       return false;
     }
-    onOpen(false);
-    onClose(false);
   };
 
   const contentSpace = disableSpaceContent ? 0 : '1.5rem';
@@ -136,7 +133,6 @@ export default function Modal({
 
 Modal.propTypes = {
   open: PropTypes.any,
-  onOpen: PropTypes.any,
   disableOutsideClick: PropTypes.bool,
   onClose: PropTypes.func,
   maxWidth: PropTypes.any,
@@ -156,10 +152,4 @@ Modal.propTypes = {
     loadingSave: PropTypes.bool
   }),
   disableFooter: PropTypes.bool
-};
-
-Modal.defaultProps = {
-  titleType: 'primary',
-  onClose: () => null,
-  onOpen: () => null
 };

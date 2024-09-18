@@ -100,6 +100,15 @@ router.post('/signin', async (req, res) => {
     let expireCookie = new Date();
     expireCookie.setDate(expireCookie.getDate() + process.env.LOGIN_SESSION_DAY);
     if (redirectUrl) {
+        var cookies = new Cookies(req, res);
+        cookies.set('next-auth.session-token', token, {
+            httpOnly: true,
+            sameSite: 'Lax',  // or 'Strict' based on your security needs
+            expires: expireCookie,  // Cookie expiration date
+            path: '/', // Define the path
+            secure: process.env.NODE_ENV === 'production' // Set 'secure' flag in production
+        });
+
         return res.send(
             `<html>
             <body onload="document.forms['myform'].submit()">

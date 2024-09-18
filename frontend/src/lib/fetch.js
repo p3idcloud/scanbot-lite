@@ -1,9 +1,19 @@
 import axios from "axios";
-import { parseCookies } from "nookies";
+import Cookies from "js-cookie";
 import { authConstants } from "constants/auth";
+import { cookies } from "next/headers";
+
+const isBrowser = () => typeof window !== 'undefined';
 
 export default async function(...args) {
-  const token = localStorage?.getItem('token') ||  parseCookies()[authConstants.SESSION_TOKEN];
+  let token;
+
+  if (isBrowser()) {
+    token = localStorage?.getItem('token') || Cookies.get(authConstants.SESSION_TOKEN);
+  } else {
+    token = Cookies.get(authConstants.SESSION_TOKEN);
+  }
+
   const headers = {};
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -18,8 +28,8 @@ export default async function(...args) {
   return result;
 }
 
-export async function fetchApp({url , ctx, requestOptions}) {
-  const token = parseCookies(ctx)[authConstants.SESSION_TOKEN];
+export async function fetchApp({url, requestOptions}) {
+  const token = Cookies.get(authConstants.SESSION_TOKEN);
   const headers = { 'Content-Type': 'application/json' };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -35,28 +45,44 @@ export async function fetchApp({url , ctx, requestOptions}) {
   return result;
 }
 
-export async function fetchData(...args) {
+export async function fetchData(url, args = {}) {
+  let token;
   const Axios = axios.create({
-    baseURL: process.env.BACKEND_URL,
-    timeout: 20000,
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+    timeout: 60000,
+    cancelToken: args?.source?.token,
   });
+
   Axios.interceptors.request.use(
     async (config) => {
-      const token = localStorage?.getItem("token") || parseCookies()[authConstants.SESSION_TOKEN];
+      if (isBrowser()) {
+        token = localStorage?.getItem('token') || Cookies.get(authConstants.SESSION_TOKEN);
+      } else {
+        token = Cookies.get(authConstants.SESSION_TOKEN);
+      }
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     },
-    (error) => Promise.reject(error),
-    null,
-    { synchronous: true }
+    (error) => Promise.reject(error)
   );
 
   try {
-    const fetcher = await Axios(...args);
-    return fetcher.data;
+    const data = args.body ? args.body : args.data;
+
+    const response = await Axios({
+      url,
+      method: args.method || 'GET',
+      data: data,  // Pass the formData here
+      headers: args.headers,  // Pass additional headers if needed
+      params: args.params,
+      responseType: args.responseType,
+      ...args
+    });
+    return response.data;
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(error.response ? error.response.data : error);
   }
 }

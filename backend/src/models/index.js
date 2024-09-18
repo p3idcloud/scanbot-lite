@@ -21,7 +21,7 @@ exports.connectDB = async () => {
     try {
         console.log('---------------------------database connection')
         console.log(connection);
-        await db.mongoose.connect(connection,{ useNewUrlParser: true, useUnifiedTopology: true });
+        await db.mongoose.connect(connection,{ });
 
     } catch (err) {
         console.log('error: ' + err);

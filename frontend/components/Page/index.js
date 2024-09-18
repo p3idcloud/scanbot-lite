@@ -33,7 +33,7 @@ const Page = (props) => {
           if (parseCookies()[authConstants.REGISTRATION_TOKEN]) {
             destroyCookie({}, authConstants.REGISTRATION_TOKEN);
           }
-          Router.push('/api/auth/login/saml');
+          // Router.push('/api/auth/login/saml');
         }
       }
     }

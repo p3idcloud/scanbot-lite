@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { InputFieldStyle, InputFieldContainer } from './style';
 import { InputAdornment } from '@mui/material';
 
-const Component = ({ suffixIcon, password, type, error, helperText, prefixIcon, fullWidth, ...props }, ref) => {
+const Component = ({ suffixIcon, password, type, error = false, helperText = null, prefixIcon, fullWidth = false, ...props }, ref) => {
   const [hasPassword, setHasPassword] = useState(false);
   const [passwordType, setPasswordType] = useState('password');
 
@@ -55,7 +55,6 @@ const Component = ({ suffixIcon, password, type, error, helperText, prefixIcon, 
 
 const InputField = forwardRef(Component);
 
-Component.defaultProps = { error: false, helperText: null, fullWidth: false };
 Component.propTypes = {
   suffixIcon: PropTypes.any,
   prefixIcon: PropTypes.any,

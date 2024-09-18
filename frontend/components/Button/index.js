@@ -5,7 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { ButtonWrapper, ContentWrapper, LoadingWrapper } from './style';
 import { Box } from '@mui/material';
 
-const Button = ({ children, variant, text, loading, startIcon, autoWidth, onClick, size, type, ...props }) => {
+const Button = ({ children, variant = 'contained', text, loading, startIcon, autoWidth, onClick, size = 'large', type = 'button', ...props }) => {
   const buttonVariant = () => {
     if (variant === 'light') {
       return {
@@ -96,12 +96,6 @@ Button.propTypes = {
     'purpleActive',
     'purpleInactive'
   ])
-};
-
-Button.defaultProps = {
-  variant: 'contained',
-  size: 'large',
-  type: 'button'
 };
 
 export default Button;

@@ -2,6 +2,8 @@ import { authConstants } from "constants/auth";
 import { serialize, parse } from "cookie";
 
 export default async (req, res) => {
+    console.log(req.method)
+
     if (req.method === 'GET') {
         const cookies = parse(req.headers.cookie ?? '');
         const registrationToken = cookies[authConstants.REGISTRATION_TOKEN];
@@ -21,7 +23,7 @@ export default async (req, res) => {
                 path: '/'
             });
             res.setHeader('Set-Cookie', cookie);
-            // console.log(decodeURI(redirectUrl));
+            console.log(decodeURI(redirectUrl));
             return res.redirect(decodeURI(redirectUrl));
         }
     }

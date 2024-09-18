@@ -1,5 +1,4 @@
 const nextConfig = {
-  basePath: '',
   env: {
     LOGIN_SESSION_DAY: parseInt(process.env.LOGIN_SESSION_DAY),
     JWT_SECRET: process.env.JWT_SECRET,
@@ -33,6 +32,11 @@ const nextConfig = {
       {
         source: '/signin',
         destination: '/api/auth/login/saml',
+        permanent: true,
+      },
+      {
+        source: '/api/auth/signin',
+        destination: `${process.env.BACKEND_URL}api/auth/signin`,
         permanent: true,
       },
       {

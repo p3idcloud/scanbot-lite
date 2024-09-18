@@ -6,14 +6,14 @@ const Card = ({
   background,
   style,
   hover,
-  withpadding,
+  withpadding = false,
   disabledcard,
   status,
   noBorder,
   spaceTop,
   boxShadow,
   styleContainer,
-  bgHover,
+  bgHover = 'auto',
   onClick
 }) => {
   const colorStatus =
@@ -64,10 +64,6 @@ Card.propTypes = {
   noBorder: PropTypes.bool,
   styleContainer: PropTypes.any,
   bgHover: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
-};
-Card.defaultProps = {
-  withpadding: false,
-  bgHover: 'auto'
 };
 
 export default Card;

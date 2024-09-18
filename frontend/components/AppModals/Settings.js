@@ -18,7 +18,7 @@ const validationSchema = Yup.object().shape({
 const Settings = ({ open, close, ...rest }) => {
   const [loading, setLoading] = useState(false);
   const { setAccount, account } = useAccount();
-  const { accountId, mobileNumber, enabled2FA, docsumoApiKey } = account;
+  const { accountId, mobileNumber, enabled2FA, docsumoApiKey } = account || {};
   const initialValues = {
     mobileNumber: mobileNumber ?? '',
     enabled2FA: enabled2FA ?? false,

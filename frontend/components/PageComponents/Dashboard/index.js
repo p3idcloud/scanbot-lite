@@ -18,7 +18,7 @@ function Dashboard() {
   const handlePageIndexChange = (e, newIndex) => setPageIndex(newIndex+1);
 
   const { data, error, isValidating } = useSWR(
-    `${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`,
+    `${process.env.BACKEND_URL}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`,
     fetchData,
     {
       refreshInterval: 5000

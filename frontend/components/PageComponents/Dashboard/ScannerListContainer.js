@@ -53,14 +53,14 @@ export default function ScannerListContaner({...props}) {
     const handleRemoveScanner = () => {
         setLoadingRemove(true);
         fetchData(
-            `${process.env.backendUrl}api/scanners/${id}`, 
+            `${process.env.BACKEND_URL}api/scanners/${id}`, 
             {
                 method: "DELETE"
             }
         )
         .then(res => {
             setPageIndex(1);
-            mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
+            mutate(`${process.env.BACKEND_URL}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
                 .then(() => {
                     setLoadingRemove(false);
                     toast.success('Successfully deleted scanner');

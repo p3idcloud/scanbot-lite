@@ -8,9 +8,9 @@ export default async (req, res) => {
         const cookies = parse(req.headers.cookie ?? '');
         const registrationToken = cookies[authConstants.REGISTRATION_TOKEN];
         if (registrationToken) {
-            return res.redirect(`${process.env.backendUrl}api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${registrationToken}`);
+            return res.redirect(`${process.env.BACKEND_URL}api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${registrationToken}`);
         } else {
-            return res.redirect(`${process.env.backendUrl}api/auth/signin`);
+            return res.redirect(`${process.env.BACKEND_URL}api/auth/signin`);
         }
     }
     if (req.method === 'POST') {

@@ -49,7 +49,7 @@ const StartSessionForm = ({ open, close }) => {
       "x-twain-cloud-request-id": commandId,
       "x-privet-token": privetToken,
     };
-    fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
+    fetchData(`${process.env.BACKEND_URL}api/scanners/${scannerId}/twaindirect/session`, {
       headers,
       method: "POST",
       data,

@@ -33,7 +33,7 @@ const Settings = ({ open, close, ...rest }) => {
       docsumoApiKey: e.docsumoApiKey
     };
     // console.log(data);
-    fetchData(`${process.env.backendUrl}api/accounts/${accountId ?? ''}`, {
+    fetchData(`${process.env.BACKEND_URL}api/accounts/${accountId ?? ''}`, {
       method: 'PATCH',
       data,
     })

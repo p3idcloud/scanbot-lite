@@ -12,7 +12,7 @@ import ScannerSettingForm from './Form/';
 
 export default function ScannerSetting() {
     const { data } = useSWR(
-        `${process.env.BACKEND_URL}api/scannersetting?limit=999999`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scannersetting?limit=999999`,
         fetchData
     ).data ?? { data: [] };
     const [tab, setTab] = useState(data[0]?.labelName ?? '');

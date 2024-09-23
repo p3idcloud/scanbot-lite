@@ -10,8 +10,6 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-// const applogger = require('../../utils/logger')('express');
-// const jwt = require("jsonwebtoken");
 const authMiddleware = require('./middlewares/auth');
 
 // Swagger API
@@ -43,7 +41,7 @@ const localRouter = require('./routes/local');
 
 const app = express();
 
-if ( process.env.NODE_ENV !== 'production' ) {
+if (process.env.NODE_ENV !== 'production') {
   const morgan = require('morgan');
   app.use(morgan('short'));
 }
@@ -53,74 +51,79 @@ app.enable('trust proxy');
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 var corsOptions = {
-  origin: process.env.FRONTEND_URL.slice(0,-1), //removes trailing slash
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+  origin: process.env.FRONTEND_URL.replace(/\/$/, ''), // Remove trailing slash
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
 app.use(cors(corsOptions));
 
-//DEBUGGER
+// DEBUGGER
 // app.use('*', (req, res, next) => {
 //   console.log(req.originalUrl);
 //   next();
-// })
+// });
 
+// Auth routes - does NOT require auth middleware
 app.use('/api/auth', authRouter);
 
-// Documentation Route
+// Swagger API route - does NOT require auth middleware
 app.use('/api/swagger', swaggerRouter);
 
-
-const { createAccount } = require('./controllers/account.controller');
-
-app.get('/', (req, res) => {
-  res.status(301).redirect(process.env.FRONTEND_URL);
-})
-
-// Register scanner
+// Registration route - does NOT require auth middleware
 app.use('/api/register', registerRouter);
 
 app.use('/api/poll', pollRouter);
-//user register here
-app.post('/api/accounts/register', createAccount);
 
+// User registration route
+const { createAccount } = require('./controllers/account.controller');
+app.post('/api/register/accounts', createAccount);
 
-// Auth middleware
-app.use('/api*', authMiddleware);
+// Auth middleware - applies only to protected routes
+app.use(['/api/claim', '/api/scanners', '/api/storage', '/api/accounts', '/api/jobs', '/api/scannersetting', '/api/dashboard'], authMiddleware);
 
-// Storage
+// Storage route - requires auth middleware
 app.use('/api/storage', storageRouter);
 
-// APIs that do require authentication
+// Claim route - requires auth middleware
 app.use('/api/claim', claimRouter);
 
-// APIs under scanners (/api/scanners)
+// Scanner-related routes
 app.use('/api/scanners/state', scannerStateRouter);
 app.use('/api/scanners/history', scannerHistoryRouter);
-
 app.use('/api/scanners', scannersRouter);
+
+// Account-related routes
 app.use('/api/accounts', accountRouter);
+
+// Job-related routes
 app.use('/api/jobs', jobRouter);
+
+// Scanner setting route
 app.use('/api/scannersetting', scannerSettingRouter);
+
+// Dashboard route
 app.use('/api/dashboard', dashboardRouter);
 
 // Endpoints for exercise
 app.use('/api/exercise', require('./routes/exercise.route'));
 
-//to use scanner:
+// Sub-routes for scanner
 scannersRouter.use('', blocksRouter);
 scannersRouter.use('', localRouter);
 
 // Database connection
-console.log('---------------------------database')
+console.log('---------------------------database');
 console.log(process.env.MONGODB_URL);
+
 const db = require('./models');
 db.connectDB()
   .then(() => {
     console.log('db connected');
   })
-  .catch(() => {
-    console.log('Failed to connect database');
+  .catch((err) => {
+    console.log('Failed to connect database:', err.message);
     process.exit(0);
   });
 
@@ -128,15 +131,21 @@ db.connectDB()
 const checkAndLoadScannerSettings = async () => {
   const scannerSettingsList = require('./lib/config/scannerSettings.json');
   const { insertFromJSON, getAllScannerSettings } = require('./services/scannersetting');
-  console.log('Checking scanner settings...')
+  console.log('Checking scanner settings...');
   const scannerSettings = await getAllScannerSettings();
+  
   if (scannerSettings.length === 0) {
-      console.log('Loading default settings...')
-      await insertFromJSON(scannerSettingsList);
+    console.log('Loading default settings...');
+    await insertFromJSON(scannerSettingsList);
   } else {
-      console.log('Settings already loaded...')
+    console.log('Settings already loaded...');
   }
-}
+};
 checkAndLoadScannerSettings();
+
+// Redirect root path to frontend URL
+app.get('/', (req, res) => {
+  res.status(301).redirect(process.env.FRONTEND_URL);
+});
 
 module.exports = app;

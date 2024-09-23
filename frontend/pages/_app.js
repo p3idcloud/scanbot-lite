@@ -55,7 +55,7 @@ class MyApp extends App {
     // JWT and session handling
     if (sessionToken) {
       try {
-        const res = await fetchData(`${process.env.BACKEND_URL}api/auth/verify`, {
+        const res = await fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/auth/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: sessionToken })
@@ -98,24 +98,22 @@ class MyApp extends App {
 
         // Fetch account-related data
         try {
-          const accountResult = await fetchData(`${process.env.BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`,{});
+          const accountResult = await fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`,{},sessionToken);
           pageProps.user.enabled2FA = accountResult.enabled2FA;
           pageProps.user.mobileNumber = accountResult.mobileNumber;
           pageProps.user.docsumoApiKey = accountResult.docsumoApiKey;
         } catch (err) {
-          console.log(err)
           // Handle account creation if necessary
-          if (err.message === "Couldn't find account") {
-            await fetchData(`${process.env.BACKEND_URL}api/accounts`,
+          if (err === "Couldn't find account") {
+            await fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/register/accounts`,
               {
                 method: 'POST',
-                body: JSON.stringify({
+                body: {
                   id: decoded.user?.attributes?.userid?.[0],
                   email: decoded.user?.attributes?.email?.[0],
                   username: decoded.user?.name_id,
                   fullname: `${decoded.user?.attributes?.firstname?.[0]} ${decoded.user?.attributes?.lastname?.[0]}`,
-                }),
-              },
+              }},sessionToken
             );
           } else {
             console.log(err)

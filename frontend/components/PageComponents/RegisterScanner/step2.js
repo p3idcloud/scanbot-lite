@@ -16,7 +16,7 @@ export default function Step2() {
             return;
         }
         // Claim scanner
-        fetchData(`${process.env.BACKEND_URL}api/claim`, {
+        fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/claim`, {
             method: "POST",
             data: { registrationToken: registrationToken },
         })

@@ -63,7 +63,7 @@ const AdvancedSettingForm = ({ open, close }) => {
             "x-twain-cloud-request-id": requestId,
             "x-privet-token": privetToken,
         }
-        fetchData(`${process.env.BACKEND_URL}api/scanners/${scannerId}/twaindirect/session`, {
+        fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/${scannerId}/twaindirect/session`, {
             headers,
             method: "POST",
             data,

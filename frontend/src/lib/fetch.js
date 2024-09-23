@@ -45,7 +45,7 @@ export async function fetchApp({url, requestOptions}) {
   return result;
 }
 
-export async function fetchData(url, args = {}) {
+export async function fetchData(url, args = {}, sessionToken = null) {
   let token;
   const Axios = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -57,9 +57,11 @@ export async function fetchData(url, args = {}) {
     async (config) => {
       if (isBrowser()) {
         token = localStorage?.getItem('token') || Cookies.get(authConstants.SESSION_TOKEN);
+      } else if (sessionToken != null && sessionToken != undefined) {
+        token = sessionToken
       } else {
         token = Cookies.get(authConstants.SESSION_TOKEN);
-      }
+      } 
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;

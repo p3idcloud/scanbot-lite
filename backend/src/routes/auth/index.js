@@ -121,6 +121,7 @@ router.post('/signin', async (req, res) => {
             </html>`
         );
     }
+
     return res.redirect(process.env.BASE_URL);
 });
 

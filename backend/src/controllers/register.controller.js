@@ -10,7 +10,6 @@ var express = require('express');
 var router = express.Router();
 
 exports.registerScanner = async (req, res, next) => {
-    console.log("hits register")
     const scannerInfo = req.body;
     logger.debug(scannerInfo);
     logger.debug(req.headers);

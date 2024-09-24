@@ -26,6 +26,7 @@ router.get('/signin', async (req, res) => {
                 options,
                 (error, loginUrl) => {
                     if (error) {
+                        console.log(error)
                         reject(error);
                     }
                     resolve(loginUrl);
@@ -45,84 +46,77 @@ router.get('/signin', async (req, res) => {
     }
 })
 
-router.post('/signin', async (req, res, next) => {
-    const { ...samlBody } = req.body;
+// Helper function to handle SAML assertion
+const postAssert = (identityProvider, samlBody) =>
+    new Promise((resolve, reject) => {
+        serviceProvider.post_assert(identityProvider, { request_body: samlBody }, (error, response) => {
+            if (error) {
+                return reject(error);
+            }
+            return resolve(response);
+        });
+    });
+
+// Helper function to set session token as a cookie
+const setSessionCookie = (req, res, token) => {
     const cookies = new Cookies(req, res);
+    let expireCookie = new Date();
+    expireCookie.setDate(expireCookie.getDate() + parseInt(process.env.LOGIN_SESSION_DAY, 10));
 
-    var registrationToken = cookies.get(REGISTRATION_TOKEN);
+    cookies.set(SESSION_TOKEN, token, {
+        httpOnly: true,
+        sameSite: 'Lax',  // 'Strict' can be used if necessary
+        expires: expireCookie,
+        path: '/',
+        // secure: process.env.NODE_ENV === 'production'
+        secure: false
+    });
+};
 
-    // pass in post variables
-    res.locals.samlBody = samlBody;
-    if (typeof registrationToken !== "undefined") {
-        res.locals.callbackUrl = `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
-        cookies.set(REGISTRATION_TOKEN, null, { httpOnly: true, sameSite: false, expires: new Date() })
-    } else {
-        res.locals.callbackUrl = `${process.env.FRONTEND_URL}dashboard`;
-    }
-
-    next();
-});
-
+// Consolidated /signin route
 router.post('/signin', async (req, res) => {
-    const redirectUrl = res.locals.callbackUrl;
-
-    const samlBody = res.locals.samlBody;
+    const samlBody = req.body;
+    const cookies = new Cookies(req, res);
     let user;
 
-    const postAssert = (identityProvider, samlBody) =>
-        new Promise((resolve, reject) => {
-            serviceProvider.post_assert(
-                identityProvider,
-                {
-                    request_body: samlBody,
-                },
-                (error, response) => {
-                    if (error) {
-                        reject(error);
-                    }
-                    resolve(response);
-                }
-            );
-        });
+    // Check for registration token
+    const registrationToken = cookies.get(REGISTRATION_TOKEN);
+    const callbackUrl = registrationToken
+        ? `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
+        : `${process.env.FRONTEND_URL}dashboard`;
 
-    try {
-        const postresponse = await postAssert(identityProvider, samlBody);
-        user = postresponse.user;
-    } catch (error) {
-        console.error(error);
-        return res.status(401).send({message: 'SAML identity error!'});
+    // Clear the registration token cookie if it exists
+    if (registrationToken) {
+        cookies.set(REGISTRATION_TOKEN, null, { httpOnly: true, sameSite: 'Lax', expires: new Date() });
     }
 
-    //generate jwt
-    var token = await jwt.sign({ user }, process.env.JWT_SECRET, {expiresIn: process.env.LOGIN_SESSION_DAY+'d'});
+    try {
+        // Handle SAML assertion and get user info
+        const postResponse = await postAssert(identityProvider, samlBody);
+        user = postResponse.user;
+    } catch (error) {
+        console.error('SAML identity error:', error);
+        return res.status(401).json({ message: 'SAML identity error!' });
+    }
 
-    //now set the session cookie
-    let expireCookie = new Date();
-    expireCookie.setDate(expireCookie.getDate() + process.env.LOGIN_SESSION_DAY);
-    if (redirectUrl) {
-        var cookies = new Cookies(req, res);
-        cookies.set('next-auth.session-token', token, {
-            httpOnly: true,
-            sameSite: 'Lax',  // or 'Strict' based on your security needs
-            expires: expireCookie,  // Cookie expiration date
-            path: '/', // Define the path
-            secure: process.env.NODE_ENV === 'production' // Set 'secure' flag in production
-        });
+    // Generate JWT token
+    const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: `${process.env.LOGIN_SESSION_DAY}d` });
 
-        return res.send(
-            `<html>
+    // Set the session cookie
+    setSessionCookie(req, res, token);
+
+    // Redirect to the appropriate URL
+    return res.send(`
+        <html>
             <body onload="document.forms['myform'].submit()">
                 <form name="myform" action="${process.env.FRONTEND_URL}api/auth/login/saml" method="POST">
                     <input type="hidden" name="sessionToken" value="${token}"/>
-                    <input type="hidden" name="expireTime" value="${expireCookie}"/>
-                    <input type="hidden" name="redirectUrl" value="${redirectUrl}"/>
+                    <input type="hidden" name="expireTime" value="${new Date(Date.now() + process.env.LOGIN_SESSION_DAY * 24 * 60 * 60 * 1000).toISOString()}"/>
+                    <input type="hidden" name="redirectUrl" value="${callbackUrl}"/>
                 </form>
             </body>
-            </html>`
-        );
-    }
-
-    return res.redirect(process.env.BASE_URL);
+        </html>
+    `);
 });
 
 router.post('/verify', (req, res) => {

@@ -29,7 +29,8 @@ export default function StartSession() {
     statusPoll,
     resetStatusClaimStates,
     setCloseCloud,
-    setStartCapture
+    setStartCapture,
+    loadingInfoex
   } = useScanner();
 
   const getStopSession = (callback) => {
@@ -89,20 +90,35 @@ export default function StartSession() {
 
   return (
     <>
-      <Button 
-        startIcon={<HiOutlineLightningBolt />} 
-        color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
-        sx={{ width: 'fit-content', fontSize: 13 }}
-        loading={loading || statusPoll?.state === "capturing"}
-        onClick={handleOnClick}
-      >
-        {statusClaim && statusPoll?.state !== "noSession"
-                  ? "Stop Session"
-                  : !statusScanner
-                  ? "Re-start Scanner"
-                  : "Start Session"
-        }
-      </Button>
+      {
+        loadingInfoex ? (
+          <Button 
+            startIcon={<HiOutlineLightningBolt />} 
+            color={'info'}
+            sx={{ width: 'fit-content', fontSize: 13 }}
+            loading={loadingInfoex}
+            // onClick={handleOnClick}
+          >
+            Checking Scanner
+          </Button>
+        ) : (
+          <Button 
+            startIcon={<HiOutlineLightningBolt />} 
+            color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
+            sx={{ width: 'fit-content', fontSize: 13 }}
+            loading={loading || statusPoll?.state === "capturing"}
+            onClick={handleOnClick}
+          >
+            {statusClaim && statusPoll?.state !== "noSession"
+                      ? "Stop Session"
+                      : !statusScanner
+                      ? "Re-start Scanner"
+                      : "Start Session"
+            }
+          </Button>
+        )
+      }
+      
       <StartSessionForm 
         open={openSession}
         close={()=>setOpenSession(false)}

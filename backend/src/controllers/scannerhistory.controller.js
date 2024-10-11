@@ -9,33 +9,29 @@ const JobService = require('../services/job');
 const { presignedGetObject, removeMinioObjects } = require('../lib/minio.lib');
 
 exports.getScannerHistoryFromQuery = async (req, res) => {
-    const account = await AccountService.getAccountFromId(req.twain.principalId);
-
-    const scannerQuery = {};
-    scannerQuery.accountId = {'$eq' : account.id}
-
-    const scanners = await ScannerService.getScannersFromQuery(scannerQuery);
-
     let query = {};
+    // const scannerQuery = {};
 
-    if (scanners.retValue.length > 0) {
-        let queries = [];
+    const account = await AccountService.getAccountFromId(req.twain.principalId);
+    // scannerQuery.accountId = {'$eq' : account.id}
 
-        scanners.retValue.forEach(item => {
-            if ( req.query.scannerId ) {
-                if (req.query.scannerId == item.id ){
-                    queries.push({ scannerId: item.id });
-                }
-            }else{
-                queries.push({ scannerId: item.id });
-            }
-        });
-        if (queries.length != 0) {
-            query['$or'] = queries;
-        }
-
-
-    }
+    // const scanners = await ScannerService.getScannersFromQuery(scannerQuery);
+    // console.log(scanners)
+    // if (scanners.retValue.length > 0) {
+        // let queries = [];
+        // scanners.retValue.forEach(item => {
+            // if ( req.query.scannerId ) {
+                // if (req.query.scannerId == item.id ){
+                    // queries.push({ scannerId: item.id });
+                // }
+            // }else{
+                // queries.push({ scannerId: item.id });
+            // }
+        // });
+        // if (queries.length != 0) {
+        //     query['$or'] = queries;
+        // }
+    // }
 
     if (account) {
         query.accountId = { '$eq': account.id };

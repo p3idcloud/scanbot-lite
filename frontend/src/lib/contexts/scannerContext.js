@@ -50,7 +50,7 @@ export const ScannerProvider = ({children}) => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/state/${scannerId}`,
         fetchData,
         {
-            refreshInterval: 1000
+            refreshInterval: 5000
         }
     ).data;
     const scannerSettingsData = useSWR(
@@ -213,11 +213,12 @@ export const ScannerProvider = ({children}) => {
                 setIsChange,
                 resetStatusClaimStates,
                 scanHistoryPageIndex,
-                setScanHistoryPageIndex
+                setScanHistoryPageIndex,
+                loadingInfoex
             }}
         >
         {children}
-        <Modal open={loadingInfoex}>
+        {/* <Modal open={loadingInfoex}>
             <Box 
                 display='flex' 
                 sx={{
@@ -234,7 +235,7 @@ export const ScannerProvider = ({children}) => {
                     <CustomLoader message="Checking Scanner" />
                 </Card>
             </Box>
-        </Modal>
+        </Modal> */}
         <Modal open={infoexStatus}>
             <Box 
                 display='flex' 
@@ -310,7 +311,8 @@ export const useScanner = () => {
         setIsChange,
         resetStatusClaimStates,
         scanHistoryPageIndex,
-        setScanHistoryPageIndex
+        setScanHistoryPageIndex,
+        loadingInfoex,
     } = useContext(ScannerContext);
 
     return {
@@ -352,6 +354,7 @@ export const useScanner = () => {
         setIsChange,
         resetStatusClaimStates,
         scanHistoryPageIndex,
-        setScanHistoryPageIndex
+        setScanHistoryPageIndex,
+        loadingInfoex,
     };
 }

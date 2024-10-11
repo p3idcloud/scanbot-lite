@@ -44,6 +44,14 @@ exports.incrementPageCount = async (queueId) => {
     }
 }
 
+exports.updateScannerHistoryCompleted = async ( accountId ) => {
+    try {
+        return ScannerHistory.updateMany({ accountId: accountId, status: "In Progress" }, { status: "Completed" }).exec();
+    }catch (e) {
+        console.log(e);
+    }
+}
+
 exports.updateScannerHistory = async ( queueId, data) => {
     try {
         if (data.id) {delete data.id}

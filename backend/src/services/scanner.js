@@ -10,7 +10,7 @@ exports.insertFromJSON = async (jsonScanner) => {
 
 exports.getScannersFromQuery = async (query, page, limit, sort) => { //SWR standart
     try {
-        const retValue = await Scanner.find(query).skip((limit*page)-limit).limit(limit).sort(sort).exec();
+        const retValue = await Scanner.find(query).skip(( limit * (page - 1))).limit(limit).sort(sort).exec();
         const count = await Scanner.countDocuments(query).exec();
         
         return {retValue,count}

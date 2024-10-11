@@ -72,6 +72,22 @@ exports.getScannerStateFromScannerId = async (req, res) => {
 
             if (scanner.accountId === account.id) {
                 if ( state.currentlyUsedByUserId === '' || state.currentlyUsedByUserId === account.id || !state.currentlyUsedByUserId ){
+                    if (state.latestEvent === "infoEx" && state.state === "capturing") (
+                        await ScannerStateService.updateScannerState(scannerId,
+                            {
+                                "state": "ready",
+                            }
+                        )
+                    )
+
+                    if (state.latestEvent === "waitForEvents" && state.state !== "ready") {
+                        await ScannerStateService.updateScannerState(scannerId,
+                            {
+                                "state": "ready",
+                                "status": "ready"
+                            }
+                        )
+                    }
                     return res.send(state);
                 }else{
                     const userusing = await accountService.getAccountFromId(state.currentlyUsedByUserId);

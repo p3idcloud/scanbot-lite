@@ -63,8 +63,12 @@ const StartSessionForm = ({ open, close }) => {
       .then(() => {
         loadScannerHistory();
       })
-      .catch(() => {
-        toast.error("Scanner offline, please check your scanner");
+      .catch((err) => {
+        if (err?.results?.code === "busy") {
+          toast.error("Scanner is busy, please try again later");
+        } else {
+          toast.error("Scanner offline, please check your scanner");
+        }
       })
       .finally(() => {
         setLoading(false);

@@ -16,7 +16,7 @@ export default function ScannerReport({...props}) {
     const { data: dataReport, error: errorReport } = useSWR(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/${scannerId}/analytic`,
         fetchData, {
-            refreshInterval: 1000
+            refreshInterval: 5000
         }
     );
     useEffect(() => {

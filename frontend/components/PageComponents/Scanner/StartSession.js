@@ -94,7 +94,7 @@ export default function StartSession() {
         loadingInfoex ? (
           <Button 
             startIcon={<HiOutlineLightningBolt />} 
-            color={'info'}
+            color={'lightBlue'}
             sx={{ width: 'fit-content', fontSize: 13 }}
             loading={loadingInfoex}
             // onClick={handleOnClick}

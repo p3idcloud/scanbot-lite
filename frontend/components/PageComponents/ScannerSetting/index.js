@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
-import { Box, FormControl, Grid, Typography } from '@mui/material';
+import { Box, FormControl, Grid2 as Grid, Typography } from '@mui/material';
 import { fetchData } from 'lib/fetch';
 import Button from 'components/Button';
 import Link from 'next/link';
@@ -46,7 +46,7 @@ export default function ScannerSetting() {
             maxWidth="lg"
             justifyContent="space-between"
         >
-            <Grid item xs={6} container>
+            <Grid container size={6}>
                 <Box>
                     <Typography fontWeight={500} sx={{color: '#0D0D0D'}} fontSize='20px'>
                         {tab === '' ? 'Create New Configuration' : 'Scanner Configuration'}
@@ -69,7 +69,7 @@ export default function ScannerSetting() {
                     )}
                 </Box>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
                 <Box display='flex' flexDirection='column' alignItems="end">
                     <Button
                         autoWidth
@@ -90,12 +90,12 @@ export default function ScannerSetting() {
     )
 
     return (
-        <Header
+        (<Header
             titleHeader={titleHeader}
             component={headerComponent}
         >
             <Grid container justifyContent='center' py={3}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                     {data?.map((item, index) => {
                     if (tab === item?.labelName) {
                         return (
@@ -111,6 +111,6 @@ export default function ScannerSetting() {
                     {tab === '' && <ScannerSettingForm mutate={mutate} tab={-1} key={''} />}
                 </Grid>
             </Grid>
-        </Header>
+        </Header>)
     );
 }

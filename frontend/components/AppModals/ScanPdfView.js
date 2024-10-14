@@ -36,7 +36,7 @@ export default function ScanPdfView({open, onClose, name, files, pdfBlobs}) {
                 <Typography fontWeight={600} fontSize={18} mt={1} mb={3}>
                     Pdf result for {name}
                 </Typography>
-                <PdfViewer files={files} pdfBlobs={pdfBlobs} />
+                <PdfViewer files={files} pdfBlobs={pdfBlobs} title={name}/>
             </Box>
         </Modal>
     );

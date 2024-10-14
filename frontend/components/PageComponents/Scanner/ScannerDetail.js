@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, Typography } from "@mui/material"
+import { Box, Grid2 as Grid, Stack, Typography } from "@mui/material"
 import { useScanner } from "lib/contexts/scannerContext"
 import Image from "next/image";
 
@@ -6,8 +6,8 @@ export default function ScannerDetail() {
     const { detailScanner } = useScanner();
 
     return (
-        <Grid item container spacing={2}>
-            <Grid item xs={12} display='flex' justifyContent="space-between">
+        (<Grid container spacing={2}>
+            <Grid display='flex' justifyContent="space-between" size={12}>
                 <Stack direction='row' spacing={2}>
                     <Box display='flex' alignItems='center'>
                         <Image alt={"Scanner"} src="/Vectorscanner.png" layout="fixed" width={43} height={32} />
@@ -22,11 +22,11 @@ export default function ScannerDetail() {
                 </Box>
                 </Stack>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
                 <Typography noWrap sx={{ fontWeight: 400, fontSize: '16px', lineHeight: '19px', color: '#190D29' }}>
                     {detailScanner?.description}
                 </Typography>
             </Grid>
-        </Grid>
-    )
+        </Grid>)
+    );
 }

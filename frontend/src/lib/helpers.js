@@ -6,13 +6,11 @@ export const getInitialName = name => {
       return name;
     }
     if (name) {
-      return (
-        name
-          .match(/(\b\S)?/g)
-          .join('')
-          .substr(0, 2)
-          .toUpperCase() ?? 'AA'
-      );
+      return (name
+        .match(/(\b\S)?/g)
+        .join('')
+        .substr(0, 2)
+        .toUpperCase() ?? 'AA');
     }
     return 'AA';
 };

@@ -1,7 +1,7 @@
 import Button from 'components/Button';
 import Modal from 'components/Modal';
 import InputField from 'components/InputField';
-import { Box, Typography, FormGroup, Divider, Grid } from '@mui/material';
+import { Box, Typography, FormGroup, Divider, Grid2 as Grid } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
 import { fetchData } from 'lib/fetch';
@@ -125,7 +125,7 @@ const AdvancedSettingForm = ({ open, close }) => {
     // console.log(formik.values);
 
     return (
-        <Modal
+        (<Modal
             open={open}
             customBodyFooter={
             <>
@@ -179,7 +179,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                 </FormGroup>
                 {configValues.map((data, i) => (
                     <Grid container key={i} my={2} width={1}>
-                        <Grid item xs={12} mb={2}>
+                        <Grid mb={2} size={12}>
                             <Typography 
                                 fontSize='14px' 
                                 fontWeight={400} 
@@ -188,7 +188,12 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 {data.labelName}
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} sm={6} pr={{sm: 1.5}}>
+                        <Grid
+                            pr={{sm: 1.5}}
+                            size={{
+                                xs: 12,
+                                sm: 6
+                            }}>
                             <FormGroup>
                                 <Select
                                     onChange={formik.handleChange}
@@ -206,7 +211,12 @@ const AdvancedSettingForm = ({ open, close }) => {
                                 <Typography sx={{color: "red.main"}}>{formik.errors[data.attributeName+'-select']}</Typography>
                             </FormGroup>
                         </Grid>
-                        <Grid item xs={12} sm={6} pl={{sm: 1.5}}>
+                        <Grid
+                            pl={{sm: 1.5}}
+                            size={{
+                                xs: 12,
+                                sm: 6
+                            }}>
                             {showInputField(i) && (
                                 <FormGroup>
                                     <InputField
@@ -226,7 +236,7 @@ const AdvancedSettingForm = ({ open, close }) => {
                     </Grid>
                 ))}
             </Box>
-        </Modal>
+        </Modal>)
     );
 };
 

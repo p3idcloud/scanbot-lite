@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Grid, TablePagination, Typography } from "@mui/material";
+import { Box, Container, Grid2 as Grid, TablePagination, Typography } from "@mui/material";
 import { useAccount } from "lib/contexts/accountContext";
 import useSWR from "swr";
 import { fetchData } from "lib/fetch";
@@ -31,9 +31,15 @@ function Dashboard() {
   }, [data, pageIndex]);
 
   return (
-    <Container>
+    (<Container>
       <Grid container sx={{ padding: '30px 0' }} spacing={2}>
-        <Grid item xs={12} sm={6} display="flex" alignItems="center">
+        <Grid
+          display="flex"
+          alignItems="center"
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Box>
             <Typography mb={2} sx={{ fontWeight: 500, fontSize: '20px', lineHeight: '24px', color: '#190D29' }}>
               Scanner List
@@ -44,7 +50,14 @@ function Dashboard() {
           </Box>
         </Grid>
 
-        <Grid item xs={12} sm={6} display="flex" alignItems="center" justifyContent='end'>
+        <Grid
+          display="flex"
+          alignItems="center"
+          justifyContent='end'
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Link legacyBehavior href="/setting">
               <Box 
                 component="a" 
@@ -65,7 +78,12 @@ function Dashboard() {
         </Grid>
 
         {scannerList?.length === 0 && data && (
-          <Grid item xs={12} container display="flex" alignItems="center" justifyContent="center">
+          <Grid
+            container
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            size={12}>
             <Card withpadding>
               <Typography 
                 textAlign='center'
@@ -97,7 +115,12 @@ function Dashboard() {
 
         {data ? (
           scannerList?.map((scanner, index) => (
-          <Grid item xs={12} md={6} key={index}>
+          <Grid
+            key={index}
+            size={{
+              xs: 12,
+              md: 6
+            }}>
             <ScannerListContainer 
               {...scanner} 
               setPageIndex={setPageIndex} 
@@ -106,13 +129,13 @@ function Dashboard() {
             />
           </Grid>
         ))) : (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <CustomLoader message="Loading scanners" />
           </Grid>
         )}
 
         {scannerList.length > 0 && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TablePagination
                 component="div"
                 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
@@ -127,7 +150,7 @@ function Dashboard() {
           </Grid>
         )}
       </Grid>
-    </Container>
+    </Container>)
   );
 }
 

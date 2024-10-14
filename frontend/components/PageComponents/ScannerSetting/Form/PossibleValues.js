@@ -1,4 +1,4 @@
-import { Grid, IconButton, Stack, Typography, Tooltip } from "@mui/material";
+import { Grid2 as Grid, IconButton, Stack, Typography, Tooltip } from "@mui/material";
 import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import Button from "components/Button";
 import Card from "components/Card";
@@ -80,18 +80,17 @@ export default function PossibleValues({data})  {
         ])
     ), [getFieldProps().value])
     return (
-        <Card withpadding>
+        (<Card withpadding>
             <FieldArray name="possibleValues">
             {({ remove, push, replace, form }) => {
-                return (
-                    <>
+                return (<>
                     <Grid container direction='row' justifyContent='space-between'>
-                        <Grid item>
+                        <Grid>
                             <Typography sx={{mb: 4, fontWeight:600, fontSize: '16px', fontColor: '#0D0D0D'}}>
                                 Possible Values
                             </Typography>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <Button
                                 size="small"
                                 color="orange"
@@ -102,7 +101,6 @@ export default function PossibleValues({data})  {
                             </Button>
                         </Grid>
                     </Grid>
-
                     <Grid container mt={1}>
                         <Table
                             rowCount={values.possibleValues.length}
@@ -138,10 +136,9 @@ export default function PossibleValues({data})  {
                         push={push}
                         replace={replace}
                     />
-                    </>
-                    );
+                </>);
                 }}
             </FieldArray>
-        </Card>
-    )
+        </Card>)
+    );
 }

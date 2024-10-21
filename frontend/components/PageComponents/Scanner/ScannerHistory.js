@@ -83,9 +83,11 @@ export default function ScannerHistory({...props}) {
             const urls = pdfBlobs.map(blob => URL.createObjectURL(blob));
             setLoadingPdf(false);
             setHistoryPdf({
+                history: data.history,
                 url: urls,
                 name: name,
-                pdfBlobs: pdfBlobs
+                pdfBlobs: pdfBlobs,
+                rawUrl: data.url,
             });
         })
         .catch(err => toast.error('Failed to fetch pdf'));
@@ -170,9 +172,10 @@ export default function ScannerHistory({...props}) {
             <ScanPdfView
                 open={Boolean(historyPdf)}
                 onClose={()=>setHistoryPdf(null)}
-                name={historyPdf?.name}
-                files={historyPdf?.url}
-                pdfBlobs={historyPdf?.pdfBlobs}
+                // name={historyPdf?.name}
+                // files={historyPdf?.url}
+                // pdfBlobs={historyPdf?.pdfBlobs}
+                pdfData={historyPdf}
             />
             
             <Modal open={loadingPdf}>

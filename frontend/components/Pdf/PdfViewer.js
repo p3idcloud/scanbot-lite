@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import PropTypes from "prop-types";
@@ -13,12 +13,14 @@ import { toast } from "react-toastify";
 import DocSumoForm from "components/AppModals/DocSumoForm";
 import { mergePdf } from "lib/helpers";
 import Image from "next/image";
+import OpentextDialog from "./OpentextDialog";
+import { fetchData } from "lib/fetch";
 
 const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
 ];
 
-export default function PdfViewer({ files, pdfBlobs, title }) {
+export default function PdfViewer({ pdfData }) {
   const [file, setFile] = useState(files || dummyFile);
   const [page, setPage] = useState(0);
   const [numPages, setNumPages] = useState(null);
@@ -26,23 +28,9 @@ export default function PdfViewer({ files, pdfBlobs, title }) {
   const [width, setWidth] = useState(400);
   const pdfDocRef = useRef(null);
   const [uploadDocsumoOpen, setUploadDocsumo] = useState(false);
+  const [opentextDialog, setOpentextDialog] = useState(false);
 
-  useEffect(() => {
-    setFile(files || []);
-    if (!files) {
-      setPage(0);
-    }
-  }, [files]);
 
-  // ref
-  useEffect(() => {
-    if (pdfDocRef?.current?.clientHeight) {
-      setMinHeight(pdfDocRef?.current?.clientHeight);
-    }
-    if (pdfDocRef?.current?.clientWidth) {
-      setWidth(pdfDocRef?.current?.clientWidth);
-    }
-  }, [pdfDocRef?.current?.clientHeight, pdfDocRef?.current?.clientWidth]);
   function onFileChange(type) {
     if (type === "next" && page + 1 < file.length) {
       setPage((page) => page + 1);
@@ -84,6 +72,71 @@ export default function PdfViewer({ files, pdfBlobs, title }) {
     const url = URL.createObjectURL(mergedPdf);
     window.open(url, "_blank");
   }
+
+
+  const handleDownloadC2PA = async () => {
+    let pdfUrl = pdfData.rawUrl[page];
+    // remove leading url
+    pdfUrl = pdfUrl.split('storage/')[1];
+    // remove query
+    pdfUrl = pdfUrl.split('?')[0];
+
+    let data = {
+      uri: pdfUrl,
+      pdfTitle: pdfData.name
+    }
+
+    const blob = await fetchData(`/api/c2pa`, {
+      method: "POST",
+      responseType: 'blob',
+      data
+    });
+
+    // Create a temporary anchor element
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${data.pdfTitle || 'Scanbot'}.png`; // Specify the desired file name
+
+    // Append the anchor to the document body
+    document.body.appendChild(a);
+
+    // Trigger a click on the anchor to initiate the download
+    a.click();
+
+    // Remove the anchor from the document body
+    document.body.removeChild(a);
+  };
+
+  const files = useMemo(() => {
+    return pdfData?.url || dummyFile
+  },[pdfData])
+  const pdfBlobs = useMemo(() => {
+    return pdfData?.pdfBlobs
+  },[pdfData])
+  const title = useMemo(() => {
+    return pdfData?.name
+  },[pdfData])
+  const historyId = useMemo(() => {
+    return pdfData?.history.id
+  },[pdfData])
+
+
+  useEffect(() => {
+    setFile(files || []);
+    if (!files) {
+      setPage(0);
+    }
+  }, [files, pdfData]);
+
+  // ref
+  useEffect(() => {
+    if (pdfDocRef?.current?.clientHeight) {
+      setMinHeight(pdfDocRef?.current?.clientHeight);
+    }
+    if (pdfDocRef?.current?.clientWidth) {
+      setWidth(pdfDocRef?.current?.clientWidth);
+    }
+  }, [pdfDocRef?.current?.clientHeight, pdfDocRef?.current?.clientWidth]);
 
   return (<>
     <Card withpadding background='#F8F8FA'>
@@ -245,6 +298,40 @@ export default function PdfViewer({ files, pdfBlobs, title }) {
                     Upload To Docsumo
                   </Typography>
                 </IconButton>
+                <IconButton
+                  sx={{
+                    borderRadius: 0, 
+                    bgcolor: '#4D61FC', 
+                    py: 0.5,
+                    px: 1,
+                    color: "#000000",
+                    '&:hover' : {
+                      bgcolor: '#6397FC'
+                    } 
+                  }}
+                  onClick={() => setOpentextDialog(true)}
+                >
+                  <Typography ml={1} sx={{fontSize: '14px', fontWeight: 600, color: 'white !important'}}>
+                    Opentext
+                  </Typography>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    borderRadius: 0, 
+                    bgcolor: '#4D61FC', 
+                    py: 0.5,
+                    px: 1,
+                    color: "#000000",
+                    '&:hover' : {
+                      bgcolor: '#6397FC'
+                    } 
+                  }}
+                  onClick={handleDownloadC2PA}
+                >
+                  <Typography ml={1} sx={{fontSize: '14px', fontWeight: 600, color: 'white !important'}}>
+                    Download C2PA
+                  </Typography>
+                </IconButton>
               </Stack>
               {file.length !== 0 && (
                 <div style={{ minHeight: minHeight }}>
@@ -289,10 +376,19 @@ export default function PdfViewer({ files, pdfBlobs, title }) {
       pdfBlobs={pdfBlobs}
       fileUrls={files}
     />
+    <OpentextDialog 
+      open={opentextDialog} 
+      close={() => setOpentextDialog(false)} 
+      pdfBlobs={pdfBlobs}
+      pdfUrls={pdfData?.rawUrl || []}
+      historyId={historyId}
+      pdfTitle={title}
+    />
   </>);
 }
 
 PdfViewer.propTypes = {
   files: PropTypes.array,
   title: PropTypes.string,
+  detailHistory: PropTypes.object,
 };

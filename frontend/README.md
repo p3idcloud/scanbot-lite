@@ -54,3 +54,6 @@ Once you did that, run the following command to update your application at Lyrid
 ```
 lc code submit
 ```
+
+## Notes on Dependency
+Dont update react-pdf it will break the pdf viewer

@@ -40,3 +40,13 @@ export const mergePdf = async (blobs) => {
     return [null, error];
   }
 }
+
+export const TextWithParagraphs = ({ text }) => {
+  return (
+    <div>
+      {text.split('\r\n').map((paragraph, index) => (
+        <p key={index}>{paragraph}</p>
+      ))}
+    </div>
+  );
+};

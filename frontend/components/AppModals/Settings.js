@@ -8,12 +8,43 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { fetchData } from 'lib/fetch';
 import { useAccount } from 'lib/contexts/accountContext';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+
+import AccountSettingForm from 'components/Form/AccountSettingForm';
+import DocsumoForm from 'components/Form/DocsumoForm';
+import OpentextForm from 'components/Form/OpentextForm';
+import C2PAForm from 'components/Form/C2PAForm';
+import BarleaForm from 'components/Form/BarleaForm';
 
 const validationSchema = Yup.object().shape({
   mobileNumber: Yup.string(),
   enabled2FA: Yup.boolean(),
   docsumoApiKey: Yup.string()
 });
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 const Settings = ({ open, close, ...rest }) => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +54,11 @@ const Settings = ({ open, close, ...rest }) => {
     mobileNumber: mobileNumber ?? '',
     enabled2FA: enabled2FA ?? false,
     docsumoApiKey: docsumoApiKey ?? ''
+  };
+
+  const [tabValue, setTabValue] = useState(0);
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
   const handleSubmit = (e, {resetForm}) => {
@@ -56,52 +92,45 @@ const Settings = ({ open, close, ...rest }) => {
   };
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit} enableReinitialize>
-      {({ handleBlur, handleChange, submitForm, values }) => {
-        return (
-          <Modal
-            open={open}
-            customBodyFooter={
-              <>
-                <Button
-                  onClick={() => {
-                    close();
-                  }}
-                  variant="outlined"
-                  color="primaryBlack"
-                  autoWidth
-                  size="medium"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={submitForm} variant="contained" autoWidth size="medium" loading={loading}>
-                  Update
-                </Button>
-              </>
-            }
+    <Modal
+      open={open}
+      customBodyFooter={
+        <>
+          <Button
+            onClick={() => {
+              close();
+            }}
+            variant="outlined"
+            color="primaryBlack"
+            autoWidth
+            size="medium"
           >
-            <Box display="flex" padding={4} flexDirection="column" justifyContent="center" alignItems="center" width={1}>
-              <Form style={{ width: '100%' }}>
-                <Typography fontWeight={600} fontSize="20px" lineHeight="28px">
-                  Authentication Settings
-                </Typography>
-                <Divider sx={{ my: 4 }} />
-                <FormControl sx={{ my: 2 }} fullWidth>
-                  <FormControlLabel label="Enable 2FA?" control={<Switch id="enabled2FA" onBlur={handleBlur} onChange={handleChange} />} />
-                </FormControl>
-                <FormControl sx={{ my: 2 }} fullWidth>
-                  <InputField label="Mobile Number" fullWidth id="mobileNumber" name='mobileNumber' defaultValue={values.mobileNumber} onBlur={handleBlur} onChange={handleChange} placeholder="Mobile Number" />
-                </FormControl>
-                <FormControl sx={{ my: 2 }} fullWidth>
-                  <Typography fontWeight={700} color='#4D61FC' mb={2}>Docsumo API</Typography>
-                  <InputField label="Api Key" fullWidth id="apikey" name='docsumoApiKey' value={values.docsumoApiKey} onBlur={handleBlur} onChange={handleChange} placeholder="Api Key" />
-                </FormControl>
-              </Form>
-            </Box>
-          </Modal>
-        );
-      }}
-    </Formik>
+            Cancel
+          </Button>
+        </>
+      }
+    >
+      <Box display="flex" padding={1} flexDirection="column" width={1} minHeight="300px">
+        <Typography fontWeight={600} fontSize="20px" lineHeight="28px" textAlign="center">
+          Settings
+        </Typography>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', alignItems: 'left' }}>
+          <Tabs value={tabValue} onChange={handleTabChange} aria-label='setting-tab'>
+            <Tab label="Account" {...a11yProps(0)} />
+            <Tab label="Plugin" {...a11yProps(1)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={tabValue} index={0}>
+          <AccountSettingForm />
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={1}>
+          <DocsumoForm />
+          <OpentextForm />
+          <BarleaForm />
+          <C2PAForm />
+        </CustomTabPanel>
+      </Box>
+    </Modal>
   );
 };
 

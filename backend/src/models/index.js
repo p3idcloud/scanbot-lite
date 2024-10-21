@@ -15,6 +15,8 @@ db.scannersession = require('./scannersession.model');
 db.scannerstate = require('./scannerstate.model');
 db.scannerhistory = require('./scannerhistory.model');
 db.scannerdefault = require('./scannerdefault.model');
+db.plugin = require('./plugin.model');
+db.opentext = require('./opentext.model');
 
 exports.connectDB = async () => {
     const connection = process.env.MONGODB_URL;

@@ -35,6 +35,9 @@ const scannerSettingRouter = require('./routes/scannersetting');
 const scannerStateRouter = require('./routes/scannerstate');
 const scannerHistoryRouter = require('./routes/scannerhistory');
 const dashboardRouter = require('./routes/dashboard');
+const pluginRouter = require('./routes/plugin');
+const opentextRouter = require('./routes/opentext');
+const c2paRouter = require('./routes/c2pa');
 
 // Local API
 const localRouter = require('./routes/local');
@@ -81,7 +84,11 @@ const { createAccount } = require('./controllers/account.controller');
 app.post('/api/register/accounts', createAccount);
 
 // Auth middleware - applies only to protected routes
-app.use(['/api/claim', '/api/scanners', '/api/storage', '/api/accounts', '/api/jobs', '/api/scannersetting', '/api/dashboard'], authMiddleware);
+app.use([
+  '/api/claim', '/api/scanners', '/api/storage', '/api/accounts',
+  '/api/jobs', '/api/scannersetting', '/api/dashboard', '/api/plugin',
+  '/api/opentext', '/api/barlea', '/api/c2pa'
+], authMiddleware);
 
 // Storage route - requires auth middleware
 app.use('/api/storage', storageRouter);
@@ -105,6 +112,15 @@ app.use('/api/scannersetting', scannerSettingRouter);
 
 // Dashboard route
 app.use('/api/dashboard', dashboardRouter);
+
+// Plugin route
+app.use('/api/plugin', pluginRouter);
+
+// Opentext Route
+app.use('/api/opentext', opentextRouter);
+
+// C2PA Route
+app.use('/api/c2pa', c2paRouter);
 
 // Endpoints for exercise
 app.use('/api/exercise', require('./routes/exercise.route'));

@@ -29,6 +29,7 @@
     "morgan": "^1.10.0",
     "mqtt": "^5.10.1",
     "multer": "^1.4.5-lts.1",
+    "node-cache": "^5.1.2",
     "pdf-merger-js": "4.2",
     "pdfjs-dist": "^4.7.76",
     "saml2-js": "^4.0.0",

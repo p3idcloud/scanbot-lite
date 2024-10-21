@@ -55,3 +55,7 @@ Once you did that, run the following command to update your application at Lyrid
 ```
 lc code submit
 ```
+
+
+## Notes on Dependency
+Dont update pdf-merger-js it will break the apps

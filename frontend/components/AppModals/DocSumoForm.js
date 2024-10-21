@@ -6,12 +6,13 @@ import { Box, Typography, FormGroup, Divider, Grid2 as Grid } from '@mui/materia
 import { Formik, Form } from 'formik';
 import { useMemo, useState } from 'react';
 import { toast } from "react-toastify";
-import { fetchData } from 'lib/fetch';
+import { fetchData, fetchDataSWR } from 'lib/fetch';
 import Select from 'components/Select';
 import Image from 'next/image';
 import { mergePdf } from 'lib/helpers';
 import { v1 as uuid } from 'uuid';
 import { useAccount } from 'lib/contexts/accountContext';
+import useSWR from 'swr';
 
 const validationSchema = Yup.object().shape({
   type: Yup.string().required("required"),
@@ -22,11 +23,14 @@ const DocSumoForm = ({ open, close, pdfBlobs, fileUrls }) => {
   const [loading, setLoading] = useState(false);
   const [documentList, setDocumentList] = useState(null);
   const [submitResponse, setSubmitResponse] = useState(null);
+  const { data: pluginData, error: pluginErr } = useSWR(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}api/plugin/DOCSUMO`,
+    fetchDataSWR
+);
 
-  const { account } = useAccount();
   const initialValues = {
     type: '',
-    apiKey: account?.docsumoApiKey ?? null,
+    apiKey: pluginData?.data.apiKey ?? null,
   };
 
   const selectDocumentList = useMemo(() => {

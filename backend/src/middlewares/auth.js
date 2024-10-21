@@ -53,7 +53,6 @@ module.exports = async function (req, res, next) {
     } else {
         req.twain.principalId = req.headers.authorization;
     }
-
     if (plainToken) {
         const scannerFound = await getScannerFromLoginToken(req.twain.principalId);
         if (!scannerFound) {
@@ -62,6 +61,5 @@ module.exports = async function (req, res, next) {
             req.twain.principalId = scannerFound.accountId;
         }
     }
-
     return next();
 };

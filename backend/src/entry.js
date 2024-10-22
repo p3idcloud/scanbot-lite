@@ -38,6 +38,7 @@ const dashboardRouter = require('./routes/dashboard');
 const pluginRouter = require('./routes/plugin');
 const opentextRouter = require('./routes/opentext');
 const c2paRouter = require('./routes/c2pa');
+const barleaRouter = require('./routes/barlea');
 
 // Local API
 const localRouter = require('./routes/local');
@@ -118,6 +119,9 @@ app.use('/api/plugin', pluginRouter);
 
 // Opentext Route
 app.use('/api/opentext', opentextRouter);
+
+// Barlea Route
+app.use('/api/barlea', barleaRouter);
 
 // C2PA Route
 app.use('/api/c2pa', c2paRouter);

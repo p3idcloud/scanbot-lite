@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('./src/routes');
+const app = require('./src/entry');
 const port = 8000;
 
 app.listen(port, () => {

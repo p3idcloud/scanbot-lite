@@ -15,6 +15,7 @@ import { mergePdf } from "lib/helpers";
 import Image from "next/image";
 import OpentextDialog from "./OpentextDialog";
 import { fetchData } from "lib/fetch";
+import BarleaDialog from "./BarleaDialog";
 
 const dummyFile = [
   "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
@@ -29,6 +30,7 @@ export default function PdfViewer({ pdfData }) {
   const pdfDocRef = useRef(null);
   const [uploadDocsumoOpen, setUploadDocsumo] = useState(false);
   const [opentextDialog, setOpentextDialog] = useState(false);
+  const [barleaDialog, setBarleaDialog] = useState(false);
 
 
   function onFileChange(type) {
@@ -332,6 +334,23 @@ export default function PdfViewer({ pdfData }) {
                     Download C2PA
                   </Typography>
                 </IconButton>
+                <IconButton
+                  sx={{
+                    borderRadius: 0, 
+                    bgcolor: '#4D61FC', 
+                    py: 0.5,
+                    px: 1,
+                    color: "#000000",
+                    '&:hover' : {
+                      bgcolor: '#6397FC'
+                    } 
+                  }}
+                  onClick={() => setBarleaDialog(true)}
+                >
+                  <Typography ml={1} sx={{fontSize: '14px', fontWeight: 600, color: 'white !important'}}>
+                    Upload Barlea
+                  </Typography>
+                </IconButton>
               </Stack>
               {file.length !== 0 && (
                 <div style={{ minHeight: minHeight }}>
@@ -379,6 +398,14 @@ export default function PdfViewer({ pdfData }) {
     <OpentextDialog 
       open={opentextDialog} 
       close={() => setOpentextDialog(false)} 
+      pdfBlobs={pdfBlobs}
+      pdfUrls={pdfData?.rawUrl || []}
+      historyId={historyId}
+      pdfTitle={title}
+    />
+    <BarleaDialog 
+      open={barleaDialog} 
+      close={() => setBarleaDialog(false)} 
       pdfBlobs={pdfBlobs}
       pdfUrls={pdfData?.rawUrl || []}
       historyId={historyId}

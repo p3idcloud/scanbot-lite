@@ -17,8 +17,9 @@
 
 const PDFMerger = require("pdf-merger-js");
 const { Readable } = require('stream');
+const { getGlobalMinioClient } = require('../lib/minio.lib')
 
-exports.mergePdfToBase64 = async (blobs) => {
+const mergePdfToBase64 = async (blobs) => {
     try {
         const merger = new PDFMerger();
         for await (const blob of blobs) {
@@ -38,7 +39,7 @@ exports.mergePdfToBase64 = async (blobs) => {
     }
 };
 
-exports.mergePdf = async (blobs) => {
+const mergePdf = async (blobs) => {
     try {
         const merger = new PDFMerger();
         for await (const blob of blobs) {
@@ -60,7 +61,7 @@ exports.mergePdf = async (blobs) => {
     }
 };
 
-exports.streamlinePdfBlobList = (pdfBlobParam) => {
+const streamlinePdfBlobList = (pdfBlobParam) => {
     if (Array.isArray(pdfBlobParam)) {
         return pdfBlobParam.map(pdfBlob => {
             if (pdfBlob instanceof Blob) {
@@ -78,7 +79,8 @@ exports.streamlinePdfBlobList = (pdfBlobParam) => {
     }
 }
 
-exports.streamToBlob = async (readableStream, { mimeType = null } = { mimeType: null }) => {
+const streamToBlob = async (readableStream, { mimeType = null } = { mimeType: null }) => {
+    console.log(readableStream)
     return new Promise((resolve, reject) => {
         const chunks = [];
         readableStream.on('data', (chunk) => {
@@ -97,7 +99,7 @@ exports.streamToBlob = async (readableStream, { mimeType = null } = { mimeType: 
 }
 
 
-exports.findFilename= (url) => {
+const findFilename = (url) => {
     try {
       const urlParts = url?.split("/");
       const scannerId = urlParts[urlParts?.length - 2];
@@ -108,3 +110,49 @@ exports.findFilename= (url) => {
       return { scannerId: 0, fileId: 0 };
     }
 }
+
+
+const fetchPdfBlobs =  async (urls, accountID) => {
+    return Promise.all(urls.map(async (url) => {
+        if (url.includes(process.env.BASE_URL)) {
+            return await fetchFromMinio(url, accountID);
+        } else {
+            return await fetchFromUrl(url);
+        }
+    }));
+}
+
+
+// Fetch PDF blob from Minio
+const fetchFromMinio = async (url, accountID) => {
+    const minioClient = getGlobalMinioClient();
+
+    const uri = url.replace(`${process.env.BASE_URL}api/storage/`, '').split('?')[0];
+    const pdfStream = await minioClient.getObject(accountID, uri);
+    try {
+        return await streamToBlob(pdfStream);
+    } catch (e) {
+        console.error(`Error converting stream to blob: ${e}`);
+        return null;
+    }
+}
+
+// Fetch PDF blob from external URL
+const fetchFromUrl = async (url) => {
+    try {
+        const response = await fetch(url);
+        return await response.blob();
+    } catch (err) {
+        console.error(`Error fetching URL: ${url}, error: ${err}`);
+        return null;
+    }
+}
+
+module.exports = {
+    mergePdfToBase64,
+    mergePdf,
+    streamlinePdfBlobList,
+    findFilename,
+    fetchPdfBlobs,
+    streamToBlob,
+};

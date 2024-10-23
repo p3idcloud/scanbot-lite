@@ -20,7 +20,7 @@ import { fetchDataSWR, fetchData } from 'lib/fetch';
 import { toast } from "react-toastify";
 import { TextWithParagraphs } from 'lib/helpers';
 import useSWR, { mutate } from 'swr';
-import { Box, Button, Card, Chip, Dialog, DialogContent, DialogTitle, Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, Card, Chip, Dialog, DialogContent, DialogTitle, Grid2, Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Item } from 'components/Stack/Item';
 import { parseCookies } from 'nookies';
@@ -363,7 +363,6 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
         <Dialog
             open={open}
             onClose={close}
-            fullScreen={fullScreen}
             sx={{minWidth:'50%'}}
         >
             <DialogTitle id="opentext-dialog-title">
@@ -376,33 +375,33 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
             </DialogTitle>
             <DialogContent>
                 {ErrorComponent}
-                <Stack direction='row' spacing={2}>
-                    <Item>
-                        <Button variant='contained' color="primary" onClick={handleSubmitOCR} disabled={loadingOCR}>{(loadingOCR && status) ? 'Uploading to OCR....' : 'Upload to OCR'}</Button>
-                    </Item>
+                <Grid2 container spacing={2}>
+                    <Grid2 item xs={4}>
+                        <Button variant='outlined' color="primary" onClick={handleSubmitOCR} disabled={loadingOCR}>{(loadingOCR && status) ? 'Uploading to OCR....' : 'Upload to OCR'}</Button>
+                    </Grid2>
                     {
                         opentextData && (
                             <>
-                                <Item>
-                                    <Button color="info" onClick={fetchOCRText}>Preview Text OCR</Button>
-                                </Item>
+                                <Grid2 item xs={4}>
+                                    <Button variant='outlined' color="info" onClick={fetchOCRText}>Preview Text OCR</Button>
+                                </Grid2>
                                 {
                                     opentextData.Riskguard && (
-                                        <Item>
-                                            <Button color="info" onClick={handleShowRiskguard}>Riskguard Information</Button>
-                                        </Item>
+                                        <Grid2 item xs={4}>
+                                            <Button variant='outlined' color="info" onClick={handleShowRiskguard}>Riskguard Information</Button>
+                                        </Grid2>
                                     )
                                 }
-                                <Item>
-                                    <Button color="secondary" onClick={() => downloadOCR("pdf")}>Download PDF OCR</Button>
-                                </Item>
-                                <Item>
-                                    <Button color="secondary" onClick={() => downloadOCR("text")}>Download Text OCR</Button>
-                                </Item>
+                                <Grid2 item xs={4}>
+                                    <Button variant='outlined' color="secondary" onClick={() => downloadOCR("pdf")}>Download PDF OCR</Button>
+                                </Grid2>
+                                <Grid2 item xs={4}>
+                                    <Button variant='outlined' color="secondary" onClick={() => downloadOCR("text")}>Download Text OCR</Button>
+                                </Grid2>
                             </>
                         )
                     }
-                </Stack>
+                </Grid2>
                 {
                     showRiskGuard && (
                         <DisplayRiskguardResult />

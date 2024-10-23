@@ -77,6 +77,7 @@ exports.getScannersFromQuery = async (req, res) => { //SWR standard
     const sort = req.query.sort || "-lastActive"
     
     const qValues = await scanserv.getScannersFromQuery(query, page, limit, sort)
+
     let result = {
         data: qValues.retValue,
         dataCount: qValues.count,

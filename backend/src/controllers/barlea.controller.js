@@ -25,14 +25,13 @@ const { getGlobalMinioClient } = require('../lib/minio.lib');
 /**
  * Execute callback to handle PDF upload
  */
-exports.sendBarlea = async (req, res) => {
+const sendBarlea = async (req, res) => {
     if (!req.body.pdfUrls) {
         return res.status(400).json({
             message: "No PDF Urls specified" 
         });
     }
     const accountID = req.twain.principalId;
-    const minioClient = getGlobalMinioClient();
 
     const barleaPlugin = await getBarleaPlugin(accountID)
     const apiToken = await getApiToken(barleaPlugin)
@@ -42,35 +41,13 @@ exports.sendBarlea = async (req, res) => {
         });
     }
 
-    const urls = req.body.pdfUrls;
-
-    pdfBlobList = await Promise.all(urls.map(async (url) => {
-        if (url.includes(process.env.BASE_URL)) {
-            let uri = url.replace(`${process.env.BASE_URL}api/storage/`, '').split('?')[0];
-            let pdfStream = await minioClient.getObject(accountID, uri);
-            try {
-                return await streamToBlob(pdfStream);
-            } catch (e) {
-                console.error(`Error converting stream to blob: ${e}`);
-                return res.status(500).json({ "message": "Failed to convert stream to blob" });;
-            }
-        } else {
-            try {
-                const response = await fetch(url);
-                return await response.blob();
-            } catch (err) {
-                console.error(`Error fetching URL: ${url}, error: ${err}`);
-                return res.status(500).json({ "message": "Failed to fetch some PDFs" });;
-            }
-        }
-    }));
-
+    // Fetch and process PDF blobs
+    const pdfBlobList = await fetchPdfBlobs(req.body.pdfUrls, accountID);
     if (pdfBlobList.includes(null)) {
         return res.status(500).json({ "message": "Failed to retrieve some PDFs" });
     }
 
-    pdfBlobList = streamlinePdfBlobList(pdfBlobList);
-    const [mergedPdf, error] = await mergePdf(pdfBlobList);
+    const [mergedPdf, error] = await mergePdf(streamlinePdfBlobList(pdfBlobList));
     console.log(mergedPdf)
     if (error) {
         console.log("Failed to merge Pdf");
@@ -91,13 +68,13 @@ exports.sendBarlea = async (req, res) => {
     }
 };
 
-getBarleaPlugin = async (accountID) => {
+const getBarleaPlugin = async (accountID) => {
     const plugin = await pluginService.getPluginFromName("BARLEA", accountID);
 
     return plugin;
 }
 
-getApiToken = async (plugin) => {
+const getApiToken = async (plugin) => {
     try {
         const response = await axios.post(`${plugin.data.endpoint}/v1/auth/login`, {
             username: plugin.data.username,
@@ -114,7 +91,7 @@ getApiToken = async (plugin) => {
  * Upload document to Barlea API
  */
 
-uploadDocumentMultipart = async (plugin, token, title, pdfBlob ) => {
+const uploadDocumentMultipart = async (plugin, token, title, pdfBlob ) => {
     try {
         const fileName = title
         const form = new FormData();
@@ -141,7 +118,7 @@ uploadDocumentMultipart = async (plugin, token, title, pdfBlob ) => {
 /**
  * Add uploaded document metadata to Barlea API
  */
-addDocumentMetadata = async (plugin, token, resultHash, pdfBlob, historyId) => {
+const addDocumentMetadata = async (plugin, token, resultHash, pdfBlob, historyId) => {
     try {
         const history = await ScannerHistoryService.getScannerHistoryFromId(historyId)
         const requestBody = {
@@ -174,3 +151,7 @@ addDocumentMetadata = async (plugin, token, resultHash, pdfBlob, historyId) => {
         return e;
     }
 };
+
+module.exports = {
+    sendBarlea
+}

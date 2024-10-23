@@ -23,10 +23,10 @@ const { convertPdfToPng } = require("../lib/pdf.lib");
 const logger = require('../utils/logger')('c2paClient');
 const fs = require('fs');
 
-exports.generatePngUrl = (uri) => uri + '-c2pa-png.png';
+const generatePngUrl = (uri) => uri + '-c2pa-png.png';
 
-exports.retrieveC2paPng = async (accountId, uri) => {
-	const pngUrl = this.generatePngUrl(uri);
+const retrieveC2paPng = async (accountId, uri) => {
+	const pngUrl = generatePngUrl(uri);
 	const minioClient = getGlobalMinioClient();
 	try {
 		let pdfStream = await minioClient.getObject(accountId, pngUrl);
@@ -36,15 +36,15 @@ exports.retrieveC2paPng = async (accountId, uri) => {
 	}
 }
 
-exports.storeC2paPng = async (accountId, uri, buffer) => {
-	const pngUrl = this.generatePngUrl(uri);
+const storeC2paPng = async (accountId, uri, buffer) => {
+	const pngUrl = generatePngUrl(uri);
 	const paths = pngUrl.split('/');
 	const filename = paths[paths.length-1]
 	await putObjectBuffer(accountId, pngUrl, buffer, filename);
 	logger.info(`stored: ${pngUrl}`);
 }
 
-exports.storeC2pa = async (accountId, uri, buffer) => {
+const storeC2pa = async (accountId, uri, buffer) => {
 	const storeUrl = uri + '-c2pa'
 	const paths = storeUrl.split('/');
 	const filename = paths[paths.length-1]
@@ -53,7 +53,7 @@ exports.storeC2pa = async (accountId, uri, buffer) => {
 }
 
 
-exports.retrieveC2pa = async (accountId, uri) => {
+const retrieveC2pa = async (accountId, uri) => {
 	const minioClient = getGlobalMinioClient();
 	try {
 		let pdfStream = await minioClient.getObject(accountId, uri);
@@ -63,28 +63,30 @@ exports.retrieveC2pa = async (accountId, uri) => {
 	}
 }
 
-exports.retrieveFile = async (accountId, uri) => {
+const retrieveFile = async (accountId, uri) => {
 	const minioClient = getGlobalMinioClient();
 	try {
 		let pdfStream = await minioClient.getObject(accountId, uri);
 		return await streamToBlob(pdfStream);
 	} catch (e) {
+		console.log(e)
 		return null;
 	}
 }
 
-exports.retrieveC2paPdf = async (accountId, uri) => {
+const retrieveC2paPdf = async (accountId, uri) => {
 	const minioClient = getGlobalMinioClient();
 	try {
 		let pdfStream = await minioClient.getObject(accountId, uri);
 		return await streamToBlob(pdfStream);
 	} catch (e) {
+		console.log(e)
 		return null;
 	}
 }
 
 
-exports.c2paReadFile = async (req, res) => {
+const c2paReadFile = async (req, res) => {
 	const fileUpload = req.file;
 	const fileContent = req.body;
 	logger.info(fileUpload)
@@ -99,14 +101,14 @@ exports.c2paReadFile = async (req, res) => {
 	}
   };
 
-exports.c2paSigningManifest = async (req, res) => {
+const c2paSigningManifest = async (req, res) => {
 	try {
 	  let { uri, pdfTitle } = req.body;
-  
-	  const c2paResult = await this.retrieveC2paPng(req.twain.principalId, uri);
+	  const c2paResult = await retrieveC2paPng(req.twain.principalId, uri);
+
 	  if (!c2paResult) {
 		const mimeType = 'image/png';
-		const pdfFile = await this.retrieveFile(req.twain.principalId, uri);
+		const pdfFile = await retrieveFile(req.twain.principalId, uri);
 		const buffer = Buffer.from(await pdfFile.arrayBuffer());
   
 		const file = {
@@ -122,7 +124,7 @@ exports.c2paSigningManifest = async (req, res) => {
 
 		// Store in MinIO
 		if (result?.buffer) {
-		  await this.storeC2paPng(req.twain.principalId, uri, result.buffer);
+		  await storeC2paPng(req.twain.principalId, uri, result.buffer);
 		}
 		const imageBuffer = result.buffer;
 		// Set the appropriate response headers
@@ -146,3 +148,15 @@ exports.c2paSigningManifest = async (req, res) => {
 	  return res.status(500).send('Internal Server Error');
 	}
   };
+
+module.exports = {
+	generatePngUrl,
+	retrieveC2paPng,
+	retrieveC2paPdf,
+	retrieveC2pa,
+	retrieveFile,
+	storeC2paPng,
+	storeC2pa,
+	c2paReadFile,
+	c2paSigningManifest
+}

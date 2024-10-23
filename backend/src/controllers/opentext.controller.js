@@ -19,107 +19,36 @@ const { default: axios } = require('axios');
 const pluginService = require('../services/plugin');
 const NodeCache = require('node-cache');
 const cache = new NodeCache();
-const { mergePdfToBase64, streamlinePdfBlobList, streamToBlob } = require('../utils/helpers');
+const { mergePdfToBase64, streamlinePdfBlobList, fetchPdfBlobs } = require('../utils/helpers');
 const { getGlobalMinioClient } = require('../lib/minio.lib')
 const OpentextService = require('../services/opentext');
 const { Blob } = require('buffer'); 
 const { generateOpentextURL } = require('../utils/opentextURL');
-const TokenExpiredError = require('jsonwebtoken/lib/TokenExpiredError');
 
-// exports.executeCallback = async (req, res) => {
-//     // Generate request body for multiple file blobs or urls
-//     let pdfAttachmentBlob = null;
-//     if (Array.isArray(this.args.pdfBlob)) {
-//         // Convert text data to blob if text
-//         this.args.pdfBlob = streamlinePdfBlobList(this.args.pdfBlob);
-
-//         // Merge
-//         const [mergedPdfBlobs, error] = await mergePdf(this.args.pdfBlob);
-//         if (error)  {
-//             console.log("Failed to merge Pdf")
-//             return {"status": 500, "message": "Failed to merge Pdf"};
-//         }
-//         pdfAttachmentBlob = mergedPdfBlobs;
-//     } else if (this.args.pdfBlob) {
-//         pdfAttachmentBlob = this.args.pdfBlob;
-//     } else {
-//         return { "status": 400, "message": "No Pdf Specified" };
-//     }
-
-//     const openTextResult = await this.putPdf(pdfAttachmentBlob);
-//     if (openTextResult instanceof Error) {
-//         return { "status": 500, "message": `Something went wrong with Opentext:\n${openTextResult.message}` };
-//     } else {
-//         return { 
-//             "status": 200,
-//             "message": `Pdf successfully uploaded to Riskguard`,
-//             "data": openTextResult.data
-//         };
-//     }
-// }
-
-exports.sendOCR = async (req, res) => {
+const sendOCR = async (req, res) => {
     try {
         if (!req.body.pdfUrls) {
             return res.status(400).json({ "message": "No PDF Url Specified" });
         }
-        
         const accountID = req.twain.principalId;
-        const minioClient = getGlobalMinioClient();
-        let pdfBlobList = [];
-
         const urls = req.body.pdfUrls;
 
-        pdfBlobList = await Promise.all(urls.map(async (url) => {
-            if (url.includes(process.env.BASE_URL)) {
-                let uri = url.replace(`${process.env.BASE_URL}api/storage/`, '').split('?')[0];
-                let pdfStream = await minioClient.getObject(accountID, uri);
-                try {
-                    return await streamToBlob(pdfStream);
-                } catch (e) {
-                    console.error(`Error converting stream to blob: ${e}`);
-                    return null;
-                }
-            } else {
-                try {
-                    const response = await fetch(url);
-                    return await response.blob();
-                } catch (err) {
-                    console.error(`Error fetching URL: ${url}, error: ${err}`);
-                    return null;
-                }
-            }
-        }));
-
+        // Fetch and process PDF blobs
+        const pdfBlobList = await fetchPdfBlobs(urls, accountID);
         if (pdfBlobList.includes(null)) {
             return res.status(500).json({ "message": "Failed to retrieve some PDFs" });
         }
 
-        pdfBlobList = streamlinePdfBlobList(pdfBlobList);
-        const [mergedPdf, error] = await mergePdfToBase64(pdfBlobList);
-        if (error) {
-            console.log("Failed to merge Pdf");
+        // Merge PDFs and handle errors
+        const [mergedPdf, mergeError] = await mergePdfToBase64(streamlinePdfBlobList(pdfBlobList));
+        if (mergeError) {
             return res.status(500).json({ "message": "Failed to merge Pdf" });
         }
 
-        const opentextPlugin = await getOpentextPlugin(accountID);
-        const token = await getToken(opentextPlugin, accountID);
-        const sessionOCR = await createSessionOCR(token, opentextPlugin);
-        const uploadOCRResult = await putPdfOCR(mergedPdf, token, opentextPlugin);
-
+        // Handle OCR processing
+        const uploadOCRResult = await processOCR(mergedPdf, accountID, req.body.pdfTitle, req.body.historyId);
         if (uploadOCRResult instanceof Error) {
             return res.status(500).json({ "message": `Something went wrong with Opentext: ${uploadOCRResult.message}` });
-        }
-
-        const OCRResult = await requestOCR(uploadOCRResult, req.body.pdfTitle, token, opentextPlugin);
-        if (OCRResult instanceof Error) {
-            return res.status(500).json({ "message": `Something went wrong with Opentext: ${OCRResult}` });
-        }
-
-        // Process OCR results
-        for (const result of OCRResult.resultItems) {
-            const type = result.nodeId === 1 ? "text" : "pdf";
-            getFileOCRResult(result.files[0].value, type,accountID, req.body.historyId, token, opentextPlugin)
         }
 
         return res.status(200).json({ "message": "Pdf successfully uploaded to OCR" });
@@ -127,9 +56,9 @@ exports.sendOCR = async (req, res) => {
         console.error(error);
         return res.status(500).json({ "message": "Internal Server Error" });
     }
-}
+};
 
-exports.getAccessToken = async (req, res) => {
+const getAccessToken = async (req, res) => {
     try {
         const plugin = await getOpentextPlugin(req.twain.principalId);
         const data = await axios.post(`${plugin.data.domain}/tenants/${plugin.data.tenantId}/oauth2/token`, {
@@ -145,7 +74,7 @@ exports.getAccessToken = async (req, res) => {
     }
 }
 
-exports.verifyToken = async (req, res) => {
+const verifyToken = async (req, res) => {
     const { opentextDomain } = generateOpentextURL(req.body.opentext_url)
     
     try {
@@ -162,7 +91,7 @@ exports.verifyToken = async (req, res) => {
     }
 }
 
-exports.verifyTokenPlugin = async (req, res) => {
+const verifyTokenPlugin = async (req, res) => {
     const plugin = await getOpentextPlugin(req.twain.principalId)
     if (!plugin) {
         res.status(401).json({
@@ -185,7 +114,7 @@ exports.verifyTokenPlugin = async (req, res) => {
     }
 }
 
-exports.FindOCRResult = async (req, res) => {
+const FindOCRResult = async (req, res) => {
     const id = req.params.id;
     const accountID = req.twain.principalId;
     const result = await OpentextService.findOne(id);
@@ -207,13 +136,32 @@ exports.FindOCRResult = async (req, res) => {
     }
 }
 
-getOpentextPlugin = async (accountID) => {
+const processOCR = async (mergedPdf, accountID, pdfTitle, historyId) => {
+    const opentextPlugin = await getOpentextPlugin(accountID);
+    const token = await getToken(opentextPlugin, accountID);
+    const sessionOCR = await createSessionOCR(token, opentextPlugin);
+    const uploadOCRResult = await putPdfOCR(mergedPdf, token, opentextPlugin);
+    const OCRResult = await requestOCR(uploadOCRResult, pdfTitle, token, opentextPlugin);
+
+    processOCRResults(OCRResult.resultItems, accountID, historyId, token, opentextPlugin);
+
+    return OCRResult;
+}
+// Process OCR results
+const processOCRResults = async (resultItems, accountID, historyId, token, opentextPlugin) => {
+    for (const result of resultItems) {
+        const type = result.nodeId === 1 ? "text" : "pdf";
+        await getFileOCRResult(result.files[0].value, type, accountID, historyId, token, opentextPlugin);
+    }
+}
+
+const getOpentextPlugin = async (accountID) => {
     const plugin = await pluginService.getPluginFromName("OPENTEXT", accountID);
 
     return plugin;
 }
 
-getToken = async (plugin,accountID) => {
+const getToken = async (plugin,accountID) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
     try {
         const data = await axios.post(`${opentextDomain}/tenants/${plugin.data.tenant_id}/oauth2/token`, {
@@ -229,7 +177,7 @@ getToken = async (plugin,accountID) => {
     }
 }
 
-createSessionOCR = async (token, plugin) => {
+const createSessionOCR = async (token, plugin) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
     try{
         const response = await axios.get(`${opentextDomain}/capture/cp-rest/v2/session`,{
@@ -244,7 +192,7 @@ createSessionOCR = async (token, plugin) => {
     }
 }
 
-deleteSessionOCR = async (token, plugin) => {
+const deleteSessionOCR = async (token, plugin) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
 
     try{
@@ -260,7 +208,7 @@ deleteSessionOCR = async (token, plugin) => {
     }
 }
 
-putPdfOCR = async (base64Pdf, token, plugin) => {
+const putPdfOCR = async (base64Pdf, token, plugin) => {
     try {
         const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
         const jsonData = {
@@ -286,7 +234,7 @@ putPdfOCR = async (base64Pdf, token, plugin) => {
     }
 }
 
-requestOCR = async(file, title, token, plugin) => {
+const requestOCR = async(file, title, token, plugin) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
 
     const requestData = {
@@ -370,7 +318,7 @@ requestOCR = async(file, title, token, plugin) => {
 
 }
 
-getFileOCRResult = async (id,type, accountID, historyID, token, plugin) => {
+const getFileOCRResult = async (id,type, accountID, historyID, token, plugin) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
 
     var contentType = "application/pdf"
@@ -417,8 +365,7 @@ getFileOCRResult = async (id,type, accountID, historyID, token, plugin) => {
     }
 }
 
-
-putPdf = async (pdfBlob, token, plugin, historyID) => {
+const putPdf = async (pdfBlob, token, plugin, historyID) => {
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
 
     try{
@@ -439,5 +386,13 @@ putPdf = async (pdfBlob, token, plugin, historyID) => {
         console.log(e);
         return e;
     }
+}
+
+module.exports = {
+    sendOCR,
+    getAccessToken,
+    verifyToken,
+    verifyTokenPlugin,
+    FindOCRResult
 }
 

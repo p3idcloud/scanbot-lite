@@ -45,7 +45,7 @@ function CustomTabPanel(props) {
 
 const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
     const { data: opentextData, error: opentextErr, loading: opentextLoading } = useSWR(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/opentext/${historyId}`,
+        `${process.env.BACKEND_URL}api/opentext/${historyId}`,
         fetchDataSWR
       );
 
@@ -79,12 +79,12 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
             historyId: historyId,
           };
 
-        fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/opentext/upload`, {
+        fetchData(`${process.env.BACKEND_URL}api/opentext/upload`, {
             method: 'POST',
             data,
         })
             .then((res) => {
-                mutate(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/opentext/${historyId}`)
+                mutate(`${process.env.BACKEND_URL}api/opentext/${historyId}`)
                 toast.success('Success upload to Opentext OCR');
             })
             .catch((err) => {
@@ -103,7 +103,7 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
             fileName = `${pdfTitle || 'Scanbot'}.txt`;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/storage/${fileURL}`,
+        const response = await fetch(`${process.env.BACKEND_URL}api/storage/${fileURL}`,
         {
             headers: {
             'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
@@ -139,7 +139,7 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
     const fetchOCRText = async () => {
         try {
             if (ocrTextData === '') {
-                var response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/storage/${opentextData.OcrText}`,
+                var response = await fetch(`${process.env.BACKEND_URL}api/storage/${opentextData.OcrText}`,
                     {
                         headers: {
                         'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,

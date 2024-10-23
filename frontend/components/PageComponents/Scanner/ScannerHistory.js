@@ -40,11 +40,11 @@ export default function ScannerHistory({...props}) {
     const handleDeleteScanner = () => {
         setLoadingDelete(true);
         fetchData(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/history/${deleteHistory.id}`, 
+            `${process.env.BACKEND_URL}api/scanners/history/${deleteHistory.id}`, 
             { method: "DELETE" }
         ).then(res => {
             loadScannerHistory(scanHistoryPageIndex, rowsPerPage);
-            mutate(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/${scannerId}/analytic`)
+            mutate(`${process.env.BACKEND_URL}api/scanners/${scannerId}/analytic`)
                 .then(() =>{
                     setLoadingDelete(false);
                     toast.success('Successfully deleted history');
@@ -75,7 +75,7 @@ export default function ScannerHistory({...props}) {
 
     const getPdf = (id, name) => {
         setLoadingPdf(true);
-        fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/history/${id}`)
+        fetchData(`${process.env.BACKEND_URL}api/scanners/history/${id}`)
         .then(async data => {
             const pdfBlobs = await Promise.all(data?.url.map(url => 
                 fetchPdf(url)

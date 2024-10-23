@@ -69,7 +69,7 @@ export default function StartSession() {
         sessionId: session_id,
       },
     };
-    fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/${id}/twaindirect/session`, {
+    fetchData(`${process.env.BACKEND_URL}api/scanners/${id}/twaindirect/session`, {
       headers,
       method: "POST",
       data,
@@ -82,7 +82,7 @@ export default function StartSession() {
         resetStatusClaimStates();
         setTimeout(() => {
           loadScannerHistory();
-          mutate(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scanners/${scannerId}/analytic`);
+          mutate(`${process.env.BACKEND_URL}api/scanners/${scannerId}/analytic`);
           setLoading(false);
         }, 1000)
       });

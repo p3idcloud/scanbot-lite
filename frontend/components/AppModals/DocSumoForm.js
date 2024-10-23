@@ -24,7 +24,7 @@ const DocSumoForm = ({ open, close, pdfBlobs, fileUrls }) => {
   const [documentList, setDocumentList] = useState(null);
   const [submitResponse, setSubmitResponse] = useState(null);
   const { data: pluginData, error: pluginErr } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}api/plugin/DOCSUMO`,
+    `${process.env.BACKEND_URL}api/plugin/DOCSUMO`,
     fetchDataSWR
 );
 

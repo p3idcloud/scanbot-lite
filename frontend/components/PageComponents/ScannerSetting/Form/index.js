@@ -45,8 +45,8 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
     // console.log(dataValue);
     const url =
       tab === -1
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scannersetting`
-        : `${process.env.NEXT_PUBLIC_BACKEND_URL}api/scannersetting/${initialValues.id}`;
+        ? `${process.env.BACKEND_URL}api/scannersetting`
+        : `${process.env.BACKEND_URL}api/scannersetting/${initialValues.id}`;
     const method = tab === -1 ? "POST" : "PATCH";
     fetchData(url, {
       method: method,
@@ -56,7 +56,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
       },
     })
       .then((res) => {
-        mutate(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/scannersetting`)
+        mutate(`${process.env.BACKEND_URL}api/scannersetting`)
           .then(() => {
             setLoading(false);
             toast.success("Successfully Updated!");

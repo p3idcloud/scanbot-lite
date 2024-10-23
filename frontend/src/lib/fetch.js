@@ -48,7 +48,7 @@ export async function fetchApp({url, requestOptions}) {
 export async function fetchData(url, args = {}, sessionToken = null) {
   let token;
   const Axios = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    baseURL: process.env.BACKEND_URL,
     timeout: 60000,
     cancelToken: args?.source?.token,
   });
@@ -92,7 +92,7 @@ export async function fetchData(url, args = {}, sessionToken = null) {
 export async function fetchDataSWR(url, args = {}, sessionToken = null) {
   let token;
   const Axios = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    baseURL: process.env.BACKEND_URL,
     timeout: 60000,
     cancelToken: args?.source?.token,
   });

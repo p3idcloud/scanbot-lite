@@ -21,7 +21,7 @@ const validationSchema = Yup.object({
 
 const BarleaForm = () => {
   const { data: pluginData, error: pluginErr } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}api/plugin/BARLEA`,
+    `${process.env.BACKEND_URL}api/plugin/BARLEA`,
     fetchDataSWR
 );
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ const BarleaForm = () => {
     setLoading(true);
 
     try {
-      await fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/plugin`, {
+      await fetchData(`${process.env.BACKEND_URL}api/plugin`, {
         method: 'PATCH',
         data: values,
       });

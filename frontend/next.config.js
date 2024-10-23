@@ -2,7 +2,7 @@ const nextConfig = {
   env: {
     LOGIN_SESSION_DAY: parseInt(process.env.LOGIN_SESSION_DAY),
     JWT_SECRET: process.env.JWT_SECRET,
-    baseUrl: process.env.BASE_URL,
+    BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     APP_SECRET_STRING: process.env.APP_SECRET_STRING,
   },
   webpack: (config, { isServer }) => {

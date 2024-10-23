@@ -35,7 +35,7 @@ const C2PAForm = ({ close }) => {
     };
 
     try {
-      await fetchData(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/accounts/${accountId ?? ''}`, {
+      await fetchData(`${process.env.BACKEND_URL}api/accounts/${accountId ?? ''}`, {
         method: 'PATCH',
         data,
       });

@@ -1,43 +1,28 @@
-import React, { useEffect } from "react";
-import ReactDOMClient from "react-dom/client";
+import React from "react";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
-
-import PageChange from "components/PageChange/PageChange.js";
-import Page from "components/Page";
 import nookies, { setCookie, destroyCookie } from "nookies";
 import jwt from 'jsonwebtoken';
-
-import "assets/css/global.css";
-
-import { authConstants } from "constants/auth";
 import { fetchData } from "lib/fetch";
 import AccountProvider from "lib/contexts/accountContext";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from "config/theme/ThemeProvider";
 import TwoFactorAuth from "components/AppModals/TwoFactorAuth";
+import Page from "components/Page";
+import { authConstants } from "constants/auth";
 
 // Page Transition Effects
 Router.events.on("routeChangeStart", (url) => {
   document.body.classList.add("body-page-transition");
-  const container = document.getElementById("page-transition");
-  const root = ReactDOMClient.createRoot(container)
-  root.render(<PageChange path={url} />);
 });
 
 Router.events.on("routeChangeComplete", () => {
-  const container = document.getElementById("page-transition");
-  const root = ReactDOMClient.createRoot(container)
-  root.unmount();
   document.body.classList.remove("body-page-transition");
 });
 
 Router.events.on("routeChangeError", () => {
-  const container = document.getElementById("page-transition");
-  const root = ReactDOMClient.createRoot(container)
-  root.unmount();
   document.body.classList.remove("body-page-transition");
 });
 
@@ -52,6 +37,7 @@ class MyApp extends App {
 
     const cookies = nookies.get(ctx);
     const sessionToken = cookies[authConstants.SESSION_TOKEN];
+
     // JWT and session handling
     if (sessionToken) {
       try {
@@ -59,15 +45,16 @@ class MyApp extends App {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: sessionToken })
-        })
-        const verified = res.verified
+        });
+        const verified = res.verified;
+
         if (!verified) {
           // Redirect to signin if verification fails
-          if (ctx.res) {
+          if (ctx.res && ctx.req.url !== '/signin') {
             ctx.res.writeHead(302, { Location: '/signin' });
             ctx.res.end();
           }
-          return;
+          return { pageProps };
         }
 
         const decoded = jwt.decode(sessionToken);
@@ -78,11 +65,11 @@ class MyApp extends App {
           destroyCookie(ctx, authConstants.SESSION_TOKEN);
           destroyCookie(ctx, authConstants.CSRF_TOKEN);
           destroyCookie(ctx, authConstants.CALLBACK_URL);
-          if (ctx.res) {
+          if (ctx.res && ctx.req.url !== '/signin') {
             ctx.res.writeHead(302, { Location: '/signin' });
             ctx.res.end();
           }
-          return;
+          return { pageProps };
         }
 
         // Add user details to pageProps
@@ -93,36 +80,42 @@ class MyApp extends App {
           firstName: decoded.user?.attributes?.firstname?.[0],
           lastName: decoded.user?.attributes?.lastname?.[0],
         };
+
         // Refresh cookie expiration
         setCookie(ctx, authConstants.SESSION_TOKEN, sessionToken);
 
         // Fetch account-related data
         try {
-          const accountResult = await fetchData(`${process.env.BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`,{},sessionToken);
+          const accountResult = await fetchData(`${process.env.BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`, {}, sessionToken);
           pageProps.user.enabled2FA = accountResult.enabled2FA;
           pageProps.user.mobileNumber = accountResult.mobileNumber;
           pageProps.user.docsumoApiKey = accountResult.docsumoApiKey;
         } catch (err) {
           // Handle account creation if necessary
           if (err === "Couldn't find account") {
-            await fetchData(`${process.env.BACKEND_URL}api/register/accounts`,
-              {
-                method: 'POST',
-                body: {
-                  id: decoded.user?.attributes?.userid?.[0],
-                  email: decoded.user?.attributes?.email?.[0],
-                  username: decoded.user?.name_id,
-                  fullname: `${decoded.user?.attributes?.firstname?.[0]} ${decoded.user?.attributes?.lastname?.[0]}`,
-              }},sessionToken
-            );
+            await fetchData(`${process.env.BACKEND_URL}api/register/accounts`, {
+              method: 'POST',
+              body: {
+                id: decoded.user?.attributes?.userid?.[0],
+                email: decoded.user?.attributes?.email?.[0],
+                username: decoded.user?.name_id,
+                fullname: `${decoded.user?.attributes?.firstname?.[0]} ${decoded.user?.attributes?.lastname?.[0]}`,
+              }
+            }, sessionToken);
           } else {
-            console.log(err)
+            console.log(err);
           }
         }
-      } catch (error) {
+      } catch ( error) {
         console.log('JWT Verification Error: ', error);
       }
+    } else {
+      if (ctx.res && ctx.req.url !== '/signin') {
+        ctx.res.writeHead(302, { Location: '/signin' });
+        ctx.res.end();
+      }
     }
+
     return { pageProps };
   }
 

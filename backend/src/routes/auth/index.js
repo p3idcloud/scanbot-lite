@@ -105,18 +105,7 @@ router.post('/signin', async (req, res) => {
     // Set the session cookie
     setSessionCookie(req, res, token);
 
-    // Redirect to the appropriate URL
-    return res.send(`
-        <html>
-            <body onload="document.forms['myform'].submit()">
-                <form name="myform" action="${process.env.FRONTEND_URL}api/auth/login/saml" method="POST">
-                    <input type="hidden" name="sessionToken" value="${token}"/>
-                    <input type="hidden" name="expireTime" value="${new Date(Date.now() + process.env.LOGIN_SESSION_DAY * 24 * 60 * 60 * 1000).toISOString()}"/>
-                    <input type="hidden" name="redirectUrl" value="${callbackUrl}"/>
-                </form>
-            </body>
-        </html>
-    `);
+    res.redirect(callbackUrl)
 });
 
 router.post('/verify', (req, res) => {
@@ -130,6 +119,10 @@ router.post('/verify', (req, res) => {
         }
     } 
     res.status(200).send({verified: false});
+})
+
+router.post('/logout', async (req, res) => {
+    
 })
 
 module.exports = router;

@@ -29,11 +29,6 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/signin',
-        destination: '/api/auth/login/saml',
-        permanent: true,
-      },
-      {
         source: '/api/auth/signin',
         destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/auth/signin`,
         permanent: true,

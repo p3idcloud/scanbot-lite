@@ -22,7 +22,7 @@ export const AccountProvider = ({ children, user }) => {
         destroyCookie({}, authConstants.CALLBACK_URL);
         destroyCookie({}, authConstants.REGISTRATION_TOKEN);
         destroyCookie({}, "ivalt-cookies");
-        Router.push("/api/auth/logout/saml");
+        Router.push("/signin");
       }
 
     const setAppModalAndOpen = (modalChild) => {

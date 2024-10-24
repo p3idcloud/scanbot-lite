@@ -27,97 +27,86 @@ Router.events.on("routeChangeError", () => {
 });
 
 class MyApp extends App {
-  // Server-Side Rendering (SSR)
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {};
 
     if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
+        pageProps = await Component.getInitialProps(ctx);
     }
 
     const cookies = nookies.get(ctx);
     const sessionToken = cookies[authConstants.SESSION_TOKEN];
-
-    // JWT and session handling
     if (sessionToken) {
-      try {
-        const res = await fetchData(`${process.env.BACKEND_URL}api/auth/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: sessionToken })
-        });
-        const verified = res.verified;
-
-        if (!verified) {
-          // Redirect to signin if verification fails
-          if (ctx.res && ctx.req.url !== '/signin') {
-            ctx.res.writeHead(302, { Location: '/signin' });
-            ctx.res.end();
-          }
-          return { pageProps };
-        }
-
-        const decoded = jwt.decode(sessionToken);
-        const expiredInMS = decoded.exp * 1000;
-
-        // If JWT is expired, clear cookies and redirect to signin
-        if (Date.now() >= expiredInMS) {
-          destroyCookie(ctx, authConstants.SESSION_TOKEN);
-          destroyCookie(ctx, authConstants.CSRF_TOKEN);
-          destroyCookie(ctx, authConstants.CALLBACK_URL);
-          if (ctx.res && ctx.req.url !== '/signin') {
-            ctx.res.writeHead(302, { Location: '/signin' });
-            ctx.res.end();
-          }
-          return { pageProps };
-        }
-
-        // Add user details to pageProps
-        pageProps.user = {
-          username: decoded.user?.attributes?.username?.[0],
-          email: decoded.user?.attributes?.email?.[0],
-          accountId: decoded.user?.attributes?.userid?.[0],
-          firstName: decoded.user?.attributes?.firstname?.[0],
-          lastName: decoded.user?.attributes?.lastname?.[0],
-        };
-
-        // Refresh cookie expiration
-        setCookie(ctx, authConstants.SESSION_TOKEN, sessionToken);
-
-        // Fetch account-related data
         try {
-          const accountResult = await fetchData(`${process.env.BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`, {}, sessionToken);
-          pageProps.user.enabled2FA = accountResult.enabled2FA;
-          pageProps.user.mobileNumber = accountResult.mobileNumber;
-          pageProps.user.docsumoApiKey = accountResult.docsumoApiKey;
-        } catch (err) {
-          // Handle account creation if necessary
-          if (err === "Couldn't find account") {
-            await fetchData(`${process.env.BACKEND_URL}api/register/accounts`, {
-              method: 'POST',
-              body: {
-                id: decoded.user?.attributes?.userid?.[0],
+            const res = await fetchData(`${process.env.BACKEND_URL}api/auth/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: sessionToken })
+            });
+            const verified = res.verified;
+
+            if (!verified) {
+                if (ctx.res && ctx.req.url !== '/signin') {
+                    ctx.res.writeHead(302, { Location: '/signin' });
+                    ctx.res.end();
+                }
+                return { pageProps }; // Return early to avoid further processing
+            }
+
+            const decoded = jwt.decode(sessionToken);
+            const expiredInMS = decoded.exp * 1000;
+
+            if (Date.now() >= expiredInMS) {
+                destroyCookie(ctx, authConstants.SESSION_TOKEN);
+                destroyCookie(ctx, authConstants.CSRF_TOKEN);
+                destroyCookie(ctx, authConstants.CALLBACK_URL);
+                if (ctx.res && ctx.req.url !== '/signin') {
+                    ctx.res.writeHead(302, { Location: '/signin' });
+                    ctx.res.end();
+                }
+                return { pageProps }; // Return early to avoid further processing
+            }
+
+            // Add user details to pageProps
+            pageProps.user = {
+                username: decoded.user?.attributes?.username?.[0],
                 email: decoded.user?.attributes?.email?.[0],
-                username: decoded.user?.name_id,
-                fullname: `${decoded.user?.attributes?.firstname?.[0]} ${decoded.user?.attributes?.lastname?.[0]}`,
-              }
-            }, sessionToken);
-          } else {
-            console.log(err);
-          }
+                accountId: decoded.user?.attributes?.userid?.[0],
+                firstName: decoded.user?.attributes?.firstname?.[0],
+                lastName: decoded.user?.attributes?.lastname?.[0],
+            };
+
+            // Refresh cookie expiration
+            setCookie(ctx, authConstants.SESSION_TOKEN, sessionToken);
+
+            // Fetch account-related data
+            try {
+                const accountResult = await fetchData(`${process.env.BACKEND_URL}api/accounts/${decoded.user?.attributes?.userid?.[0]}`, {}, sessionToken);
+                pageProps.user.enabled2FA = accountResult.enabled2FA;
+                pageProps.user.mobileNumber = accountResult.mobileNumber;
+                pageProps.user.docsumoApiKey = accountResult.docsumoApiKey;
+            } catch (err) {
+                if (err === "Couldn't find account") {
+                    await fetchData(`${process.env.BACKEND_URL}api/register/accounts`, {
+                        method: 'POST',
+                        body: {
+                            id: decoded.user?.attributes?.userid?.[0],
+                            email: decoded.user?.attributes?.email?.[0],
+                            username: decoded.user?.name_id,
+                            fullname: `${decoded.user?.attributes?.firstname?.[0]} ${decoded.user?.attributes?.lastname?.[0]}`,
+                        }
+                    }, sessionToken);
+                } else {
+                    console.log(err);
+                }
+            }
+        } catch (error) {
+            console.log('JWT Verification Error: ', error);
         }
-      } catch ( error) {
-        console.log('JWT Verification Error: ', error);
-      }
-    } else {
-      if (ctx.res && ctx.req.url !== '/signin') {
-        ctx.res.writeHead(302, { Location: '/signin' });
-        ctx.res.end();
-      }
     }
 
     return { pageProps };
-  }
+}
 
   render() {
     const { Component, pageProps } = this.props;

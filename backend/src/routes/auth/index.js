@@ -59,18 +59,7 @@ const postAssert = (identityProvider, samlBody) =>
 
 // Helper function to set session token as a cookie
 const setSessionCookie = (req, res, token) => {
-    const cookies = new Cookies(req, res);
-    let expireCookie = new Date();
-    expireCookie.setDate(expireCookie.getDate() + parseInt(process.env.LOGIN_SESSION_DAY, 10));
-
-    cookies.set(SESSION_TOKEN, token, {
-        httpOnly: true,
-        sameSite: 'Lax',  // 'Strict' can be used if necessary
-        expires: expireCookie,
-        path: '/',
-        // secure: process.env.NODE_ENV === 'production'
-        secure: false
-    });
+    res.cookie(SESSION_TOKEN, token, { httpOnly: true, sameSite: false, secure: false });
 };
 
 // Consolidated /signin route
@@ -122,7 +111,7 @@ router.post('/verify', (req, res) => {
 })
 
 router.post('/logout', async (req, res) => {
-    
+
 })
 
 module.exports = router;

@@ -1,25 +1,37 @@
-import { useEffect } from "react";
 import { authConstants } from "constants/auth";
 import Cookies from "js-cookie";
-import { useRouter } from "next/router";
 import Head from "next/head";
 
 const Signin = () => {
-    const router = useRouter();
+    return (
+        <div>
+            <Head>
+                <title>Scanbot Login</title>
+            </Head>
+            {/* Return null or a loading indicator while redirecting */}
+            <div>Loading...</div>
+        </div>
+    );
+};
+
+// This gets called on every request
+export async function getServerSideProps({ req, res }) {
     const registrationToken = Cookies.get(authConstants.REGISTRATION_TOKEN);
-
-    useEffect(() => {
-        // Check if the registration token exists and navigate accordingly
-        if (registrationToken) {
-            router.push(`/api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${registrationToken}`);
-        } else {
-            router.push(`/api/auth/signin`);
-        }
-    }, [registrationToken, router]); // Dependency array to run effect when registrationToken changes
-
-    return <Head>
-         <title>Scanbot Login</title>
-    </Head>; // Return null or a loading indicator while redirecting
+    if (registrationToken) {
+        return {
+            redirect: {
+                destination: `/api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${registrationToken}`,
+                permanent: false,
+            },
+        };
+    } else {
+        return {
+            redirect: {
+                destination: `/api/auth/signin`,
+                permanent: false,
+            },
+        };
+    }
 }
 
 export default Signin;

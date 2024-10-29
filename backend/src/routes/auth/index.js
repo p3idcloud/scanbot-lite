@@ -59,7 +59,15 @@ const postAssert = (identityProvider, samlBody) =>
 
 // Helper function to set session token as a cookie
 const setSessionCookie = (req, res, token) => {
-    res.cookie(SESSION_TOKEN, token, { httpOnly: true, sameSite: false, secure: false });
+    const maxAgeInDays = parseInt(process.env.LOGIN_SESSION_DAY, 10); // Ensure it's a number
+    const maxAgeInMilliseconds = maxAgeInDays * 24 * 60 * 60 * 1000;
+    
+    res.cookie(SESSION_TOKEN, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: maxAgeInMilliseconds,
+        path: '/',
+      });
 };
 
 // Consolidated /signin route
@@ -98,7 +106,7 @@ router.post('/signin', async (req, res) => {
 });
 
 router.post('/verify', (req, res) => {
-    const { token } = req.body;
+    const token = req.cookies[SESSION_TOKEN];
     if (token) {
         try {
             const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);

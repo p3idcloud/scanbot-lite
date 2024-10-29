@@ -87,7 +87,7 @@ const BarleaDialog = ({open, close, pdfUrls, pdfTitle, historyId}) => {
             };
 
               
-            fetchData(`${process.env.BACKEND_URL}api/barlea/upload`, {
+            fetchData(`api/barlea/upload`, {
                 method: "POST",
                 data
             })

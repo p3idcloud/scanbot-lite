@@ -50,7 +50,7 @@ const HeaderMain = () => {
         </Grid>
         <Grid display="flex" justifyContent="end" size={5}>
           <AccountWrapper>
-            <TitleAccount>{account?.firstName + ' ' + account?.lastName}</TitleAccount>
+            <TitleAccount>{account?.fullname}</TitleAccount>
             <SubTitleAccount>{account?.email}</SubTitleAccount>
           </AccountWrapper>
           <AvatarWrapper id="avatar-profile-header">

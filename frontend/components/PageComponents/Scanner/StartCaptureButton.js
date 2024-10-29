@@ -33,7 +33,7 @@ export default function StartCaptureButton() {
         "x-twain-cloud-request-id": requestId,
         "x-privet-token": privetToken,
         };
-        fetchData(`${process.env.BACKEND_URL}api/scanners/${scannerId}/twaindirect/session`, {
+        fetchData(`api/scanners/${scannerId}/twaindirect/session`, {
             headers,
             method: "POST",
             data,

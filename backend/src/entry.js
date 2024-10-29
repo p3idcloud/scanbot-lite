@@ -29,6 +29,7 @@ const storageRouter = require('./routes/storage');
 // Cloud API
 const scannersRouter = require('./routes/scanner');
 const accountRouter = require('./routes/account');
+const meRouter = require('./routes/me');
 const blocksRouter = require('./routes/block');
 const jobRouter = require('./routes/job');
 const scannerSettingRouter = require('./routes/scannersetting');
@@ -58,7 +59,8 @@ app.use(cookieParser());
 
 var corsOptions = {
   origin: process.env.FRONTEND_URL.replace(/\/$/, ''), // Remove trailing slash
-  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -88,7 +90,7 @@ app.post('/api/register/accounts', createAccount);
 app.use([
   '/api/claim', '/api/scanners', '/api/storage', '/api/accounts',
   '/api/jobs', '/api/scannersetting', '/api/dashboard', '/api/plugin',
-  '/api/opentext', '/api/barlea', '/api/c2pa'
+  '/api/opentext', '/api/barlea', '/api/c2pa', '/api/me'
 ], authMiddleware);
 
 // Storage route - requires auth middleware
@@ -103,6 +105,7 @@ app.use('/api/scanners/history', scannerHistoryRouter);
 app.use('/api/scanners', scannersRouter);
 
 // Account-related routes
+app.use('/api/me', meRouter)
 app.use('/api/accounts', accountRouter);
 
 // Job-related routes

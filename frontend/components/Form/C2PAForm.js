@@ -15,7 +15,7 @@ const validationSchema = Yup.object({
 
 const C2PAForm = ({ close }) => {
   const [loading, setLoading] = useState(false);
-  const { setAccount, account } = useAccount();
+  const { account } = useAccount();
   const { accountId, mobileNumber, enabled2FA, docsumoApiKey } = account || {};
 
   // Initial form values
@@ -35,15 +35,13 @@ const C2PAForm = ({ close }) => {
     };
 
     try {
-      await fetchData(`${process.env.BACKEND_URL}api/accounts/${accountId ?? ''}`, {
+      await fetchData(`api/accounts/${accountId ?? ''}`, {
         method: 'PATCH',
         data,
       });
       toast.success('Successfully updated settings');
       close();
 
-      // Update the account context
-      setAccount((prevAccount) => ({ ...prevAccount, ...data }));
     } catch (error) {
       toast.error('Failed to update settings');
     } finally {

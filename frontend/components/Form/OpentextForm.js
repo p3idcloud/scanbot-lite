@@ -20,7 +20,7 @@ const validationSchema = Yup.object({
 
 const OpentextForm = () => {
   const { data: pluginData, error: pluginErr } = useSWR(
-    `${process.env.BACKEND_URL}api/plugin/OPENTEXT`,
+    `api/plugin/OPENTEXT`,
     fetchDataSWR
   );
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ const OpentextForm = () => {
   const handleSubmit = async (values, { resetForm }) => {
     setLoading(true);
     try {
-      await fetchData(`${process.env.BACKEND_URL}api/plugin`, {
+      await fetchData(`api/plugin`, {
         method: 'PATCH',
         data: values,
       });
@@ -53,7 +53,7 @@ const OpentextForm = () => {
 
   const handleTestConnection = async (values) => {
     try {
-      const response = await fetchData(`${process.env.BACKEND_URL}api/opentext/verify`, {
+      const response = await fetchData(`api/opentext/verify`, {
         method: 'POST',
         data: values.data,
       });

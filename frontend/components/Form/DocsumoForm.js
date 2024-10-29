@@ -17,7 +17,7 @@ const validationSchema = Yup.object({
 
 const DocsumoForm = () => {
   const { data: pluginData, error: pluginErr } = useSWR(
-      `${process.env.BACKEND_URL}api/plugin/DOCSUMO`,
+      `api/plugin/DOCSUMO`,
       fetchDataSWR
   );
 
@@ -34,7 +34,7 @@ const DocsumoForm = () => {
   const handleSubmit = async (values, { resetForm }) => {
     setLoading(true);
     try {
-      await fetchData(`${process.env.BACKEND_URL}api/plugin`, {
+      await fetchData(`api/plugin`, {
         method: 'PATCH',
         data: values,
       });

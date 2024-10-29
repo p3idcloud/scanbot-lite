@@ -43,18 +43,18 @@ export const ScannerProvider = ({children}) => {
 
     
     const { data, error, isValidating } = useSWR(
-        `${process.env.BACKEND_URL}api/scanners/${scannerId}?ui=true`,
+        `api/scanners/${scannerId}?ui=true`,
         fetchData
     );
     const scannerStateData = useSWR(
-        `${process.env.BACKEND_URL}api/scanners/state/${scannerId}`,
+        `api/scanners/state/${scannerId}`,
         fetchData,
         {
             refreshInterval: 5000
         }
     ).data;
     const scannerSettingsData = useSWR(
-        `${process.env.BACKEND_URL}api/scannersetting`,
+        `api/scannersetting`,
         fetchData
     ).data;
 
@@ -87,7 +87,7 @@ export const ScannerProvider = ({children}) => {
 
     function handleInfoex() {
         setLoadingInfoex(true);
-        fetchData(`${process.env.BACKEND_URL}api/scanners/${scannerId}/infoex`, {
+        fetchData(`api/scanners/${scannerId}/infoex`, {
         headers,
         })
         .then((res) => {
@@ -142,7 +142,7 @@ export const ScannerProvider = ({children}) => {
         if (page !== scanHistoryPageIndex) {
             setScanHistoryPageIndex(page);
         }
-        fetchData(`${process.env.BACKEND_URL}api/scanners/history`, {
+        fetchData(`api/scanners/history`, {
             headers,
             params: {
                 scannerId,
@@ -162,7 +162,7 @@ export const ScannerProvider = ({children}) => {
         });
     }
     function loadScannerDetail() {
-        fetchData(`${process.env.BACKEND_URL}api/scanners/${scannerId}?ui=true`)
+        fetchData(`api/scanners/${scannerId}?ui=true`)
         .then((res) => {
             setDetailScanner(res.scanner ?? null);
         })

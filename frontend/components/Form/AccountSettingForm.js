@@ -34,7 +34,7 @@ const AccountSettingForm = () => {
     };
 
     try {
-      await fetchData(`${process.env.BACKEND_URL}api/accounts/${accountId ?? ''}`, {
+      await fetchData(`api/accounts/${accountId ?? ''}`, {
         method: 'PATCH',
         data,
       });

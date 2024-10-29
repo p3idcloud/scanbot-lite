@@ -3,11 +3,20 @@ import CustomLoader from "components/Loader";
 import { Box, Modal } from "@mui/material";
 import { destroyCookie } from "nookies/dist";
 import { authConstants } from "constants/auth";
-import Router from 'next/router';
+import { useRouter } from 'next/router';
+import { fetchData, fetchDataSWR } from "lib/fetch";
+import useSWR from "swr";
 
 export const AccountContext = createContext({});
 
 export const AccountProvider = ({ children, user }) => {
+    const { data: userData, error: userError } = useSWR(
+        `api/me`,
+        fetchDataSWR
+    );
+
+    const router = useRouter();
+
     const [loading, setLoading] = useState(false);
     const [appModalIsOpen, setAppModal] = useState(false);
     const [appModalChild, setAppModalChild] = useState(null);
@@ -22,7 +31,7 @@ export const AccountProvider = ({ children, user }) => {
         destroyCookie({}, authConstants.CALLBACK_URL);
         destroyCookie({}, authConstants.REGISTRATION_TOKEN);
         destroyCookie({}, "ivalt-cookies");
-        Router.push("/signin");
+        router.push("/signin");
       }
 
     const setAppModalAndOpen = (modalChild) => {
@@ -33,6 +42,28 @@ export const AccountProvider = ({ children, user }) => {
     const closeAppModal = () => {
         setAppModal(false);
     }
+
+
+    const verifyToken = async () => {
+        const res = await fetchData(`api/auth/verify`, {
+            method: 'POST',
+        });
+        const verified = res.verified;
+
+        if (!verified) {
+            if (router.pathname.includes('/signin')) {
+                router.push('/signin');
+            }
+        }
+    }
+
+    useEffect(() => {
+        setAccount(userData)
+    },[userData])
+
+    useEffect(() => {
+        verifyToken()
+    },[])
     
     return (
         <AccountContext.Provider 

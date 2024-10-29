@@ -33,7 +33,7 @@ export async function getServerSideProps(ctx) {
     
     if (token) {
         // Check if user is authorized
-        const { verified } = await fetch(`${process.env.BACKEND_URL}api/auth/verify`, {
+        const { verified } = await fetch(`api/auth/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

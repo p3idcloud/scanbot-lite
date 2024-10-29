@@ -28,11 +28,11 @@ export default function ConfigDescription({ tab, loading }) {
 
     const handleRemove = (id) => {
         setLoadingDelete(true);
-        fetchData(`${process.env.BACKEND_URL}api/scannersetting/${id}`, {
+        fetchData(`api/scannersetting/${id}`, {
           method: "DELETE",
         })
           .then((res) => {
-            mutate(`${process.env.BACKEND_URL}api/scannersetting`)
+            mutate(`api/scannersetting`)
                 .then(() => {
                     toast.success("Successfully Deleted!");
                     setLoadingDelete(false);

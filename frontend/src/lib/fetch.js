@@ -45,31 +45,13 @@ export async function fetchApp({url, requestOptions}) {
   return result;
 }
 
-export async function fetchData(url, args = {}, sessionToken = null) {
-  let token;
+export async function fetchData(url, args = {}) {
   const Axios = axios.create({
-    baseURL: process.env.BACKEND_URL,
+    baseURL: process.env.SAME_DOMAIN === 'false' ? process.env.BACKEND_URL : '/',
     timeout: 60000,
     cancelToken: args?.source?.token,
+    withCredentials: true 
   });
-
-  Axios.interceptors.request.use(
-    async (config) => {
-      if (isBrowser()) {
-        token = localStorage?.getItem('token') || Cookies.get(authConstants.SESSION_TOKEN);
-      } else if (sessionToken != null && sessionToken != undefined) {
-        token = sessionToken
-      } else {
-        token = Cookies.get(authConstants.SESSION_TOKEN);
-      } 
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
 
   try {
     const data = args.body ? args.body : args.data;
@@ -89,31 +71,13 @@ export async function fetchData(url, args = {}, sessionToken = null) {
   }
 }
 
-export async function fetchDataSWR(url, args = {}, sessionToken = null) {
-  let token;
+export async function fetchDataSWR(url, args = {}) {
   const Axios = axios.create({
-    baseURL: process.env.BACKEND_URL,
+    baseURL:  process.env.SAME_DOMAIN === 'false' ? process.env.BACKEND_URL : '/',
     timeout: 60000,
     cancelToken: args?.source?.token,
+    withCredentials: true
   });
-
-  Axios.interceptors.request.use(
-    async (config) => {
-      if (isBrowser()) {
-        token = localStorage?.getItem('token') || Cookies.get(authConstants.SESSION_TOKEN);
-      } else if (sessionToken != null && sessionToken != undefined) {
-        token = sessionToken
-      } else {
-        token = Cookies.get(authConstants.SESSION_TOKEN);
-      } 
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
 
   try {
     const data = args.body ? args.body : args.data;

@@ -4,54 +4,67 @@ import { authConstants } from "constants/auth";
 import { RegisterProvider } from "lib/contexts/registerContext";
 import { fetchData } from "lib/fetch";
 
-export default ({...props}) => <RegisterProvider {...props} >
+const RegisterPage = (props) => (
+    <RegisterProvider {...props}>
         <Register />
-    </RegisterProvider>;
+    </RegisterProvider>
+);
+
+export default RegisterPage;
 
 export async function getServerSideProps(ctx) {
     const { registrationToken, callback } = ctx.query;
+    const cookies = parseCookies(ctx);
+    let token = cookies[authConstants.SESSION_TOKEN];
 
-    var token = parseCookies(ctx)[authConstants.SESSION_TOKEN];
-
-    if (typeof callback === 'undefined') {
-        destroyCookie(ctx, authConstants.SESSION_TOKEN,{
-            path: '/'
-        });
+    // If callback is undefined, destroy the session token cookie
+    if (!callback) {
+        destroyCookie(ctx, authConstants.SESSION_TOKEN, { path: '/' });
         token = null;
     }
-    if (registrationToken && registrationToken !== 'undefined') {
+
+    // Handle registration token
+    if (registrationToken) {
         setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
             path: '/',
-            sameSite: 'lax'
+            sameSite: 'lax',
         });
     } else {
         ctx.res.writeHead(302, {
             Location: "/dashboard",
         });
-  
-      return ctx.res.end();
+        return ctx.res.end();
     }
-    
+
+    // Check if user is authorized
     if (token) {
-        // Check if user is authorized
-        const { verified } = await fetchData(`api/auth/verify`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({token: token})
-        })
-        
-        return {
-            props: {
-                user: verified
-            }
+        try {
+            const apiURL = `${(process.env.SAME_DOMAIN === 'false' ? process.env.BACKEND_URL : process.env.BASE_URL)}api/auth/verify`
+            const { verified } = await fetchData(apiURL, {
+                method: 'POST',
+                body: {
+                    token: token
+                },
+            });
+            
+            return {
+                props: {
+                    user: verified,
+                },
+            };
+        } catch (error) {
+            console.error('Error verifying token:', error);
+            return {
+                props: {
+                    user: false,
+                },
+            };
         }
     }
 
     return {
         props: {
-            user: false
-        }
+            user: false,
+        },
     };
 }

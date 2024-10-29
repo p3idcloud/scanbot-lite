@@ -108,7 +108,7 @@ router.post('/verify', (req, res) => {
     if (!token) {
        token = req.body.token; 
     }
-
+    
     if (token) {
         try {
             const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);

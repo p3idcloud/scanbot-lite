@@ -4,7 +4,6 @@ export const RegisterContext = createContext({});
 
 export const RegisterProvider = ({...props}) => {
     const { children } = props;
-    
     //  Step 1: Authorize user to log in if not yet
     //  Step 2: User is authorized, now claiming scanner (processing)
     //  Step 3: Scanner is claimed and registered to account

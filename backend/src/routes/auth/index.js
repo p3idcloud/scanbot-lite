@@ -73,18 +73,16 @@ const setSessionCookie = (req, res, token) => {
 // Consolidated /signin route
 router.post('/signin', async (req, res) => {
     const samlBody = req.body;
-    const cookies = new Cookies(req, res);
-    let user;
 
     // Check for registration token
-    const registrationToken = cookies.get(REGISTRATION_TOKEN);
+    const registrationToken = req.cookies[REGISTRATION_TOKEN];
     const callbackUrl = registrationToken
         ? `${process.env.FRONTEND_URL}scanners/register?registrationToken=${registrationToken}&callback=true`
         : `${process.env.FRONTEND_URL}dashboard`;
 
     // Clear the registration token cookie if it exists
     if (registrationToken) {
-        cookies.set(REGISTRATION_TOKEN, null, { httpOnly: true, sameSite: 'Lax', expires: new Date() });
+        res.cookie(REGISTRATION_TOKEN, null, { httpOnly: true, sameSite: 'Lax', expires: new Date() });
     }
 
     try {
@@ -106,7 +104,11 @@ router.post('/signin', async (req, res) => {
 });
 
 router.post('/verify', (req, res) => {
-    const token = req.cookies[SESSION_TOKEN];
+    var token = req.cookies[SESSION_TOKEN];
+    if (!token) {
+       token = req.body.token; 
+    }
+
     if (token) {
         try {
             const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);

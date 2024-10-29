@@ -2,6 +2,7 @@ import Register from "components/PageComponents/RegisterScanner";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { authConstants } from "constants/auth";
 import { RegisterProvider } from "lib/contexts/registerContext";
+import { fetchData } from "lib/fetch";
 
 export default ({...props}) => <RegisterProvider {...props} >
         <Register />
@@ -33,13 +34,14 @@ export async function getServerSideProps(ctx) {
     
     if (token) {
         // Check if user is authorized
-        const { verified } = await fetch(`api/auth/verify`, {
+        const { verified } = await fetchData(`api/auth/verify`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({token: token})
-        }).then(res => res.json());
+        })
+        
         return {
             props: {
                 user: verified

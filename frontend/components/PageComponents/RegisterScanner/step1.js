@@ -1,17 +1,20 @@
 import { Box, Typography } from "@mui/material";
 import Button from "components/Button";
 import Image from "next/image";
-import Router from "next/router";
+import { useRouter } from "next/router";
+import { authConstants } from "constants/auth";
 
 export default function Step1() {
+    const router = useRouter();
+
     const onClick = () => {
-        Router.push('/api/auth/login/saml');
+        router.push(`/api/auth/signin?${authConstants.REGISTRATION_TOKEN}=${router.query[authConstants.REGISTRATION_TOKEN]}`);
     } 
 
     return (
         <>
             <Image 
-                alt={"Caca"}
+                alt={"p3id"}
                 src="/p3id.png"
                 width={216}
                 height={93}

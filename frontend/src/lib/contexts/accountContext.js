@@ -51,7 +51,7 @@ export const AccountProvider = ({ children, user }) => {
         const verified = res.verified;
 
         if (!verified) {
-            if (router.pathname.includes('/signin')) {
+            if (!router.pathname.includes('/signin')) {
                 router.push('/signin');
             }
         }

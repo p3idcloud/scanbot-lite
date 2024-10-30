@@ -6,6 +6,8 @@ modules:
   language: nodejs18.x
   web: express
   description: NodeJS v18.x module using Express web framework v4.x
+  config:
+      instance: ombMirIBXO
   functions:
   - name: entry
     entry: entry.js

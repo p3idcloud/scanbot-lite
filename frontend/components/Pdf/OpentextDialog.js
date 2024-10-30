@@ -45,7 +45,7 @@ function CustomTabPanel(props) {
 
 const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
     const { data: opentextData, error: opentextErr, loading: opentextLoading } = useSWR(
-        `api/opentext/${historyId}`,
+        historyId ? `api/opentext/${historyId}` : null,
         fetchDataSWR
       );
 

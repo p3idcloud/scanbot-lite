@@ -3,7 +3,6 @@
 const pluginService = require('../services/plugin');
 
 exports.getPluginFromName = async ( req, res ) => {
-    console.log(req.twain)
     const name = req.params.name;
     const accountID = req.twain.principalId;
     const plugin = await pluginService.getPluginFromName(name, accountID);
@@ -50,7 +49,6 @@ exports.createPlugin = async (req, res) => {
         data: req.body.data,
         accountID: req.twain.principalId
     });
-    
     if (plugin) {
         return res.status(200).send(plugin);
     } else {
@@ -65,7 +63,18 @@ exports.updatePlugin = async (req, res) => {
             "errors": "body name is required",
         })
     }
-    const plugin = await pluginService.updatePlugin(req.body.name, req.twain.principalId, req.body);
+    var plugin = await pluginService.getPluginFromName(req.body.name)
+    if (!plugin) {
+        plugin = await pluginService.createPlugin(
+            {
+                name: req.body.name,
+                data: req.body.data,
+                accountID: req.twain.principalId
+            }
+        )
+    } else {
+        plugin = await pluginService.updatePlugin(req.body.name, req.twain.principalId, req.body);
+    }
 
     return res.status(200).send(plugin);
 }

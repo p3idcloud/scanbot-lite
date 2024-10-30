@@ -7,6 +7,17 @@ exports.insertFromJSON = async (jsonPlugin) => {
     return await Plugin.insertMany(jsonPlugin);
 }
 
+exports.createPlugin = async (data) => {
+    try {
+        if (data.id) {delete data.id}
+        const plugin = new Plugin(data)
+        await plugin.save()
+        return plugin
+    }catch (e) {
+        console.log(e)
+    }
+}
+
 exports.getPluginFromId = async (id) => {
     try {
         return Plugin.findOne({ id: id }).exec();
@@ -26,7 +37,7 @@ exports.getPluginFromName = async (name, accountID) => {
 exports.updatePlugin = async (name, accountID, data) => {
     try {
         if (data.id) {delete data.id}
-        const plugin = await Plugin.findOneAndUpdate({ name: name, accountID: accountID }, data, {upsert: true}).exec();
+        const plugin = await Plugin.updateOne({ name: name, accountID: accountID }, data).exec();
         return plugin;
     }catch (e) {
         console.log(e);

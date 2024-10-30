@@ -39,15 +39,14 @@ export const ScannerProvider = ({children}) => {
     const [scanHistoryPageIndex, setScanHistoryPageIndex] = useState(1);
 
     const router = useRouter();
-    const { scannerId } = router?.query;
-
+    const { scannerId } = router.query;
     
     const { data, error, isValidating } = useSWR(
-        `api/scanners/${scannerId}?ui=true`,
+        scannerId ? `api/scanners/${scannerId}?ui=true` : null,
         fetchData
     );
     const scannerStateData = useSWR(
-        `api/scanners/state/${scannerId}`,
+        scannerId ? `api/scanners/state/${scannerId}` : null,
         fetchData,
         {
             refreshInterval: 5000
@@ -117,10 +116,10 @@ export const ScannerProvider = ({children}) => {
     };
 
     useEffect(() => {
-        if (data?.sessionId?.length === 0 || !data) {
-        handleInfoex();
+        if (data?.sessionId?.length === 0 || !data && scannerId != undefined) {
+            handleInfoex();
         }
-    }, []);
+    }, [scannerId]);
 
     useEffect(() => {
         setUsedBy(error?.response?.data?.usedBy?.name || null);
@@ -152,12 +151,10 @@ export const ScannerProvider = ({children}) => {
             },
         })
         .then((res) => {
-            // console.log(res)
             setScannerHistory(res?.data ?? []);
             setScanHistoryRowCount(res?.dataCount ?? 0);
         })
         .catch((err) => {
-            // console.error(err)
             toast.error("Api error something")
         });
     }

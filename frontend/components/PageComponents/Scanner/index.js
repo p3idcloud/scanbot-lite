@@ -102,7 +102,7 @@ export default function Scanner() {
                                                 <Typography mb={3} fontWeight={600} fontSize='16px'>
                                                     Preview Result
                                                 </Typography>
-                                                <PdfViewer files={value.files} />
+                                                <PdfViewer pdfData={{url: value.files, name: 'Scan Preview'}} />
                                             </Card>
                                         </Grid>
                                     )}

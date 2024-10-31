@@ -77,7 +77,8 @@ const retrieveFile = async (accountId, uri) => {
 const retrieveC2paPdf = async (accountId, uri) => {
 	const minioClient = getGlobalMinioClient();
 	try {
-		let pdfStream = await minioClient.getObject(accountId, uri);
+		const baseUri = uri.split("?")
+		let pdfStream = await minioClient.getObject(accountId, baseUri[0]);
 		return await streamToBlob(pdfStream);
 	} catch (e) {
 		console.log(e)

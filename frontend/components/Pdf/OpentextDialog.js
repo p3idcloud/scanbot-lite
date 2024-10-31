@@ -16,7 +16,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { fetchDataSWR, fetchData } from 'lib/fetch';
+import { fetchDataSWR, fetchData, fetchFile } from 'lib/fetch';
 import { toast } from "react-toastify";
 import { TextWithParagraphs } from 'lib/helpers';
 import useSWR, { mutate } from 'swr';
@@ -103,14 +103,8 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
             fileName = `${pdfTitle || 'Scanbot'}.txt`;
         }
 
-        const response = await fetch(`api/storage/${fileURL}`,
-        {
-            headers: {
-            'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
-            },
-            method: 'GET'
-        });
-        const blob = await response.blob();
+        const response = await fetchFile(`api/storage/${fileURL}`);
+        const blob = await response.data;
     
         // Create a temporary container
         const container = document.createElement('div');
@@ -139,18 +133,11 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
     const fetchOCRText = async () => {
         try {
             if (ocrTextData === '') {
-                var response = await fetch(`api/storage/${opentextData.OcrText}`,
-                    {
-                        headers: {
-                        'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
-                        },
-                        method: 'GET'
-                    }
-                )
+                var response = await fetchFile(`api/storage/${opentextData.OcrText}`)
                 if (!response.ok) {
                     throw new Error(`Error fetching file: ${response.statusText}`);
                 }
-                const fileBlob = await response.blob();
+                const fileBlob = await response.data;
     
                 const fileString = await blobToString(fileBlob);
                 
@@ -292,7 +279,6 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
             };
           }
         
-          console.log(activeTab)
         return (
             <div className='mt-5'>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

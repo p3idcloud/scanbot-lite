@@ -80,7 +80,6 @@ const streamlinePdfBlobList = (pdfBlobParam) => {
 }
 
 const streamToBlob = async (readableStream, { mimeType = null } = { mimeType: null }) => {
-    console.log(readableStream)
     return new Promise((resolve, reject) => {
         const chunks = [];
         readableStream.on('data', (chunk) => {

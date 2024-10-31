@@ -3,7 +3,7 @@ import { useScanner } from "lib/contexts/scannerContext";
 import { useEffect, useState } from "react";
 
 import { mutate } from "swr";
-import { fetchData } from "lib/fetch";
+import { fetchData, fetchFile } from "lib/fetch";
 import { useMemo } from "react";
 import CardDrawer from "components/CardDrawer";
 import Table from "components/Table";
@@ -63,13 +63,8 @@ export default function ScannerHistory({...props}) {
     const [historyPdf, setHistoryPdf] = useState(null);
 
     const fetchPdf = (url) => {
-        return fetch(url, {
-            headers: {
-            'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
-            },
-            method: 'GET'
-        })
-        .then((res) => res.blob())
+        return fetchFile(url)
+        .then((res) => res.data )
         .then((pdfData) => new Blob([pdfData], {type: 'application/pdf'}));
     }
 
@@ -90,7 +85,10 @@ export default function ScannerHistory({...props}) {
                 rawUrl: data.url,
             });
         })
-        .catch(err => toast.error('Failed to fetch pdf'));
+        .catch(err => {
+            console.log(err)
+            toast.error('Failed to fetch pdf')
+        });
     }
 
     const tableData = useMemo(() =>

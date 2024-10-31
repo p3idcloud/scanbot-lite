@@ -78,6 +78,8 @@ router.get(
   ExerciseController.savePDFToDrive
 );
 
+router.get('/imagepdf',ExerciseController.getFileTest)
+
 /* handler for invalid endpoints */
 router.use((_, res) => res.sendStatus(404));
 

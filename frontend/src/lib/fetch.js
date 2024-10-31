@@ -71,6 +71,29 @@ export async function fetchData(url, args = {}) {
   }
 }
 
+export async function fetchFile(url, args = {}) {
+  const Axios = axios.create({
+    baseURL: process.env.SAME_DOMAIN === 'false' ? process.env.BACKEND_URL : '/',
+    timeout: 60000,
+    cancelToken: args?.source?.token,
+    withCredentials: true 
+  });
+
+  try {
+    const response = await Axios({
+      url,
+      method: args.method || 'GET',
+      headers: args.headers,  // Pass additional headers if needed
+      params: args.params,
+      responseType: 'blob',
+      ...args
+    });
+    return response;
+  } catch (error) {
+    return Promise.reject(error.response ? error.response.data : error);
+  }
+}
+
 export async function fetchDataSWR(url, args = {}) {
   const Axios = axios.create({
     baseURL:  process.env.SAME_DOMAIN === 'false' ? process.env.BACKEND_URL : '/',

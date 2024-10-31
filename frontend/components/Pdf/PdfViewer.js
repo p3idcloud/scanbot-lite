@@ -119,7 +119,7 @@ export default function PdfViewer({ pdfData }) {
     return pdfData?.name
   },[pdfData])
   const historyId = useMemo(() => {
-    return pdfData?.history.id
+    return pdfData?.history?.id
   },[pdfData])
 
 
@@ -139,7 +139,6 @@ export default function PdfViewer({ pdfData }) {
       setWidth(pdfDocRef?.current?.clientWidth);
     }
   }, [pdfDocRef?.current?.clientHeight, pdfDocRef?.current?.clientWidth]);
-
   return (<>
     <Card withpadding background='#F8F8FA'>
       <Grid direction="column" container alignItems='center'>

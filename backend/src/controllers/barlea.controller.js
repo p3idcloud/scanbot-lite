@@ -48,7 +48,6 @@ const sendBarlea = async (req, res) => {
     }
 
     const [mergedPdf, error] = await mergePdf(streamlinePdfBlobList(pdfBlobList));
-    console.log(mergedPdf)
     if (error) {
         console.log("Failed to merge Pdf");
         return res.status(500).json({ "message": "Failed to merge Pdf" });

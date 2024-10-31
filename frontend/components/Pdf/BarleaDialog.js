@@ -124,7 +124,6 @@ const BarleaDialog = ({open, close, pdfUrls, pdfTitle, historyId}) => {
                 <LoadingButton
                     onClick={handleSubmit}
                     loading={loading}
-                    loadingPosition="end"
                     variant="contained"
                 >
                     Upload

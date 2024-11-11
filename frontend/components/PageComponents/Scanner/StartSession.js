@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { fetchData } from "lib/fetch";
 import * as uuid from "uuid";
 import { destroyCookie, parseCookies } from "nookies";
@@ -38,7 +38,7 @@ export default function StartSession() {
   }
   const handleOnClick = () => {
     getStopSession(stopSession);
-    if (!statusScanner) {
+    if (!statusScanner || statusPoll?.status == "offline") {
       return handleRefresh();
     }
     if (statusClaim && statusPoll?.state !== "noSession") {
@@ -88,6 +88,19 @@ export default function StartSession() {
       });
   };
 
+  const buttonText = useMemo(() => {
+    if (statusPoll?.status === "offline") {
+      return "Re-start Scanner";
+    }
+    if (statusClaim && statusPoll?.state !== "noSession") {
+      return "Stop Session";
+    }
+    if (!statusScanner) {
+      return "Re-start Scanner";
+    }
+    return "Start Session";
+  }, [statusClaim, statusPoll, statusScanner]);
+
   return (
     <>
       {
@@ -109,12 +122,7 @@ export default function StartSession() {
             loading={loading || statusPoll?.state === "capturing"}
             onClick={handleOnClick}
           >
-            {statusClaim && statusPoll?.state !== "noSession"
-                      ? "Stop Session"
-                      : !statusScanner
-                      ? "Re-start Scanner"
-                      : "Start Session"
-            }
+            {buttonText}
           </Button>
         )
       }

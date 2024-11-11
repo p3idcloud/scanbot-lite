@@ -16,8 +16,7 @@ const validationSchema = Yup.object({
 const AccountSettingForm = () => {
   const [loading, setLoading] = useState(false);
   const { setAccount, account } = useAccount();
-  const { accountId, mobileNumber, enabled2FA } = account || {};
-
+  const { mobileNumber, enabled2FA } = account || {};
   // Initial form values
   const initialValues = {
     mobileNumber: mobileNumber ?? '',
@@ -30,12 +29,11 @@ const AccountSettingForm = () => {
     const data = {
       mobileNumber: values.mobileNumber,
       enabled2FA: values.enabled2FA,
-      docsumoApiKey: values.docsumoApiKey,
     };
 
     try {
-      await fetchData(`api/accounts/${accountId ?? ''}`, {
-        method: 'PATCH',
+      await fetchData(`api/me`, {
+        method: 'POST',
         data,
       });
       toast.success('Successfully updated settings');

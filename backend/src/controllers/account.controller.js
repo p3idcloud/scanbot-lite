@@ -73,9 +73,8 @@ exports.createAccount = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
     const accountId = req.twain.principalId;
-
     if (accountId) {
-        const account = await accountService.updateAccount(req.params.id, req.body);
+        const account = await accountService.updateAccount(accountId, req.body);
 
         return res.status(200).send(account);
     }

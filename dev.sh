@@ -58,3 +58,20 @@ if [[ -f "$ENV_FRONTEND_FILE" ]]; then
 else
   echo "$ENV_FRONTEND_FILE does not exist."
 fi
+
+#!/bin/bash
+
+# Navigate to the backend directory and run yarn dev
+echo "Starting backend..."
+cd backend || { echo "Backend directory not found!"; exit 1; }
+yarn dev &
+
+# Navigate to the frontend directory and run yarn dev
+echo "Starting frontend..."
+cd ../frontend || { echo "Frontend directory not found!"; exit 1; }
+yarn dev &
+
+# Wait for all background jobs to finish
+wait
+
+echo "Scanbotlite are running at http://$CURRENT_IP:3000/"

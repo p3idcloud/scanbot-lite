@@ -73,10 +73,10 @@ const Settings = ({ open, close, ...rest }) => {
           <AccountSettingForm />
         </CustomTabPanel>
         <CustomTabPanel value={tabValue} index={1}>
-          <DocsumoForm />
           <OpentextForm />
           <BarleaForm />
           <C2PAForm />
+          <DocsumoForm />
         </CustomTabPanel>
       </Box>
     </Modal>

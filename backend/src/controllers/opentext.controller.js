@@ -97,6 +97,7 @@ const verifyTokenPlugin = async (req, res) => {
         return res.status(401).json({
             "message": "Plugin opentext not configured"
         })
+        return
     }
     const { opentextDomain } = generateOpentextURL(plugin.data.opentext_url)
     
@@ -107,7 +108,7 @@ const verifyTokenPlugin = async (req, res) => {
             "grant_type": "client_credentials"
         })
         res.status(200).json(response.data)
-        return response.data;
+        return
     } catch (error) {
         console.log(error)
         res.status(401).json(error)

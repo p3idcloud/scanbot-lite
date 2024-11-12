@@ -139,14 +139,37 @@ Exercise 2: Test out Plugins
 ---
 
 ## 1) OpenText
-# TODO MASKAT
-Tolong isiin cara setup api key config dll sama upload ke opentext dri scanbot-lite.
-Kalo perlu ad register user dll kasih tau aja gmn carany
+#### Updating Opentext Plugin
+1. Open scanbotlite dashboard
+2. Open Settings in the top right corner ⚙ (Cog Icon).
+3. Navigate to Plugin Tab
+4. Fill the Opentext forms
+5. Test the connection first, before saving to make sure your connection to opentext are successfull.
+6. Click Update
+
+#### Generate a new Opentext Client API
+To generate a new Client API you can follow this guides
+[https://developer.opentext.com/cloud-platform/tutorials/create-your-first-application/1](https://developer.opentext.com/cloud-platform/tutorials/create-your-first-application/1)
+
+Until you received `opentext_url` , `tenant_id`, `client_id`, `client_secret`
 
 ## 2) C2PA
-# TODO MASKAT
-Tolong isiin cara download c2pa dri ui, dan kalo perlu config apa lgi
+#### There are two ways to download C2PA files:
+1. **During Document Scanning:**
+    When you scan a new document, the PDF viewer will pop up on your screen. In the viewer, you will find a button labeled **C2PA Download**.
 
+2. **From Scan History:**
+
+   Open your scan history. In the action column, you will see a [D] icon for details. Click on this icon to open the PDF viewer, where you will find the new **C2PA Download** button.
+
+#### Generate a New Certificate for C2PA
+If you want to generate a new certificate for C2PA, you will need to create a new one. For the specifications, please follow these guidelines: [C2PA Signing Manifest](https://opensource.contentauthenticity.org/docs/manifest/signing-manifests).
+
+You should have two files with the extensions `.key` and `.pem`. 
+
+Replace the following files with your key:
+- `/backend/src/certs/p3idtech.com.scanbot.pem`
+- `/backend/src/certs/tls_server.key`
 
 ---
 Exercise 3: Deploying to Cloud

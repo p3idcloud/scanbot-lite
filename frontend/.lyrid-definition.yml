@@ -6,8 +6,6 @@ modules:
     language: nodejs20.x
     web: next.standalone
     description: NodeJS v18.x module using Next.js v13.x
-    config:
-      instance: ombMirIBXO
     functions:
       - name: entry
         description: the entry point for the function

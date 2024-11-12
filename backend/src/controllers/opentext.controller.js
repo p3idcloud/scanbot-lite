@@ -94,7 +94,7 @@ const verifyToken = async (req, res) => {
 const verifyTokenPlugin = async (req, res) => {
     const plugin = await getOpentextPlugin(req.twain.principalId)
     if (!plugin) {
-        res.status(401).json({
+        return res.status(401).json({
             "message": "Plugin opentext not configured"
         })
     }

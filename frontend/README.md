@@ -10,7 +10,7 @@ This documentation contains technical documentation related to the setup and dep
 
 ## Next.js deployment
 
-Firstly, create a new file named `.lyrid-definition.yml` at your Next.js root directory. Here's an example of the file:
+Firstly, double check file named `.lyrid-definition.yml` at your Next.js root directory. Here's an example of the file:
 
 ```
 # path: ./.lyrid-definition.yml
@@ -19,10 +19,10 @@ name: scanbot-frontend-nextjs
 description: Frontend service for Scanbot project built with Next.js
 ignoreFiles: .git .next node_modules
 modules:
-  - name: nextjs12
-    language: nodejs16.x
-    web: nextjs
-    description: NodeJS v16.x module using Next.js v12.x
+  - name: nextjs
+    language: nodejs20.x
+    web: next.standalone
+    description: NodeJS v18.x module using Next.js v13.x
     functions:
       - name: entry
         description: the entry point for the function
@@ -38,13 +38,15 @@ Once it done uploading, you should be able to see the public endpoint for your a
 
 ```
 ✅ App build and deployment completed: LYR
-🚀 Run your endpoint at: https://api.lyrid.io/x/scanbot-frontend-nextjs/nextjs12/latest/entry/
+🚀 Run your endpoint at: https://api.lyrid.io/x/scanbot-frontend-nextjs/nextjs/latest/entry/
 🚀 Try our new subdomain at: https://s22d.lyr.id
 ```
 
-After the initial upload, update your `.env` file with the Lyrid public URL, like so:
+After the initial upload, create `.env.production` by copying contents of `.env.development` and update your `.env.production` file with the Lyrid public URL, ensuring the Frontend and the Backend are connected to correct urls:
 
 ```
+# BASE_URL -> your frontend url
+# BACKEND_URL -> your backend url
 BASE_URL=https://s22d.lyr.id/
 BACKEND_URL=https://wnxb.lyr.id/
 ```
@@ -55,5 +57,14 @@ Once you did that, run the following command to update your application at Lyrid
 lc code submit
 ```
 
+### Note:
+To avoid running confusing deployment orders.
+It is recommended to take this approach:
+
+1. Submit Frontend & Backend first
+2. Retrieve  `BASE_URL` and `BACKEND_URL`
+3. Store it in `.env.production` of respective apps
+4. Re run `lc code submit` for both apps
+
 ## Notes on Dependency
-Dont update react-pdf it will break the pdf viewer
+Dont update react-pdf as there could be version incompatibilities with the app

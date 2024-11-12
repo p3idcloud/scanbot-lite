@@ -82,7 +82,7 @@ For setting up the front end and back end, refer to the README.md at their respe
 ENVIRONMENT SETUP
 ---
 
-### 0) Prerequisites : Node.js 18, Yarn
+### 0) Prerequisites : Node.js 18 or 20, Yarn
 
 1. Installing Node. Download Node and install normally
 2. Installing Yarn. Run terminal / cmd / powershell as admin then run command

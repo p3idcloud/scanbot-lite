@@ -77,14 +77,27 @@ export default function PdfViewer({ pdfData }) {
 
 
   const handleDownloadC2PA = async () => {
-    let pdfUrl = pdfData.rawUrl[page];
+    console.log(pdfData.url[page],page)
+    let pdfUrl = '';
+    if (pdfData.rawUrl !== undefined) {
+      pdfUrl = pdfData.rawUrl[page];
+    } else {
+      pdfUrl = pdfData.url[page];
+    }
+    console.log(pdfUrl)
     // remove leading url
-    pdfUrl = pdfUrl.split('storage/')[1];
+    var pdfStorageSplit = pdfUrl.split('storage/')[1];
     // remove query
-    pdfUrl = pdfUrl.split('?')[0];
+    let pdfQuerySplit = '';
+    if (pdfStorageSplit == undefined) {
+      var lastSegment = getLastSegments(pdfUrl)
+      pdfQuerySplit = lastSegment.split('?')[0];
+    } else {
+      pdfQuerySplit = pdfStorageSplit.split('?')[0];
+    }
 
     let data = {
-      uri: pdfUrl,
+      uri: pdfQuerySplit,
       pdfTitle: pdfData.name
     }
 
@@ -108,6 +121,17 @@ export default function PdfViewer({ pdfData }) {
     // Remove the anchor from the document body
     document.body.removeChild(a);
   };
+
+  const getLastSegments = (url) => {
+    // Split the URL by "/"
+    const urlParts = url.split("/");
+    
+    // Find the index of the last occurrence of the part to start from
+    const lastIndex = urlParts.length - 4; // second last part (the last UUID)
+    
+    // Join the parts from the lastIndex to the end without leading "/"
+    return urlParts.slice(lastIndex).join("/");
+}
 
   const files = useMemo(() => {
     return pdfData?.url || dummyFile

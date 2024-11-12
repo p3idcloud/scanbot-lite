@@ -52,6 +52,12 @@ BASE_URL=https://wnxb.lyr.id/
 FRONTEND_URL=https://s22d.lyr.id/
 ```
 
+Also update the `NODE_ENV` to `production` for production environment variable
+
+```
+NODE_ENV=production
+```
+
 Once you did that, run the following command to update your application at Lyrid platform:
 
 ```

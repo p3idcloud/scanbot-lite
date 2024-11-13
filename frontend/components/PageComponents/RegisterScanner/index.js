@@ -7,9 +7,34 @@ import { useRegister } from "lib/contexts/registerContext";
 import Step1 from "./step1";
 import Step2 from "./step2";
 import Step3 from "./step3";
+import { useAccount } from "lib/contexts/accountContext";
+import { useEffect, useState } from "react";
+import { fetchData } from "lib/fetch";
 
 export default function Register() {
-    const { step } = useRegister();
+    const { account } = useAccount();
+    const { setStep, step } = useRegister();
+
+    const VerifyAccount = async () => {
+        const apiURL = `api/auth/verify`
+        const { verified } = await fetchData(apiURL, {
+            method: 'POST',
+        });
+        return verified
+    }
+
+    useEffect(() => {
+        if (account === undefined) {
+            setStep(1)
+            return
+        }
+        var isVerified = VerifyAccount();
+        if (!isVerified) {
+            setStep(1)
+        } else if (isVerified && step !== 3) {
+            setStep(2)
+        }
+    },[account])
 
     const StepComponent = () => {
         switch(step) {

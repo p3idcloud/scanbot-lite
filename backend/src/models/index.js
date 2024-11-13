@@ -15,13 +15,15 @@ db.scannersession = require('./scannersession.model');
 db.scannerstate = require('./scannerstate.model');
 db.scannerhistory = require('./scannerhistory.model');
 db.scannerdefault = require('./scannerdefault.model');
+db.plugin = require('./plugin.model');
+db.opentext = require('./opentext.model');
 
 exports.connectDB = async () => {
     const connection = process.env.MONGODB_URL;
     try {
         console.log('---------------------------database connection')
         console.log(connection);
-        await db.mongoose.connect(connection,{ useNewUrlParser: true, useUnifiedTopology: true });
+        await db.mongoose.connect(connection,{ });
 
     } catch (err) {
         console.log('error: ' + err);

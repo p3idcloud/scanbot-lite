@@ -1,10 +1,9 @@
 const nextConfig = {
-  basePath: '',
   env: {
     LOGIN_SESSION_DAY: parseInt(process.env.LOGIN_SESSION_DAY),
     JWT_SECRET: process.env.JWT_SECRET,
-    baseUrl: process.env.BASE_URL,
-    backendUrl: process.env.BACKEND_URL,
+    BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    SAME_DOMAIN: process.env.SAME_DOMAIN,
     APP_SECRET_STRING: process.env.APP_SECRET_STRING,
   },
   webpack: (config, { isServer }) => {
@@ -31,17 +30,18 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/signin',
-        destination: '/api/auth/login/saml',
+        source: '/api/auth/signin',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/auth/signin`,
         permanent: true,
       },
       {
         source: '/signout',
-        destination: `${process.env.BACKEND_URL}api/auth/signout`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}api/auth/signout`,
         permanent: true,
       },
     ];
   },
+  output: 'standalone',
 };
 
 module.exports = nextConfig;

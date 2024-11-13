@@ -1,5 +1,6 @@
 const AccountService = require('../services/account');
 const Minio = require('minio');
+const { retrieveC2paPdf } = require('./c2pa.controller');
 
 const minioClient = new Minio.Client({
     endPoint: process.env.AWS_ENDPOINT,
@@ -13,7 +14,6 @@ const minioClient = new Minio.Client({
 exports.getFileFromURI = async (req, res) => {
     const uri = req.params.uri + req.params[0];
     const account = await AccountService.getAccountFromId(req.twain.principalId);
-    
     minioClient.getObject(account.id, uri, function(e, dataStream) {
         if (e) {
             return res.status(400).send(e)

@@ -6,13 +6,11 @@ export const getInitialName = name => {
       return name;
     }
     if (name) {
-      return (
-        name
-          .match(/(\b\S)?/g)
-          .join('')
-          .substr(0, 2)
-          .toUpperCase() ?? 'AA'
-      );
+      return (name
+        .match(/(\b\S)?/g)
+        .join('')
+        .substr(0, 2)
+        .toUpperCase() ?? 'AA');
     }
     return 'AA';
 };
@@ -42,3 +40,13 @@ export const mergePdf = async (blobs) => {
     return [null, error];
   }
 }
+
+export const TextWithParagraphs = ({ text }) => {
+  return (
+    <div>
+      {text.split('\r\n').map((paragraph, index) => (
+        <p key={index}>{paragraph}</p>
+      ))}
+    </div>
+  );
+};

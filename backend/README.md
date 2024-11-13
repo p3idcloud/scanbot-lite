@@ -10,23 +10,23 @@ This documentation contains technical documentation related to the setup and dep
 
 ## Express.js deployment
 
-Firstly, create a new file named `.lyrid-definition.yml` at your Express.js root directory. Here's an example of the file:
+Firstly, double check file named `.lyrid-definition.yml` at your Express.js root directory. Here's an example of the file:
 
 ```
 # path: ./.lyrid-definition.yml
 
-name: scanbot-backend-express
+name: scanbotlite-backend-express
 description: Backend service for Scanbot project built with Express.js
 ignoreFiles: .git node_modules
 modules:
-  - name: nodejs14-express4
-    language: nodejs14.x
-    web: express
-    description: NodeJS v14.x module using Express web framework v4.x
-    functions:
-      - name: entry
-        entry: entry.js
-        description: the entry point for the function
+- name: nodejs
+  language: nodejs18.x
+  web: express
+  description: NodeJS v18.x module using Express web framework v4.x
+  functions:
+  - name: entry
+    entry: entry.js
+    description: the entry point for the function
 ```
 
 Then, upload your code to Lyrid platform by running the following command:
@@ -35,7 +35,7 @@ Then, upload your code to Lyrid platform by running the following command:
 lc code submit
 ```
 
-Once it done uploading, you should be able to see the public endpoint for your application at the end of the command output:
+Once it's done uploading, you should be able to see the public endpoint for your application at the end of the command output:
 
 ```
 ✅ App build and deployment completed: LYR
@@ -43,11 +43,19 @@ Once it done uploading, you should be able to see the public endpoint for your a
 🚀 Try our new subdomain at: https://wnxb.lyr.id
 ```
 
-After the initial upload, update your `.env` file with the Lyrid public URL, like so:
+After the initial upload, create `.env.production` by copying contents of `.env.development` and update your `.env.production` file with the Lyrid public URL, include the `/` at the end:
 
 ```
+# BASE_URL -> your backend url
+# FRONTEND_URL -> your frontend url
 BASE_URL=https://wnxb.lyr.id/
 FRONTEND_URL=https://s22d.lyr.id/
+```
+
+Also update the `NODE_ENV` to `production` for production environment variable
+
+```
+NODE_ENV=production
 ```
 
 Once you did that, run the following command to update your application at Lyrid platform:
@@ -55,3 +63,15 @@ Once you did that, run the following command to update your application at Lyrid
 ```
 lc code submit
 ```
+
+### Note:
+To avoid running confusing deployment orders.
+It is recommended to take this approach:
+
+1. Submit Frontend & Backend first
+2. Retrieve `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` (or `BASE_URL`)
+3. Store it in `.env.production` of respective apps
+4. Re run `lc code submit` for both apps
+
+## Notes on Dependency
+Dont update pdf-merger-js, canvas, or c2pa-node as there could be dependency incompatibilities

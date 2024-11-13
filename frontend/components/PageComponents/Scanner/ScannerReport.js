@@ -14,9 +14,9 @@ export default function ScannerReport({...props}) {
     const [totalScan, setTotalScan] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const { data: dataReport, error: errorReport } = useSWR(
-        `${process.env.backendUrl}api/scanners/${scannerId}/analytic`,
+        `api/scanners/${scannerId}/analytic`,
         fetchData, {
-            refreshInterval: 1000
+            refreshInterval: 5000
         }
     );
     useEffect(() => {

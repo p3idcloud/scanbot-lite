@@ -11,7 +11,7 @@ import {
   TitleAccount,
   LogoutButton
 } from './style';
-import { Avatar, Box, Grid, IconButton } from '@mui/material';
+import { Avatar, Box, Grid2 as Grid, IconButton } from '@mui/material';
 import { useRef, useState } from 'react';
 import { getInitialName } from 'lib/helpers';
 import { useAccount } from 'lib/contexts/accountContext';
@@ -36,77 +36,75 @@ const HeaderMain = () => {
     setAnchorEl(null);
   };
 
-  return (
-    <>
-      <Box sx={{ position: 'sticky', width: '100%', zIndex: 500, top: 0 }}>
-        <Header container>
-          <Grid item xs={7} ref={refLeftNav} justifyContent="start" display="flex">
-            <Logo>
-              <Link legacyBehavior href="/dashboard">
-                <a style={{ textDecoration: 'none' }}>
-                  <TitleLogo />
-                </a>
-              </Link>
-            </Logo>
-          </Grid>
-          <Grid item xs={5} display="flex" justifyContent="end">
-            <AccountWrapper>
-              <TitleAccount>{account?.firstName + ' ' + account?.lastName}</TitleAccount>
-              <SubTitleAccount>{account?.email}</SubTitleAccount>
-            </AccountWrapper>
-            <AvatarWrapper id="avatar-profile-header">
-              <Avatar sx={sxAvatar}>{getInitialName(account?.firstName + ' ' + account?.lastName)}</Avatar>
-            </AvatarWrapper>
-            <SettingsWrapper>
-              <IconButton onClick={handleClick}>
-                <SettingsIcon />
-              </IconButton>
-            </SettingsWrapper>
-            <MenuHeader
-              id="header-menu"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-              }}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                'aria-labelledby': 'basic-button'
-              }}
+  return (<>
+    <Box sx={{ position: 'sticky', width: '100%', zIndex: 500, top: 0 }}>
+      <Header container>
+        <Grid ref={refLeftNav} justifyContent="start" display="flex" size={7}>
+          <Logo>
+            <Link legacyBehavior href="/dashboard">
+              <a style={{ textDecoration: 'none' }}>
+                <TitleLogo />
+              </a>
+            </Link>
+          </Logo>
+        </Grid>
+        <Grid display="flex" justifyContent="end" size={5}>
+          <AccountWrapper>
+            <TitleAccount>{account?.fullname}</TitleAccount>
+            <SubTitleAccount>{account?.email}</SubTitleAccount>
+          </AccountWrapper>
+          <AvatarWrapper id="avatar-profile-header">
+            <Avatar sx={sxAvatar}>{getInitialName(account?.firstName + ' ' + account?.lastName)}</Avatar>
+          </AvatarWrapper>
+          <SettingsWrapper>
+            <IconButton onClick={handleClick}>
+              <SettingsIcon />
+            </IconButton>
+          </SettingsWrapper>
+          <MenuHeader
+            id="header-menu"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button'
+            }}
+          >
+            <LogoutButton onClick={() => {
+              setAnchorEl(null);
+              setSettingsOpen(true)
+            }}
             >
-              <LogoutButton onClick={() => {
-                setAnchorEl(null);
-                setSettingsOpen(true)
-              }}
-              >
-                Settings
-              </LogoutButton>
-              <LogoutButton onClick={() => {
-                setAnchorEl(null);
-                setLogoutOpen(true);
-              }}
-              >
-                Log out
-              </LogoutButton>
-            </MenuHeader>
-          </Grid>
-        </Header>
-      </Box>
-      <Logout
-        open={logoutOpen}
-        close={() => setLogoutOpen(false)}
-      />
-      <Settings
-        open={Boolean(settingsOpen)}
-        close={()=>setSettingsOpen(false)}
-      />
-    </>
-  );
+              Settings
+            </LogoutButton>
+            <LogoutButton onClick={() => {
+              setAnchorEl(null);
+              setLogoutOpen(true);
+            }}
+            >
+              Log out
+            </LogoutButton>
+          </MenuHeader>
+        </Grid>
+      </Header>
+    </Box>
+    <Logout
+      open={logoutOpen}
+      close={() => setLogoutOpen(false)}
+    />
+    <Settings
+      open={Boolean(settingsOpen)}
+      close={()=>setSettingsOpen(false)}
+    />
+  </>);
 };
 
 export default HeaderMain;

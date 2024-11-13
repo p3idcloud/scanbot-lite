@@ -4,7 +4,7 @@ const jobService = require("../services/job");
 const accountService = require("../services/account")
 const queueService = require("../services/queue");
 const scannerStateService = require("../services/scannerstate");
-const { createScannerHistory, updateScannerHistory } = require("../services/scannerhistory");
+const { createScannerHistory, updateScannerHistory, updateScannerHistoryCompleted } = require("../services/scannerhistory");
 const {updateScannerFromId} = require("../services/scanner");
 const {createScannerSession, getScannerSessionFromId, updateScannerSessionFromId} = require("../services/scannersession");
 
@@ -29,7 +29,7 @@ exports.allLocal = async (req, res, next) => {
     // TODO: check scanner is online
     // subscribe to mqtt topic to get the response
     if (method === 'POST' && body.method === 'waitForEvents') {
-        iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), body.params.sessionId);
+        iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), body.params.sessionId, account.id);
 
         return res.status(200)
     }else{
@@ -62,6 +62,7 @@ exports.allLocal = async (req, res, next) => {
                 "latestEvent": "infoEx"
                 }
             );
+            await updateScannerHistoryCompleted(account.id)
             return res.status(400).send("Scanner Offline / Undetected");
         }else {
             await updateScannerFromId(scannerId,
@@ -75,6 +76,7 @@ exports.allLocal = async (req, res, next) => {
                 "latestEvent": "infoEx"
                 }
             );
+            
             return res.status(200).json(result);
         }
     }else if (method === 'POST' && body.method === 'createSession') { // check if it send a startSession
@@ -163,6 +165,7 @@ exports.allLocal = async (req, res, next) => {
 
             await createScannerHistory({
                 'id': uuid.v4(),
+                'sessionId': result.results.session.sessionId,
                 'queueId': queue.id,
                 'accountId': account.id,
                 'scannerId': scannerId,
@@ -184,7 +187,7 @@ exports.allLocal = async (req, res, next) => {
                     "lastCommandAt": Date.now()
                 }
             );
-            iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), result.results.session.sessionId);
+            iot.findPollCommandIdFromWaitForEventsThenSaveImagesToService(headers, scannerId, iot.getClientTopic(authorizationstring), result.results.session.sessionId, account.id);
             return res.status(200).json(result);
         }
     }else if (method === 'POST' && body.method === 'sendTask') {
@@ -404,6 +407,7 @@ exports.allLocal = async (req, res, next) => {
     }else if (method === 'POST' && body.method === 'closeSession') {
         //session state management
         let scannerSession = await getScannerSessionFromId(body.params.sessionId);
+
         if (scannerSession?.state !== 'ready') {
             return res.status(400).send("Please wait for scanner to be ready");
         }
@@ -437,9 +441,7 @@ exports.allLocal = async (req, res, next) => {
                 'status': result.results.session.state,
             });
 
-            await updateScannerHistory(scannerState.currentQueueId, {
-                "status": "Completed"
-            });
+            await updateScannerHistoryCompleted(account.id)
 
             await updateScannerSessionFromId(scannerSession.id,{
                 'state': result.results.session.state,

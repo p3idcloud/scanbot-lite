@@ -1,4 +1,4 @@
-import { Box, FormGroup, Typography, Grid } from "@mui/material";
+import { Box, FormGroup, Typography, Grid2 as Grid } from "@mui/material";
 import DeleteConfirmation from "components/AppModals/DeleteConfirmation";
 import Button from "components/Button";
 import Card from "components/Card";
@@ -28,11 +28,11 @@ export default function ConfigDescription({ tab, loading }) {
 
     const handleRemove = (id) => {
         setLoadingDelete(true);
-        fetchData(`${process.env.backendUrl}api/scannersetting/${id}`, {
+        fetchData(`api/scannersetting/${id}`, {
           method: "DELETE",
         })
           .then((res) => {
-            mutate(`${process.env.backendUrl}api/scannersetting`)
+            mutate(`api/scannersetting`)
                 .then(() => {
                     toast.success("Successfully Deleted!");
                     setLoadingDelete(false);
@@ -43,30 +43,29 @@ export default function ConfigDescription({ tab, loading }) {
           });
     };
 
-    return (
-        <>
-            <DeleteConfirmation
-                open={deleteConfigOpen}
-                title="Delete Config"
-                subTitle={`Are you sure you want to delete ${values?.labelName}? This process cannot be undone.`}
-                onDelete={() => {
-                    handleRemove(values.id);
-                    setDeleteConfigOpen(false);
-                }}
-                onClose={() => {
-                    setDeleteConfigOpen(false);
-                }}
-                loading={loadingDelete}
-            />
-            <Card withpadding>
-                <Typography sx={{mb: 4, fontWeight:600, fontSize: '16px', fontColor: '#0D0D0D'}}>
-                    Config Description
-                </Typography>
+    return (<>
+        <DeleteConfirmation
+            open={deleteConfigOpen}
+            title="Delete Config"
+            subTitle={`Are you sure you want to delete ${values?.labelName}? This process cannot be undone.`}
+            onDelete={() => {
+                handleRemove(values.id);
+                setDeleteConfigOpen(false);
+            }}
+            onClose={() => {
+                setDeleteConfigOpen(false);
+            }}
+            loading={loadingDelete}
+        />
+        <Card withpadding>
+            <Typography sx={{mb: 4, fontWeight:600, fontSize: '16px', fontColor: '#0D0D0D'}}>
+                Config Description
+            </Typography>
 
-                <Grid container spacing={3}>
-                    {arrForm.map((item, index) => {
-                        return (
-                        <Grid key={index} item xs={(index !== 4 && index !== 5) ? 12 : 6}>
+            <Grid container spacing={3}>
+                {arrForm.map((item, index) => {
+                    return (
+                        (<Grid key={index} size={(index !== 4 && index !== 5) ? 12 : 6}>
                             <FormGroup>
                                 <InputField
                                     fullWidth
@@ -82,39 +81,38 @@ export default function ConfigDescription({ tab, loading }) {
                                     error={Boolean(errors[item.name])}
                                 />
                             </FormGroup>
-                        </Grid>
-                        );
-                    })}    
-                </Grid>
+                        </Grid>)
+                    );
+                })}    
+            </Grid>
 
-                
+            
 
-                <Box 
-                    display='flex' 
-                    justifyContent={tab !== -1 ? 'space-between' : 'end'} 
-                    mt={3}
-                >
-                    {tab !== -1 && (
-                        <Button
-                            color="red"
-                            autoWidth
-                            loading={loadingDelete}
-                            startIcon={<RiDeleteBin4Line />}
-                            onClick={()=>setDeleteConfigOpen(true)}
-                        >
-                            Delete
-                        </Button>   
-                    )}
+            <Box 
+                display='flex' 
+                justifyContent={tab !== -1 ? 'space-between' : 'end'} 
+                mt={3}
+            >
+                {tab !== -1 && (
                     <Button
+                        color="red"
                         autoWidth
-                        loading={loading}
-                        startIcon={<RiSaveLine />}
-                        onClick={handleSubmit}
+                        loading={loadingDelete}
+                        startIcon={<RiDeleteBin4Line />}
+                        onClick={()=>setDeleteConfigOpen(true)}
                     >
-                        {tab === -1 ? 'Create': 'Save'}
-                    </Button>
-                </Box>
-            </Card>
-        </>
-    )
+                        Delete
+                    </Button>   
+                )}
+                <Button
+                    autoWidth
+                    loading={loading}
+                    startIcon={<RiSaveLine />}
+                    onClick={handleSubmit}
+                >
+                    {tab === -1 ? 'Create': 'Save'}
+                </Button>
+            </Box>
+        </Card>
+    </>);
 }

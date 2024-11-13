@@ -49,7 +49,7 @@ const StartSessionForm = ({ open, close }) => {
       "x-twain-cloud-request-id": commandId,
       "x-privet-token": privetToken,
     };
-    fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`, {
+    fetchData(`api/scanners/${scannerId}/twaindirect/session`, {
       headers,
       method: "POST",
       data,
@@ -63,8 +63,12 @@ const StartSessionForm = ({ open, close }) => {
       .then(() => {
         loadScannerHistory();
       })
-      .catch(() => {
-        toast.error("Scanner offline, please check your scanner");
+      .catch((err) => {
+        if (err?.results?.code === "busy") {
+          toast.error("Scanner is busy, please try again later");
+        } else {
+          toast.error("Scanner offline, please check your scanner");
+        }
       })
       .finally(() => {
         setLoading(false);

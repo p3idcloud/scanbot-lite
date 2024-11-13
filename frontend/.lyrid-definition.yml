@@ -1,11 +1,11 @@
-name: scanbot-frontend-nextjs
+name: scanbotlite-frontend
 description: Frontend service for Scanbot project built with Next.js
 ignoreFiles: .git .next node_modules
 modules:
-  - name: nextjs12
-    language: nodejs16.x
-    web: nextjs
-    description: NodeJS v16.x module using Next.js v12.x
+  - name: nextjs
+    language: nodejs20.x
+    web: next.standalone
+    description: NodeJS v20.x module using Next.js v13.x
     functions:
       - name: entry
         description: the entry point for the function

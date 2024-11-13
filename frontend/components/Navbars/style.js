@@ -1,5 +1,5 @@
 import { styled } from '@mui/system';
-import { Button, Grid, ListItem, ListSubheader, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, Grid2 as Grid, ListItem, ListSubheader, Menu, MenuItem, Typography } from '@mui/material';
 
 export const Header = styled(Grid)({
   padding: '12px 24px',

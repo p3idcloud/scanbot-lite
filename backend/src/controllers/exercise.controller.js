@@ -4,6 +4,7 @@ const { getJobFromId } = require('../services/job.js');
 const { getQueueFromId } = require('../services/queue.js');
 const { getScannerHistoryFromId } = require('../services/scannerhistory.js');
 const isEmpty = require('../utils/isEmpty.js');
+const { retrieveC2paPdf } = require('./c2pa.controller.js');
 
 async function getImageURIsFromScannerHistory(req, res, next) {
   try {
@@ -65,4 +66,10 @@ async function serveMergedPDFResult(req, res) {
   res.status(200).send(req.mergedPDF);
 }
 
-module.exports = { getImageURIsFromScannerHistory, mergePDFFromImageURIs, savePDFToDrive, serveMergedPDFResult };
+async function getFileTest(req, res) {
+  const uri = "5dcf5d5b-576a-4a55-819e-0dd47da7b7db/scannedDocuments/65fd075d-cee3-4703-9108-8a03acef0d08/af8869d4-682d-4b1f-81c0-9a90f1a20ef2"
+  const pdfResult = await retrieveC2paPdf("5dcf5d5b-576a-4a55-819e-0dd47da7b7db",uri)
+  res.send(pdfResult)
+}
+
+module.exports = { getImageURIsFromScannerHistory, mergePDFFromImageURIs, savePDFToDrive, serveMergedPDFResult, getFileTest };

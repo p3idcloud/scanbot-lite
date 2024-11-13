@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { fetchData } from "lib/fetch";
 import * as uuid from "uuid";
 import { destroyCookie, parseCookies } from "nookies";
@@ -29,7 +29,8 @@ export default function StartSession() {
     statusPoll,
     resetStatusClaimStates,
     setCloseCloud,
-    setStartCapture
+    setStartCapture,
+    loadingInfoex
   } = useScanner();
 
   const getStopSession = (callback) => {
@@ -37,7 +38,7 @@ export default function StartSession() {
   }
   const handleOnClick = () => {
     getStopSession(stopSession);
-    if (!statusScanner) {
+    if (!statusScanner || statusPoll?.status == "offline") {
       return handleRefresh();
     }
     if (statusClaim && statusPoll?.state !== "noSession") {
@@ -68,7 +69,7 @@ export default function StartSession() {
         sessionId: session_id,
       },
     };
-    fetchData(`${process.env.backendUrl}api/scanners/${id}/twaindirect/session`, {
+    fetchData(`api/scanners/${id}/twaindirect/session`, {
       headers,
       method: "POST",
       data,
@@ -81,28 +82,51 @@ export default function StartSession() {
         resetStatusClaimStates();
         setTimeout(() => {
           loadScannerHistory();
-          mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`);
+          mutate(`api/scanners/${scannerId}/analytic`);
           setLoading(false);
         }, 1000)
       });
   };
 
+  const buttonText = useMemo(() => {
+    if (statusPoll?.status === "offline") {
+      return "Re-start Scanner";
+    }
+    if (statusClaim && statusPoll?.state !== "noSession") {
+      return "Stop Session";
+    }
+    if (!statusScanner) {
+      return "Re-start Scanner";
+    }
+    return "Start Session";
+  }, [statusClaim, statusPoll, statusScanner]);
+
   return (
     <>
-      <Button 
-        startIcon={<HiOutlineLightningBolt />} 
-        color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
-        sx={{ width: 'fit-content', fontSize: 13 }}
-        loading={loading || statusPoll?.state === "capturing"}
-        onClick={handleOnClick}
-      >
-        {statusClaim && statusPoll?.state !== "noSession"
-                  ? "Stop Session"
-                  : !statusScanner
-                  ? "Re-start Scanner"
-                  : "Start Session"
-        }
-      </Button>
+      {
+        loadingInfoex ? (
+          <Button 
+            startIcon={<HiOutlineLightningBolt />} 
+            color={'lightBlue'}
+            sx={{ width: 'fit-content', fontSize: 13 }}
+            loading={loadingInfoex}
+            // onClick={handleOnClick}
+          >
+            Checking Scanner
+          </Button>
+        ) : (
+          <Button 
+            startIcon={<HiOutlineLightningBolt />} 
+            color={statusClaim && statusPoll?.state !== "noSession" ? 'red' : 'primary'}
+            sx={{ width: 'fit-content', fontSize: 13 }}
+            loading={loading || statusPoll?.state === "capturing"}
+            onClick={handleOnClick}
+          >
+            {buttonText}
+          </Button>
+        )
+      }
+      
       <StartSessionForm 
         open={openSession}
         close={()=>setOpenSession(false)}

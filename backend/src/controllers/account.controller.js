@@ -14,6 +14,16 @@ exports.getAccountFromId = async ( req, res ) => {
     }
 }
 
+
+exports.getMe = async (req, res) => {
+    const userId = req.twain.principalId;
+    if (userId) {
+        const account = await accountService.getAccountFromId(userId);
+        return res.status(200).send(account);
+    }
+    return res.status(401).send('Can not access this feature. You need to login first!');
+}
+
 exports.getAccountFromQuery = async (req, res) => {
     let query = {};
     const account = await accountService.getAccountFromId(req.query.id);
@@ -63,9 +73,8 @@ exports.createAccount = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
     const accountId = req.twain.principalId;
-
     if (accountId) {
-        const account = await accountService.updateAccount(req.params.id, req.body);
+        const account = await accountService.updateAccount(accountId, req.body);
 
         return res.status(200).send(account);
     }

@@ -3,38 +3,17 @@ Get more familiar with Scanbot-Lite app by trying out some exercise that we prep
 code changes for each implementation.
 
 ---
-Exercise for Backend service
+Setup tutorial
 ---
-`Scanner history id` can be used to retrieve the job history of a scanner, and also get information about the stored files for that specific job. Due to the nature of the application, each page of the scanned file is stored as a separate object, so we can use this as an exercise to create a new feature.
 
-As an exercise to get more familiar with the application, create new endpoints and implement logic to check if the scanner history exist and the user has access to the scanner history before processing the request.
-### 1) Endpoint to combine several pdf documents
-This can be achieved by using the `pdf-merger-js` library. The endpoint should accept the scanner history id as url parameter and return the combined pdf document.
+1. Git clone [this repo](https://github.com/p3idcloud/scanbot-lite)
+2. Copy paste the environments supplied
+    - `.env.development` for development, and `.env.production` for build
+    - You need two environment files (one in backend and one in frontend)
+3. Get your local IP Address
+    - Use `ipconfig` or a similar command to figure out your local IP address and use that instead of `localhost`
+    - For production use (deploying) you should use environment variables in `.env.development` with only changes to `BASE_URL` (backend url), `FRONTEND_URL` (frontend url) and `NEXT_PUBLIC_BACKEND_URL` (backend url) to the urls you would use (local ip for testing in device and actual domain for deployment for production).
 
-### 2) Endpoint to save pdf document to Google Drive
-This can be achieved by using the `googleapis` library. The endpoint should accept the scanner history id as url parameter and return the combined pdf document.
-
----
-Exercise for Frontend service
----
-For the frontend service, we will create a new feature to allow the user to make their account more secure by adding 2FA (Two Factor Authentication) to their account. One of the ways to achieve this is by implementing the iValt 2FA service using the `ivalt-api-js` library.
-
----
-Exercise for Deploying to Cloud
----
-Deploying an application to cloud is as simple as setting up Lyrid Account. To deploy your application, simply go
-through [Lyrid Documentation](https://docs.lyrid.io/registration) from Registration up to Deploying Function.
-
-To deploy your application to cloud, first you need to submit both frontend and backend to Lyrid Platform. It will
-return you the endpoint for each application (ex: wxyz.lyr.id for backend and abcd.lyr.id for frontend). Application
-wouldn't work for now. Then clone a .env file (in frontend and backend) based on the environment that you have 
-(remove .env.development and .env.production), update the values on .env that you created before: 
-
-Variables: BASE_URL
-, FRONTEND_URL or BACKEND_URL (depending on frontend or backend application). 
-
-After updating .env file, do a resubmit on both frontend and backend application. It will update your env file on 
-cloud and on finish, your cloud version of Scanbot-Lite is ready.
 
 
 # LOCAL SETUP
@@ -82,7 +61,7 @@ For setting up the front end and back end, refer to the README.md at their respe
 ENVIRONMENT SETUP
 ---
 
-### 0) Prerequisites : Node.js 18, Yarn
+### 0) Prerequisites : Node.js 18 or 20, Yarn
 
 1. Installing Node. Download Node and install normally
 2. Installing Yarn. Run terminal / cmd / powershell as admin then run command
@@ -90,7 +69,7 @@ ENVIRONMENT SETUP
 ```
 npm install -g yarn
 ```
-3. In case error (Windows) : yarn.ps1 cannot be loaded because running scripts is disabled on this system, run terminal with admin access
+3. In case of error (Windows) : yarn.ps1 cannot be loaded because running scripts is disabled on this system, run terminal with admin access
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 ```
@@ -99,7 +78,7 @@ or if you don't have admin permission
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### 1) Import Scanbot Realm to Keycloak
+### 1) Import Scanbot Realm to Keycloak (Skip this)
 
 A realm allows creating isolated groups of applications and users. By default there is a single realm in Keycloak called `master`. This realm is dedicated to manage Keycloak and should not be used for client applications.
 
@@ -107,7 +86,7 @@ A realm allows creating isolated groups of applications and users. By default th
 2. Click `Master` dropdown, then click `Create Realm` 
 3. In the `Resource file` field, click `Browse` and import `scanbot-realm.json` from the `assets` folder, then click `Create` 
 
-### 2) Import JSON Config
+### 2) Import JSON Config (Deprecated)
 Run the loadenv script: (Make sure file is in LF (CRLF will break the script))
 ```
 bash loadenv.sh
@@ -140,14 +119,75 @@ After installation is done, run:
 ```
 yarn dev
 ```
----
-Exercise
----
-`Scanner history id` can be used to retrieve the job history of a scanner, and also get information about the stored files for that specific job. Due to the nature of the application, each page of the scanned file is stored as a separate object, so we can use this as an exercise to create a new feature.
 
-As an exercise to get more familiar with the application, create new endpoints and implement logic to check if the scanner history exist and the user has access to the scanner history before processing the request.
-## 1) Endpoint to combine several pdf documents
-This can be achieved by using the `pdf-merger-js` library. The endpoint should accept the scanner history id as url parameter and return the combined pdf document.
+---
+Exercise 1: Register and Scan
+---
 
-## 2) Endpoint to save pdf document to Google Drive
-This can be achieved by using the `googleapis` library. The endpoint should accept the scanner history id as url parameter and return the combined pdf document.
+## 1) Register Scanner
+1. Identify the scanner IP Address and connect to Web UI for Scanner
+2. Navigate to Cloud
+3. Add the backend url (example http://192.168.0.1:8000, https://devday01.devday.lyrid.io)
+4. Finish Registration process
+
+## 2) Initiate a Scan
+1. Select your newly registered Scanner
+2. Start Session > Start Capturing
+
+---
+Exercise 2: Test out Plugins
+---
+
+## 1) OpenText
+#### Updating Opentext Plugin
+1. Open scanbotlite dashboard
+2. Open Settings in the top right corner ⚙ (Cog Icon).
+3. Navigate to Plugin Tab
+4. Fill the Opentext forms
+5. Test the connection first, before saving to make sure your connection to opentext are successfull.
+6. Click Update
+
+#### Generate a new Opentext Client API
+To generate a new Client API you can follow this guides
+[https://developer.opentext.com/cloud-platform/tutorials/create-your-first-application/1](https://developer.opentext.com/cloud-platform/tutorials/create-your-first-application/1)
+
+Until you received `opentext_url` , `tenant_id`, `client_id`, `client_secret`
+
+##### Note:
+For USA `opentext_url` will be `https://us.api.opentext.com` 
+
+## 2) C2PA
+#### There are two ways to download C2PA files:
+1. **During Document Scanning:**
+    When you scan a new document, the PDF viewer will pop up on your screen. In the viewer, you will find a button labeled **C2PA Download**.
+
+2. **From Scan History:**
+
+   Open your scan history. In the action column, you will see a [D] icon for details. Click on this icon to open the PDF viewer, where you will find the new **C2PA Download** button.
+
+#### Note: Generate a New Certificate for C2PA
+If you want to generate a new certificate for C2PA, you will need to create a new one. For the specifications, please follow these guidelines: [C2PA Signing Manifest](https://opensource.contentauthenticity.org/docs/manifest/signing-manifests).
+
+You should have two files with the extensions `.key` and `.pem`. 
+
+Replace the following files with your key:
+- `/backend/src/certs/p3idtech.com.scanbot.pem`
+- `/backend/src/certs/tls_server.key`
+
+---
+Exercise 3: Deploying to Cloud
+---
+Deploying an application to cloud is as simple as setting up Lyrid Account. To deploy your application, simply go
+through [Lyrid Documentation](https://docs.lyrid.io/registration) from Registration up to Deploying Function.
+
+To deploy your application to cloud, first you need to submit both frontend and backend to Lyrid Platform. It will
+return you the endpoint for each application (ex: wxyz.lyr.id for backend and abcd.lyr.id for frontend). Application
+wouldn't work for now. Then clone a .env file (in frontend and backend) based on the environment that you have 
+(remove .env.development and .env.production), update the values on .env that you created before: 
+
+Variables: BASE_URL, FRONTEND_URL or NEXT_PUBLIC_BACKEND_URL (depending on frontend or backend application). 
+
+After updating .env file, do a resubmit on both frontend and backend application. It will update your env file on 
+cloud and on finish, your cloud version of Scanbot-Lite is ready.
+
+For more information you can visit corresponding `README.md` documents within frontend and backend directories.

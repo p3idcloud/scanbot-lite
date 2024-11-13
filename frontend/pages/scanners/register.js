@@ -1,55 +1,32 @@
 import Register from "components/PageComponents/RegisterScanner";
-import { destroyCookie, parseCookies, setCookie } from "nookies";
+import { destroyCookie, setCookie } from "nookies";
 import { authConstants } from "constants/auth";
 import { RegisterProvider } from "lib/contexts/registerContext";
 
-export default ({...props}) => <RegisterProvider {...props} >
+const RegisterPage = (props) => (
+    <RegisterProvider {...props}>
         <Register />
-    </RegisterProvider>;
+    </RegisterProvider>
+);
+
+export default RegisterPage;
 
 export async function getServerSideProps(ctx) {
     const { registrationToken, callback } = ctx.query;
-
-    var token = parseCookies(ctx)[authConstants.SESSION_TOKEN];
-
-    if (typeof callback === 'undefined') {
-        destroyCookie(ctx, authConstants.SESSION_TOKEN,{
-            path: '/'
-        });
-        token = null;
+    // If callback is undefined, destroy the session token cookie
+    if (!callback) {
+        destroyCookie(ctx, authConstants.SESSION_TOKEN, { path: '/' });
     }
-    if (registrationToken && registrationToken !== 'undefined') {
+
+    // Handle registration token
+    if (registrationToken) {
         setCookie(ctx, authConstants.REGISTRATION_TOKEN, registrationToken, {
             path: '/',
-            sameSite: 'lax'
+            sameSite: 'lax',
         });
-    } else {
-        ctx.res.writeHead(302, {
-            Location: "/dashboard",
-        });
-  
-      return ctx.res.end();
     }
     
-    if (token) {
-        // Check if user is authorized
-        const { verified } = await fetch(`${process.env.backendUrl}api/auth/verify`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({token: token})
-        }).then(res => res.json());
-        return {
-            props: {
-                user: verified
-            }
-        }
-    }
-
     return {
-        props: {
-            user: false
-        }
-    };
+        props: {}
+    }
 }

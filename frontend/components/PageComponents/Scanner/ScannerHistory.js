@@ -3,7 +3,7 @@ import { useScanner } from "lib/contexts/scannerContext";
 import { useEffect, useState } from "react";
 
 import { mutate } from "swr";
-import { fetchData } from "lib/fetch";
+import { fetchData, fetchFile } from "lib/fetch";
 import { useMemo } from "react";
 import CardDrawer from "components/CardDrawer";
 import Table from "components/Table";
@@ -40,11 +40,11 @@ export default function ScannerHistory({...props}) {
     const handleDeleteScanner = () => {
         setLoadingDelete(true);
         fetchData(
-            `${process.env.backendUrl}api/scanners/history/${deleteHistory.id}`, 
+            `api/scanners/history/${deleteHistory.id}`, 
             { method: "DELETE" }
         ).then(res => {
             loadScannerHistory(scanHistoryPageIndex, rowsPerPage);
-            mutate(`${process.env.backendUrl}api/scanners/${scannerId}/analytic`)
+            mutate(`api/scanners/${scannerId}/analytic`)
                 .then(() =>{
                     setLoadingDelete(false);
                     toast.success('Successfully deleted history');
@@ -63,19 +63,14 @@ export default function ScannerHistory({...props}) {
     const [historyPdf, setHistoryPdf] = useState(null);
 
     const fetchPdf = (url) => {
-        return fetch(url, {
-            headers: {
-            'Authorization': `Bearer ${parseCookies()[authConstants.SESSION_TOKEN]}`,
-            },
-            method: 'GET'
-        })
-        .then((res) => res.blob())
+        return fetchFile(url)
+        .then((res) => res.data )
         .then((pdfData) => new Blob([pdfData], {type: 'application/pdf'}));
     }
 
     const getPdf = (id, name) => {
         setLoadingPdf(true);
-        fetchData(`${process.env.backendUrl}api/scanners/history/${id}`)
+        fetchData(`api/scanners/history/${id}`)
         .then(async data => {
             const pdfBlobs = await Promise.all(data?.url.map(url => 
                 fetchPdf(url)
@@ -83,12 +78,17 @@ export default function ScannerHistory({...props}) {
             const urls = pdfBlobs.map(blob => URL.createObjectURL(blob));
             setLoadingPdf(false);
             setHistoryPdf({
+                history: data.history,
                 url: urls,
                 name: name,
-                pdfBlobs: pdfBlobs
+                pdfBlobs: pdfBlobs,
+                rawUrl: data.url,
             });
         })
-        .catch(err => toast.error('Failed to fetch pdf'));
+        .catch(err => {
+            console.log(err)
+            toast.error('Failed to fetch pdf')
+        });
     }
 
     const tableData = useMemo(() =>
@@ -170,9 +170,10 @@ export default function ScannerHistory({...props}) {
             <ScanPdfView
                 open={Boolean(historyPdf)}
                 onClose={()=>setHistoryPdf(null)}
-                name={historyPdf?.name}
-                files={historyPdf?.url}
-                pdfBlobs={historyPdf?.pdfBlobs}
+                // name={historyPdf?.name}
+                // files={historyPdf?.url}
+                // pdfBlobs={historyPdf?.pdfBlobs}
+                pdfData={historyPdf}
             />
             
             <Modal open={loadingPdf}>

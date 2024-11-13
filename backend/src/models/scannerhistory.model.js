@@ -16,6 +16,10 @@ const mongoose = require('mongoose');
  *      type: string
  *      description: Id of scanner
  *      example: 1
+ *     sessionId:
+ *      type: string
+ *      description: Session id of scanner
+ *      example: 12
  *     queueId:
  *      type: string
  *      description: Queue id of scanner
@@ -58,6 +62,7 @@ const mongoose = require('mongoose');
 
 const ScannerHistorySchema = new mongoose.Schema({
     id: String,
+    sessionId: String,
     queueId: String,
     accountId: String,
     scannerId: String,

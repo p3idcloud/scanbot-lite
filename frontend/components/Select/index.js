@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 const placeholderHelper = 'mui-component-select';
 
-const Select = ({ value, onChange, lists, label, helperText, control, error, disabled, onChangeValue, ...props }) => {
+const Select = ({ value, onChange = () => null, lists, label, helperText, control, error, disabled = false, onChangeValue = () => null, ...props }) => {
   const [itemValue, setItemValue] = useState(value || '');
 
   useEffect(() => {
@@ -79,10 +79,5 @@ Select.propTypes = {
   disabled: PropTypes.bool
 };
 
-Select.defaultProps = {
-  onChange: () => null,
-  onChangeValue: () => null,
-  disabled: false
-};
 
 export default Select;

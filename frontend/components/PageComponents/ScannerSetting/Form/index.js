@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import { fetchData } from 'lib/fetch';
 import { toast } from 'react-toastify';
-import { Grid } from '@mui/material';
+import { Grid2 as Grid } from '@mui/material';
 import ConfigDescription from './ConfigDescription';
 import * as Yup from "yup";
 import PossibleValues from './PossibleValues';
@@ -45,8 +45,8 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
     // console.log(dataValue);
     const url =
       tab === -1
-        ? `${process.env.backendUrl}api/scannersetting`
-        : `${process.env.backendUrl}api/scannersetting/${initialValues.id}`;
+        ? `api/scannersetting`
+        : `api/scannersetting/${initialValues.id}`;
     const method = tab === -1 ? "POST" : "PATCH";
     fetchData(url, {
       method: method,
@@ -56,7 +56,7 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
       },
     })
       .then((res) => {
-        mutate(`${process.env.backendUrl}api/scannersetting`)
+        mutate(`api/scannersetting`)
           .then(() => {
             setLoading(false);
             toast.success("Successfully Updated!");
@@ -73,24 +73,30 @@ export default function ScannerSettingForm({ data, mutate, tab }) {
       })
   };
 
-  return (
-    <>
-        <Formik 
-            initialValues={initialValues} 
-            onSubmit={handleSubmit}
-            validationSchema={validationSchema}
-        >
-            <Form style={{width: '100%'}}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={5}>
-                        <ConfigDescription loading={loading} tab={tab} />
-                    </Grid>
-                    <Grid item xs={12} md={7}>
-                        <PossibleValues data={data} tab={tab} />
-                    </Grid>
+  return (<>
+    <Formik 
+        initialValues={initialValues} 
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+    >
+        <Form style={{width: '100%'}}>
+            <Grid container spacing={3}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 5
+                  }}>
+                    <ConfigDescription loading={loading} tab={tab} />
                 </Grid>
-            </Form>
-        </Formik>
-    </>
-  );
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 7
+                  }}>
+                    <PossibleValues data={data} tab={tab} />
+                </Grid>
+            </Grid>
+        </Form>
+    </Formik>
+  </>);
 }

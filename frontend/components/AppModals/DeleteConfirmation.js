@@ -4,7 +4,13 @@ import { Avatar, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 
-const DeleteConfirmation = ({ open, onClose, onDelete, loading, title, subTitle }) => {
+const DeleteConfirmation = ({ open = false,
+    onClose = () => null,
+    onDelete = () => null,
+    loading = false,
+    title,
+    subTitle
+  }) => {
   return (
     <Modal
       open={open}
@@ -54,13 +60,6 @@ const DeleteConfirmation = ({ open, onClose, onDelete, loading, title, subTitle 
   );
 };
 
-DeleteConfirmation.defaultProps = {
-  open: false,
-  loading: false,
-  data: null,
-  onClose: () => null,
-  onDelete: () => null
-};
 DeleteConfirmation.propTypes = {
   open: PropTypes.bool,
   data: PropTypes.any,

@@ -39,22 +39,21 @@ export const ScannerProvider = ({children}) => {
     const [scanHistoryPageIndex, setScanHistoryPageIndex] = useState(1);
 
     const router = useRouter();
-    const { scannerId } = router?.query;
-
+    const { scannerId } = router.query;
     
     const { data, error, isValidating } = useSWR(
-        `${process.env.backendUrl}api/scanners/${scannerId}?ui=true`,
+        scannerId ? `api/scanners/${scannerId}?ui=true` : null,
         fetchData
     );
     const scannerStateData = useSWR(
-        `${process.env.backendUrl}api/scanners/state/${scannerId}`,
+        scannerId ? `api/scanners/state/${scannerId}` : null,
         fetchData,
         {
-            refreshInterval: 1000
+            refreshInterval: 5000
         }
     ).data;
     const scannerSettingsData = useSWR(
-        `${process.env.backendUrl}api/scannersetting`,
+        `api/scannersetting`,
         fetchData
     ).data;
 
@@ -87,7 +86,7 @@ export const ScannerProvider = ({children}) => {
 
     function handleInfoex() {
         setLoadingInfoex(true);
-        fetchData(`${process.env.backendUrl}api/scanners/${scannerId}/infoex`, {
+        fetchData(`api/scanners/${scannerId}/infoex`, {
         headers,
         })
         .then((res) => {
@@ -117,10 +116,10 @@ export const ScannerProvider = ({children}) => {
     };
 
     useEffect(() => {
-        if (data?.sessionId?.length === 0 || !data) {
-        handleInfoex();
+        if (data?.sessionId?.length === 0 || !data && scannerId != undefined) {
+            handleInfoex();
         }
-    }, []);
+    }, [scannerId]);
 
     useEffect(() => {
         setUsedBy(error?.response?.data?.usedBy?.name || null);
@@ -142,7 +141,7 @@ export const ScannerProvider = ({children}) => {
         if (page !== scanHistoryPageIndex) {
             setScanHistoryPageIndex(page);
         }
-        fetchData(`${process.env.backendUrl}api/scanners/history`, {
+        fetchData(`api/scanners/history`, {
             headers,
             params: {
                 scannerId,
@@ -152,17 +151,15 @@ export const ScannerProvider = ({children}) => {
             },
         })
         .then((res) => {
-            // console.log(res)
             setScannerHistory(res?.data ?? []);
             setScanHistoryRowCount(res?.dataCount ?? 0);
         })
         .catch((err) => {
-            // console.error(err)
             toast.error("Api error something")
         });
     }
     function loadScannerDetail() {
-        fetchData(`${process.env.backendUrl}api/scanners/${scannerId}?ui=true`)
+        fetchData(`api/scanners/${scannerId}?ui=true`)
         .then((res) => {
             setDetailScanner(res.scanner ?? null);
         })
@@ -213,11 +210,12 @@ export const ScannerProvider = ({children}) => {
                 setIsChange,
                 resetStatusClaimStates,
                 scanHistoryPageIndex,
-                setScanHistoryPageIndex
+                setScanHistoryPageIndex,
+                loadingInfoex
             }}
         >
         {children}
-        <Modal open={loadingInfoex}>
+        {/* <Modal open={loadingInfoex}>
             <Box 
                 display='flex' 
                 sx={{
@@ -234,7 +232,7 @@ export const ScannerProvider = ({children}) => {
                     <CustomLoader message="Checking Scanner" />
                 </Card>
             </Box>
-        </Modal>
+        </Modal> */}
         <Modal open={infoexStatus}>
             <Box 
                 display='flex' 
@@ -310,7 +308,8 @@ export const useScanner = () => {
         setIsChange,
         resetStatusClaimStates,
         scanHistoryPageIndex,
-        setScanHistoryPageIndex
+        setScanHistoryPageIndex,
+        loadingInfoex,
     } = useContext(ScannerContext);
 
     return {
@@ -352,6 +351,7 @@ export const useScanner = () => {
         setIsChange,
         resetStatusClaimStates,
         scanHistoryPageIndex,
-        setScanHistoryPageIndex
+        setScanHistoryPageIndex,
+        loadingInfoex,
     };
 }

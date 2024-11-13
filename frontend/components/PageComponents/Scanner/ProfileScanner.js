@@ -37,7 +37,7 @@ export default function ProfileScanner() {
       "x-privet-token": privetToken,
     };
     fetchData(
-      `${process.env.backendUrl}api/scanners/${scannerId}/twaindirect/session`,
+      `api/scanners/${scannerId}/twaindirect/session`,
       {
         headers,
         method: "POST",

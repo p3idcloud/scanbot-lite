@@ -31,12 +31,12 @@ const EditDetailScannerForm = ({ open, close, ...rest }) => {
         model: e.model,
         description: e.description
     }
-    fetchData(`${process.env.backendUrl}api/scanners/${id ?? ''}`, {
+    fetchData(`api/scanners/${id ?? ''}`, {
       method: "PATCH",
       data,
     })
       .then((res) => {
-        mutate(`${process.env.backendUrl}api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
+        mutate(`api/scanners?page=${pageIndex}&limit=${rowsPerPage}&sort=-lastActive`)
           .then(() => {
             setLoading(false);
             toast.success("Successfully updated scanner");

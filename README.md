@@ -153,6 +153,9 @@ To generate a new Client API you can follow this guides
 
 Until you received `opentext_url` , `tenant_id`, `client_id`, `client_secret`
 
+##### Note:
+For USA `opentext_url` will be `https://us.api.opentext.com` 
+
 ## 2) C2PA
 #### There are two ways to download C2PA files:
 1. **During Document Scanning:**

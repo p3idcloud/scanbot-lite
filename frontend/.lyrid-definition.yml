@@ -5,7 +5,7 @@ modules:
   - name: nextjs
     language: nodejs20.x
     web: next.standalone
-    description: NodeJS v18.x module using Next.js v13.x
+    description: NodeJS v20.x module using Next.js v13.x
     functions:
       - name: entry
         description: the entry point for the function

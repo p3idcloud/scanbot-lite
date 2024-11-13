@@ -45,10 +45,10 @@ Once it done uploading, you should be able to see the public endpoint for your a
 After the initial upload, create `.env.production` by copying contents of `.env.development` and update your `.env.production` file with the Lyrid public URL, ensuring the Frontend and the Backend are connected to correct urls:
 
 ```
-# BASE_URL -> your frontend url
+# BASE_URL -> your backend url
 # BACKEND_URL -> your backend url
-BASE_URL=https://s22d.lyr.id/
-BACKEND_URL=https://wnxb.lyr.id/
+BASE_URL=https://wnxb.lyr.id/
+NEXT_PUBLIC_BACKEND_URL=https://wnxb.lyr.id/
 ```
 
 Also update the `NODE_ENV` to `production` for production environment variable
@@ -68,7 +68,7 @@ To avoid running confusing deployment orders.
 It is recommended to take this approach:
 
 1. Submit Frontend & Backend first
-2. Retrieve  `BASE_URL` and `BACKEND_URL`
+2. Retrieve `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` (or `BASE_URL`)
 3. Store it in `.env.production` of respective apps
 4. Re run `lc code submit` for both apps
 

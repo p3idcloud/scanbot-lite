@@ -43,7 +43,7 @@ Once it's done uploading, you should be able to see the public endpoint for your
 🚀 Try our new subdomain at: https://wnxb.lyr.id
 ```
 
-After the initial upload, create `.env.production` by copying contents of `.env.development` and update your `.env.production` file with the Lyrid public URL, like so:
+After the initial upload, create `.env.production` by copying contents of `.env.development` and update your `.env.production` file with the Lyrid public URL, include the `/` at the end:
 
 ```
 # BASE_URL -> your backend url
@@ -69,7 +69,7 @@ To avoid running confusing deployment orders.
 It is recommended to take this approach:
 
 1. Submit Frontend & Backend first
-2. Retrieve  `BASE_URL` and `FRONTEND_URL`
+2. Retrieve `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` (or `BASE_URL`)
 3. Store it in `.env.production` of respective apps
 4. Re run `lc code submit` for both apps
 

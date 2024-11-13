@@ -5,7 +5,7 @@ export default function Step3() {
     return (
         <>
             <Image 
-                alt={"Caca"}
+                alt={"P3id"}
                 src="/p3id.png"
                 width={216}
                 height={93}

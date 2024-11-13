@@ -12,7 +12,7 @@ Setup tutorial
     - You need two environment files (one in backend and one in frontend)
 3. Get your local IP Address
     - Use `ipconfig` or a similar command to figure out your local IP address and use that instead of `localhost`
-    - For production use (deploying) you should use environment variables in `.env.development` with only changes to `BASE_URL`, `FRONTEND_URL` and `BACKEND_URL` to the urls you would use (local ip for testing in device and actual domain for deployment for production).
+    - For production use (deploying) you should use environment variables in `.env.development` with only changes to `BASE_URL` (backend url), `FRONTEND_URL` (frontend url) and `NEXT_PUBLIC_BACKEND_URL` (backend url) to the urls you would use (local ip for testing in device and actual domain for deployment for production).
 
 
 
@@ -127,7 +127,7 @@ Exercise 1: Register and Scan
 ## 1) Register Scanner
 1. Identify the scanner IP Address and connect to Web UI for Scanner
 2. Navigate to Cloud
-3. Add the backend url (example 192.168.0.1:8000, scanbotlite.lyr.id)
+3. Add the backend url (example http://192.168.0.1:8000, https://devday01.devday.lyrid.io)
 4. Finish Registration process
 
 ## 2) Initiate a Scan
@@ -165,7 +165,7 @@ For USA `opentext_url` will be `https://us.api.opentext.com`
 
    Open your scan history. In the action column, you will see a [D] icon for details. Click on this icon to open the PDF viewer, where you will find the new **C2PA Download** button.
 
-#### Generate a New Certificate for C2PA
+#### Note: Generate a New Certificate for C2PA
 If you want to generate a new certificate for C2PA, you will need to create a new one. For the specifications, please follow these guidelines: [C2PA Signing Manifest](https://opensource.contentauthenticity.org/docs/manifest/signing-manifests).
 
 You should have two files with the extensions `.key` and `.pem`. 
@@ -185,7 +185,7 @@ return you the endpoint for each application (ex: wxyz.lyr.id for backend and ab
 wouldn't work for now. Then clone a .env file (in frontend and backend) based on the environment that you have 
 (remove .env.development and .env.production), update the values on .env that you created before: 
 
-Variables: BASE_URL, FRONTEND_URL or BACKEND_URL (depending on frontend or backend application). 
+Variables: BASE_URL, FRONTEND_URL or NEXT_PUBLIC_BACKEND_URL (depending on frontend or backend application). 
 
 After updating .env file, do a resubmit on both frontend and backend application. It will update your env file on 
 cloud and on finish, your cloud version of Scanbot-Lite is ready.

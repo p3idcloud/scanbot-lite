@@ -5,9 +5,9 @@ modules:
 - name: container
   language: docker
   description: NodeJS v18.x module using Express web framework v4.x
-  functions:
   ports:
-      - alias: "http"
-        port: 8000
-  - name: entry
-    description: the entry point for the function
+    - alias: "http"
+      port: 8000
+  functions:
+    - name: entry
+      description: the entry point for the function

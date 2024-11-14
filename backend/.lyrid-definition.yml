@@ -5,7 +5,6 @@ modules:
 - name: nodejs
   language: nodejs18.x
   web: express
-  prebuildScript: ./install.sh
   description: NodeJS v18.x module using Express web framework v4.x
   functions:
   - name: entry

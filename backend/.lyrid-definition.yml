@@ -2,11 +2,12 @@ name: scanbotlite-backend
 description: Backend service for Scanbot project built with Express.js
 ignoreFiles: .git node_modules
 modules:
-- name: nodejs
-  language: nodejs18.x
-  web: express
+- name: container
+  language: docker
   description: NodeJS v18.x module using Express web framework v4.x
   functions:
+  ports:
+      - alias: "http"
+        port: 8000
   - name: entry
-    entry: entry.js
     description: the entry point for the function

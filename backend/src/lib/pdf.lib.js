@@ -16,7 +16,7 @@
  */
 
 const { PDFDocument } = require('pdf-lib');
-const { createCanvas } = require('canvas');
+const { pdfToPng } = require('pdf-to-png-converter');
 
 exports.separatePagesToPDFs = async ({ file }) => {
     const { buffer: pdfBuffer, originalname } = file;
@@ -40,33 +40,43 @@ exports.separatePagesToPDFs = async ({ file }) => {
 
 exports.convertPdfToPng = async ({ file }) => {
     try {
-        const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
         const { buffer: pdfBuffer, originalname } = file;
-        const uint8Array = new Uint8Array(pdfBuffer);
-        const pdf = await getDocument({ data: uint8Array }).promise;
-        const totalPageCount = pdf.numPages;
+        // const uint8Array = new Uint8Array(pdfBuffer);
+        // const pdf = await getDocument({ data: uint8Array }).promise;
+        // const totalPageCount = pdf.numPages;
 
-        const images = [];
-        for (let i = 1; i <= totalPageCount; i++) {
-            const page = await pdf.getPage(i);
+        // const images = [];
+        // for (let i = 1; i <= totalPageCount; i++) {
+        //     const page = await pdf.getPage(i);
 
-            // Set up a canvas
-            const viewport = page.getViewport({ scale: 2.0 });
-            const canvas = createCanvas(viewport.width, viewport.height);
-            const context = canvas.getContext('2d');
+        //     // Set up a canvas
+        //     const viewport = page.getViewport({ scale: 2.0 });
+        //     const canvas = createCanvas(viewport.width, viewport.height);
+        //     const context = canvas.getContext('2d');
 
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport,
-            };
-            await page.render(renderContext).promise;
+        //     const renderContext = {
+        //         canvasContext: context,
+        //         viewport: viewport,
+        //     };
+        //     await page.render(renderContext).promise;
 
-            // Convert canvas to PNG image
-            const dataURL = canvas.toDataURL('image/png');
-            images.push(dataURL);
-        }
+        //     // Convert canvas to PNG image
+        //     const dataURL = canvas.toDataURL('image/png');
+        //     images.push(dataURL);
+        // }
 
-        return images[0]
+        // return images[0]
+
+        const pngPages = await pdfToPng(pdfBuffer, { // The function accepts PDF file path or a Buffer
+            disableFontFace: false, // When `false`, fonts will be rendered using a built-in font renderer that constructs the glyphs with primitive path commands. Default value is true.
+            useSystemFonts: false, // When `true`, fonts that aren't embedded in the PDF document will fallback to a system font. Default value is false.
+            enableXfa: false, // Render Xfa forms if any. Default value is false.
+            viewportScale: 2.0, // The desired scale of PNG viewport. Default value is 1.0.
+            strictPagesToProcess: false, // When `true`, will throw an error if specified page number in pagesToProcess is invalid, otherwise will skip invalid page. Default value is false.
+            verbosityLevel: 0 // Verbosity level. ERRORS: 0, WARNINGS: 1, INFOS: 5. Default value is 0.
+        });
+        console.log(pngPages)
+        return pngPages[0] 
     } catch (error) {
         console.error('Error converting PDF to PNG:', error);
         return null;

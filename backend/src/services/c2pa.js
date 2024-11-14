@@ -65,7 +65,7 @@ exports.readFromFile = async (buffer, mimeType) => {
     }
 };
 
-exports.signingManifest = async (dataURL, mimeType, pdfTitle) => {
+exports.signingManifest = async (pngPages, mimeType, pdfTitle) => {
 	logger.info('Reached signing');
 
 	const generateC2pa = async () => {
@@ -108,9 +108,10 @@ exports.signingManifest = async (dataURL, mimeType, pdfTitle) => {
 
 	const convertDataURLToBuffer = async () => {
 		// Convert Data URL to Buffer
-		const buffer = Buffer.from(dataURL.split(',')[1], 'base64');
-		logger.info('Converted data URL to buffer');
-		return buffer;
+		// const buffer = Buffer.from(dataURL.split(',')[1], 'base64');
+		// logger.info('Converted data URL to buffer');
+		console.log(pngPages.content)
+		return pngPages.content;
 	};
 
 	// Concurrently create the test signer, manifest builder, and convert data URL to buffer

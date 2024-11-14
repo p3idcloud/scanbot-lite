@@ -117,11 +117,11 @@ const c2paSigningManifest = async (req, res) => {
 		  mimeType: pdfFile.type,
 		};
   
-		const pngDataUrl = await convertPdfToPng({ file });
-		if (!pngDataUrl) {
+		const pngPages = await convertPdfToPng({ file });
+		if (!pngPages) {
 			return res.status(500).send({ message: "Failed to convert to png" })
 		}
-		const result = await c2paserv.signingManifest(pngDataUrl, mimeType, pdfTitle);
+		const result = await c2paserv.signingManifest(pngPages, mimeType, pdfTitle);
 
 		// Store in MinIO
 		if (result?.buffer) {

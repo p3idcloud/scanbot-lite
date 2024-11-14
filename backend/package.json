@@ -31,12 +31,13 @@
     "multer": "^1.4.5-lts.1",
     "node-cache": "^5.1.2",
     "pdf-merger-js": "4.2",
+    "pdf-to-png-converter": "^3.5.2",
     "pdfjs-dist": "^4.7.76",
     "saml2-js": "^4.0.0",
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^5.0.0",
     "uuid": "^10.0.0"
-  }, 
+  },
   "resolutions": {
     "sharp": "0.32.3"
   },

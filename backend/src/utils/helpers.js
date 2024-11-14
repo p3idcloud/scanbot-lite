@@ -113,12 +113,23 @@ const findFilename = (url) => {
 
 const fetchPdfBlobs =  async (urls, accountID) => {
     return Promise.all(urls.map(async (url) => {
-        if (url.includes(process.env.BASE_URL)) {
+        if (!isValidUrl(url)) {
+            return await fetchFromMinioStorage(url, accountID)
+        } else if (url.includes(process.env.BASE_URL)) {
             return await fetchFromMinio(url, accountID);
         } else {
             return await fetchFromUrl(url);
         }
     }));
+}
+
+const isValidUrl = urlString=> {
+    try { 
+        return Boolean(new URL(urlString)); 
+    }
+    catch(e){ 
+        return false; 
+    }
 }
 
 
@@ -128,6 +139,17 @@ const fetchFromMinio = async (url, accountID) => {
 
     const uri = url.replace(`${process.env.BASE_URL}api/storage/`, '').split('?')[0];
     const pdfStream = await minioClient.getObject(accountID, uri);
+    try {
+        return await streamToBlob(pdfStream);
+    } catch (e) {
+        console.error(`Error converting stream to blob: ${e}`);
+        return null;
+    }
+}
+
+const fetchFromMinioStorage = async (url, accountID) => {
+    const minioClient = getGlobalMinioClient();
+    const pdfStream = await minioClient.getObject(accountID, url);
     try {
         return await streamToBlob(pdfStream);
     } catch (e) {

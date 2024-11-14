@@ -134,7 +134,7 @@ const OpentextDialog = ({ open, close, pdfUrls, pdfTitle, historyId }) => {
         try {
             if (ocrTextData === '') {
                 var response = await fetchFile(`api/storage/${opentextData.OcrText}`)
-                if (!response.ok) {
+                if (response.status !== 200) {
                     throw new Error(`Error fetching file: ${response.statusText}`);
                 }
                 const fileBlob = await response.data;

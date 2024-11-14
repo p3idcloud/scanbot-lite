@@ -32,6 +32,45 @@ export default function PdfViewer({ pdfData }) {
   const [opentextDialog, setOpentextDialog] = useState(false);
   const [barleaDialog, setBarleaDialog] = useState(false);
 
+  const getLastSegments = (url) => {
+    // Split the URL by "/"
+    const urlParts = url.split("/");
+    
+    // Find the index of the last occurrence of the part to start from
+    const lastIndex = urlParts.length - 4; // second last part (the last UUID)
+    
+    // Join the parts from the lastIndex to the end without leading "/"
+    return urlParts.slice(lastIndex).join("/");
+  }
+
+  const filesToDownload = useMemo(() => {
+    let pdfUrl = [];
+    let urlResults = [];
+    if (pdfData && (pdfData.rawUrl || pdfData.url)) {
+        pdfUrl = pdfData.rawUrl !== undefined ? pdfData.rawUrl : pdfData.url;
+    }
+
+    if (!Array.isArray(pdfUrl)) {
+        pdfUrl = [pdfUrl];
+    }
+
+    for (let i = 0; i < pdfUrl.length; i++) {
+        const pdfPage = pdfUrl[i];
+        let pdfStorageSplit = pdfPage.split('storage/')[1];
+
+        let pdfQuerySplit = '';
+        if (pdfStorageSplit !== undefined) {
+            pdfQuerySplit = pdfStorageSplit.split('?')[0];
+        } else {
+            const lastSegment = getLastSegments(pdfPage);
+            pdfQuerySplit = lastSegment.split('?')[0];
+        }
+
+        urlResults.push(pdfQuerySplit);
+    }
+
+    return urlResults; // Return the processed URLs
+  }, [pdfData]);
 
   function onFileChange(type) {
     if (type === "next" && page + 1 < file.length) {
@@ -77,27 +116,11 @@ export default function PdfViewer({ pdfData }) {
 
 
   const handleDownloadC2PA = async () => {
-    console.log(pdfData.url[page],page)
-    let pdfUrl = '';
-    if (pdfData.rawUrl !== undefined) {
-      pdfUrl = pdfData.rawUrl[page];
-    } else {
-      pdfUrl = pdfData.url[page];
-    }
-    console.log(pdfUrl)
+    // C2PA only Downloads one page 
+    let fileDownload = filesToDownload[page]
     // remove leading url
-    var pdfStorageSplit = pdfUrl.split('storage/')[1];
-    // remove query
-    let pdfQuerySplit = '';
-    if (pdfStorageSplit == undefined) {
-      var lastSegment = getLastSegments(pdfUrl)
-      pdfQuerySplit = lastSegment.split('?')[0];
-    } else {
-      pdfQuerySplit = pdfStorageSplit.split('?')[0];
-    }
-
     let data = {
-      uri: pdfQuerySplit,
+      uri: fileDownload,
       pdfTitle: pdfData.name
     }
 
@@ -121,17 +144,6 @@ export default function PdfViewer({ pdfData }) {
     // Remove the anchor from the document body
     document.body.removeChild(a);
   };
-
-  const getLastSegments = (url) => {
-    // Split the URL by "/"
-    const urlParts = url.split("/");
-    
-    // Find the index of the last occurrence of the part to start from
-    const lastIndex = urlParts.length - 4; // second last part (the last UUID)
-    
-    // Join the parts from the lastIndex to the end without leading "/"
-    return urlParts.slice(lastIndex).join("/");
-}
 
   const files = useMemo(() => {
     return pdfData?.url || dummyFile
@@ -422,7 +434,7 @@ export default function PdfViewer({ pdfData }) {
       open={opentextDialog} 
       close={() => setOpentextDialog(false)} 
       pdfBlobs={pdfBlobs}
-      pdfUrls={pdfData?.rawUrl || []}
+      pdfUrls={filesToDownload || []}
       historyId={historyId}
       pdfTitle={title}
     />
@@ -430,7 +442,7 @@ export default function PdfViewer({ pdfData }) {
       open={barleaDialog} 
       close={() => setBarleaDialog(false)} 
       pdfBlobs={pdfBlobs}
-      pdfUrls={pdfData?.rawUrl || []}
+      pdfUrls={filesToDownload || []}
       historyId={historyId}
       pdfTitle={title}
     />
